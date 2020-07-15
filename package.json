@@ -34,6 +34,7 @@
     "node-rsa": "^1.0.8",
     "rdf-namespaces": "^1.8.0",
     "solid-auth-client": "^2.4.1",
+    "solid-auth-fetcher": "^1.0.1",
     "tripledoc": "^4.3.4",
     "ts-jest": "^26.1.1",
     "typescript": "^3.9.5"
