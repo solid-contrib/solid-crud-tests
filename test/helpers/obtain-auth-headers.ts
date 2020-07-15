@@ -23,6 +23,7 @@ import NodeStorage from "solid-auth-fetcher/dist/localStorage/NodeStorage";
 import IStorage from "solid-auth-fetcher/dist/localStorage/IStorage";
 import ILoginOptions from "solid-auth-fetcher/dist/login/ILoginOptions";
 import IClient from "solid-auth-fetcher/dist/login/oidc/IClient";
+import { CLIENT_RENEG_WINDOW } from "tls";
 
 const method = "get";
 const url = "https://localhost:8443/";
@@ -86,10 +87,10 @@ async function requestToken(): Promise<string> {
     new IsomorphicJoseUtility()
   );
   await requester.request("alice", {
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    grant_type: "refresh_token",
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    refresh_token: "thisIsARefreshToken"
+    grant_type: 'authorization_code',
+    code: 'c0de',
+    redirect_uri: 'https://app.com/callback',
+    client_id: await storageUtility.getForUser("alice", "clientId"),
   });
   return "";
 }
