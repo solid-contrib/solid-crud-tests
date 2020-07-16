@@ -78,6 +78,10 @@ async function createFetchHeaders(params: {
   };
 }
 
+function debugStorage() {
+  console.log("storage:", storage);
+}
+
 async function requestToken(): Promise<string> {
   const requester = new TokenRequester(
     storageUtility,
@@ -86,12 +90,15 @@ async function requestToken(): Promise<string> {
     dpopHeaderCreator,
     new IsomorphicJoseUtility()
   );
-  await requester.request("alice", {
+  debugStorage();
+  const result = await requester.request("alice", {
     grant_type: 'authorization_code',
-    code: 'c0de',
+    code_verifier: 'g+5ZeOz0TG',
+    code: 'd59b7e4340e94795b9f7783c379a9eeb',
     redirect_uri: 'https://app.com/callback',
     client_id: await storageUtility.getForUser("alice", "clientId"),
   });
+  console.log("result", result);
   return "";
 }
 
@@ -118,8 +125,13 @@ async function registerClient(): Promise<void> {
 
 async function test(): Promise<void> {
   try {
+    console.log('bootstrapping')
     await bootstrap();
+    debugStorage();
+    console.log('registering client')
     await registerClient();
+    debugStorage();
+    console.log('requesting token')
     const authToken = await requestToken();
     // const headers = await createFetchHeaders({
     //   authToken,
