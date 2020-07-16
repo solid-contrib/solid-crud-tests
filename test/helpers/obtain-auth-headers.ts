@@ -2,13 +2,15 @@ import { login, customAuthFetcher } from "solid-auth-fetcher";
 import fetch, { Response } from "node-fetch";
 
 const SERVER_ROOT = "https://localhost:8443";
+const USERNAME = "alice";
+const PASSWORD = "123";
 
 async function getCookie() {
   const result = await fetch(`${SERVER_ROOT}/login/password`, {
     headers: {
       "content-type": "application/x-www-form-urlencoded"
     },
-    body: "username=alice&password=123",
+    body: `username=${USERNAME}&password=${PASSWORD}`,
     method: "POST",
     redirect: "manual"
   });
@@ -37,6 +39,8 @@ async function getAuthHeaders() {
   } while(!redirectedTo?.startsWith("https://mysite.com"));
 
   await authFetcher.handleRedirect(redirectedTo);
-  await authFetcher.fetch("https://localhost:8443/private/");
+  const result = await authFetcher.fetch("https://localhost:8443/private/");
+  console.log(result.status);
+  console.log(await result.text());
 }
 getAuthHeaders();
