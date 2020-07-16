@@ -1,7 +1,7 @@
 {
-  "name": "storage-tests",
+  "name": "solid-crud-tests",
   "version": "1.0.0",
-  "description": "A test suite with some basic happy-path checks against a DPop-based WebID-OIDC provider.",
+  "description": "A test suite with some tests for CRUD operations on containers and documents on a Solid pod.",
   "main": "jest.config.js",
   "directories": {
     "test": "test"
@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/solid/storage-tests.git"
+    "url": "git+https://github.com/solid/solid-crud-tests.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/solid/storage-tests/issues"
+    "url": "https://github.com/solid/solid-crud-tests/issues"
   },
-  "homepage": "https://github.com/solid/storage-tests#readme",
+  "homepage": "https://github.com/solid/solid-crud-tests#readme",
   "dependencies": {
     "@types/debug": "^4.1.4",
     "@types/node": "^11.15.16",
