@@ -1,4 +1,4 @@
-import { login } from "solid-auth-fetcher";
+import { login, customAuthFetcher } from "solid-auth-fetcher";
 import fetch, { Response } from "node-fetch";
 
 const SERVER_ROOT = "https://localhost:8443";
@@ -18,32 +18,25 @@ async function getCookie() {
 
 async function getAuthHeaders() {
   const cookie = await getCookie();
-  const session = await login({
+  const authFetcher = await customAuthFetcher();
+
+  const session = await authFetcher.login({
     oidcIssuer: "https://localhost:8443",
     redirect: "https://mysite.com/redirect"
   });
-  const result1 = await fetch((session.neededAction as any).redirectUrl, {
-    headers: {
-      cookie
-    },
-    redirect: "manual"
-  });
-  const result2 = await fetch(result1.headers.get('location'), {
-    headers: {
-      cookie
-    },
-    redirect: "manual"
-  });
-  const result3 = await fetch(result2.headers.get('location'), {
-    headers: {
-      cookie
-    },
-    redirect: "manual"
-  });
-  const harvest = new URL(result3.headers.get('location')).searchParams;
-  console.log({
-    code: harvest.get('code'),
-    idToken: harvest.get('id_token')
-  });
+  let redirectedTo = (session.neededAction as any).redirectUrl;
+  do {
+    const result = await fetch(redirectedTo, {
+      headers: {
+        cookie
+      },
+      redirect: "manual"
+    });
+    redirectedTo = result.headers.get("location");
+    console.log("Redirected to", redirectedTo);
+  } while(!redirectedTo?.startsWith("https://mysite.com"));
+
+  await authFetcher.handleRedirect(redirectedTo);
+  await authFetcher.fetch("https://localhost:8443/private/");
 }
 getAuthHeaders();
