@@ -37,11 +37,12 @@ describe('Alice\'s pod', () => {
       'Accept': type
     }});
     let text = await fetchResult.text();
-    if (type === 'application/ld+json') {
-      const obj = JSON.parse(text);
-      delete obj['@type'];
-      text = JSON.stringify(obj);
-    }
+    // Trying to get it working with JSON-LD:
+    // if (type === 'application/ld+json') {
+    //   const obj = JSON.parse(text);
+    //   delete obj['@type'];
+    //   text = JSON.stringify(obj);
+    // }
     const store = getStore();
     console.log('Parsing!', text);
     rdf.parse(text, store, url, type);
