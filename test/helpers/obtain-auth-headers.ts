@@ -1,41 +1,34 @@
 import { customAuthFetcher } from "solid-auth-fetcher";
 import fetch, { Response } from "node-fetch";
 
-const SERVER_ROOT = "https://localhost:8443";
-const USERNAME = "alice";
-const PASSWORD = "123";
-
-
-
-async function getAuthHeaders() {
+export async function getAuthFetcher(idpRoot, username, password) {
   const authFetcher = await customAuthFetcher();
-  const serverLoginResult = await authFetcher.fetch(`${SERVER_ROOT}/login/password`, {
+  const serverLoginResult = await authFetcher.fetch(`${idpRoot}/login/password`, {
     headers: {
       "content-type": "application/x-www-form-urlencoded"
     },
-    body: `username=${USERNAME}&password=${PASSWORD}`,
+    body: `username=${username}&password=${password}`,
     method: "POST",
     redirect: "manual"
   });
   const cookie = serverLoginResult.headers.get('set-cookie');
 
   const session = await authFetcher.login({
-    oidcIssuer: "https://localhost:8443",
-    redirect: "https://mysite.com/redirect"
+    oidcIssuer: idpRoot,
+    redirect: "https://tester/redirect"
   });
   let redirectedTo = (session.neededAction as any).redirectUrl;
   do {
+    console.log("Redirected to: ", redirectedTo);
     const result = await fetch(redirectedTo, {
       headers: { cookie },
       redirect: "manual"
     });
+    console.log('fetch done');
     redirectedTo = result.headers.get("location");
-    console.log("Redirected to", redirectedTo);
-  } while(!redirectedTo?.startsWith("https://mysite.com"));
+  } while(!redirectedTo?.startsWith("https://tester"));
 
+  console.log("Handling redirect");
   await authFetcher.handleRedirect(redirectedTo);
-  const result = await authFetcher.fetch("https://localhost:8443/private/");
-  console.log(result.status);
-  console.log(await result.text());
+  return authFetcher;
 }
-getAuthHeaders();
