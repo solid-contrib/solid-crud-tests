@@ -1,5 +1,5 @@
 import { customAuthFetcher } from "solid-auth-fetcher";
-import fetch, { Response } from "node-fetch";
+import fetch from "node-fetch";
 
 export async function getAuthFetcher(idpRoot, username, password) {
   const authFetcher = await customAuthFetcher();
@@ -19,16 +19,13 @@ export async function getAuthFetcher(idpRoot, username, password) {
   });
   let redirectedTo = (session.neededAction as any).redirectUrl;
   do {
-    console.log("Redirected to: ", redirectedTo);
     const result = await fetch(redirectedTo, {
       headers: { cookie },
       redirect: "manual"
     });
-    console.log('fetch done');
     redirectedTo = result.headers.get("location");
   } while(!redirectedTo?.startsWith("https://tester"));
 
-  console.log("Handling redirect");
   await authFetcher.handleRedirect(redirectedTo);
   return authFetcher;
 }
