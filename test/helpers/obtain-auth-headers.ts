@@ -19,11 +19,16 @@ export async function getAuthFetcher(idpRoot, username, password) {
   });
   let redirectedTo = (session.neededAction as any).redirectUrl;
   do {
+    console.log('getAuthFetcher 5', redirectedTo)
+
     const result = await fetch(redirectedTo, {
       headers: { cookie },
       redirect: "manual"
     });
     redirectedTo = result.headers.get("location");
+    if (redirectedTo === null) {
+      throw new Error('Please add https://tester as a trusted app!');
+    }
   } while(!redirectedTo?.startsWith("https://tester"));
 
   await authFetcher.handleRedirect(redirectedTo);

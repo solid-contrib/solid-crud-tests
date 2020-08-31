@@ -7,16 +7,16 @@ const PASSWORD = process.env.PASSWORD || "123";
 const TEST_FOLDER = `solid-crud-tests-${new Date().getTime()}`;
 
 const testUrls = [
-  // 'empty/', // exists but is empty
-  // 'empty', // should apply the operation to empty/
-  // 'empty/foo.ttl',
-  // 'empty/foo/bar.ttl',
-  // 'exists/', // exists and contains exists.ttl
+  'empty/', // exists but is empty
+  'empty', // should apply the operation to empty/
+  'empty/foo.ttl',
+  'empty/foo/bar.ttl',
+  'exists/', // exists and contains exists.ttl
   'exists',
-  // 'exists/exists.ttl', // exists
-  // 'exists/ExIsTs.ttl',
-  // 'exists/exists.ttl/', // should error
-  // 'exists/foo.ttl'
+  'exists/exists.ttl', // exists
+  'exists/ExIsTs.ttl',
+  'exists/exists.ttl/', // should error
+  'exists/foo.ttl'
 ];
 const testOperations = {
   post: {
@@ -94,6 +94,11 @@ const testOperations = {
   //   body: '<#hello> <#linked> <#world> .'
   // }
 };
+// (async () => {
+// const authFetcher = await getAuthFetcher(SERVER_ROOT, USERNAME, PASSWORD);
+// console.log('get authFetcher', authFetcher);
+// process.exit(1);
+// })();
 
 describe('Basic Sequences', () => {
   let authFetcher;
