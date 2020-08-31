@@ -7,15 +7,15 @@ const PASSWORD = process.env.PASSWORD || "123";
 const TEST_FOLDER = `solid-crud-tests-${new Date().getTime()}`;
 
 const testUrls = [
-  'empty/',
-  'empty',
+  'empty/', // exists but is empty
+  'empty', // should apply the operation to empty/
   'empty/foo.ttl',
   'empty/foo/bar.ttl',
-  'exists/',
+  'exists/', // exists and contains exists.ttl
   'exists',
-  'exists/exists.ttl',
+  'exists/exists.ttl', // exists
   'exists/ExIsTs.ttl',
-  'exists/exists.ttl/',
+  'exists/exists.ttl/', // should error
   'exists/foo.ttl'
 ];
 const testOperations = {
@@ -24,79 +24,113 @@ const testOperations = {
     headers: {
       'Content-Type': 'text/turtle'
     },
-    body: '<#hello> <#linked> <#world> .'
-  },
-  patchIns: {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'text/turtle'
+    body: '<#hello> <#linked> <#world> .',
+    expectedWriteStatus: {
+      'empty/': 404,
+      'empty': 404,
+      'empty/foo.ttl': 404,
+      'empty/foo/bar.ttl': 404,
+      'exists/': 201,
+      'exists': 201, // applied to exists/ instead
+      'exists/exists.ttl': 404, // see https://github.com/solid/specification/blob/c7fdf4977c6f9219bade7ca9857e23695711740d/main/resource-access.bs#L191-L192
+      'exists/ExIsTs.ttl': 404,
+      'exists/exists.ttl/': 404, // that container does not exist
+      'exists/foo.ttl': 404
     },
-    body: '<#hello> <#linked> <#world> .'
+    expectedReadStatus: {
+      'empty/': 404,
+      'empty': 404,
+      'empty/foo.ttl': 404,
+      'empty/foo/bar.ttl': 404,
+      'exists/': 200,
+      'exists': 200,
+      'exists/exists.ttl': 200,
+      'exists/ExIsTs.ttl': 404,
+      'exists/exists.ttl/': 404,
+      'exists/foo.ttl': 404
+    }
+
   },
-  patchDel: {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'text/turtle'
-    },
-    body: '<#hello> <#linked> <#world> .'
-  },
-  patchInsDel: {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'text/turtle'
-    },
-    body: '<#hello> <#linked> <#world> .'
-  },
-  put: {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'text/turtle'
-    },
-    body: '<#hello> <#linked> <#world> .'
-  },
-  del: {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'text/turtle'
-    },
-    body: '<#hello> <#linked> <#world> .'
-  },
-  noop: {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'text/turtle'
-    },
-    body: '<#hello> <#linked> <#world> .'
-  }
+  // patchIns: {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'text/turtle'
+  //   },
+  //   body: '<#hello> <#linked> <#world> .'
+  // },
+  // patchDel: {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'text/turtle'
+  //   },
+  //   body: '<#hello> <#linked> <#world> .'
+  // },
+  // patchInsDel: {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'text/turtle'
+  //   },
+  //   body: '<#hello> <#linked> <#world> .'
+  // },
+  // put: {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'text/turtle'
+  //   },
+  //   body: '<#hello> <#linked> <#world> .'
+  // },
+  // del: {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'text/turtle'
+  //   },
+  //   body: '<#hello> <#linked> <#world> .'
+  // },
+  // noop: {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'text/turtle'
+  //   },
+  //   body: '<#hello> <#linked> <#world> .'
+  // }
 };
 
 describe('Basic Sequences', () => {
   let authFetcher;
   beforeAll(async () => {
     authFetcher = await getAuthFetcher(SERVER_ROOT, USERNAME, PASSWORD);
-    authFetcher.fetch(`${SERVER_ROOT}/${TEST_FOLDER}/empty/`, { method: 'PUT' });
-    authFetcher.fetch(`${SERVER_ROOT}/${TEST_FOLDER}/exists/exists.ttl`, {
+    await authFetcher.fetch(`${SERVER_ROOT}/${TEST_FOLDER}/empty/`, {
+      method: 'PUT',
+      headers: {
+        Link: '<http://www.w3.org/ns/ldp#BasicContainer>; rel="type"' // see https://github.com/solid/node-solid-server/issues/1465
+      }
+    });
+    await authFetcher.fetch(`${SERVER_ROOT}/${TEST_FOLDER}/exists/exists.ttl`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'text/turtle',
       },
       body: '<#hello> <#linked> <#world> .'
     });
+    const fetchBack = await authFetcher.fetch(`${SERVER_ROOT}/${TEST_FOLDER}/exists/`)
+    expect(fetchBack.status).toEqual(200);
+    console.log(await fetchBack.text())
   });
   afterAll(() => recursiveDelete(`${SERVER_ROOT}/${TEST_FOLDER}/`, authFetcher));
 
-  async function runTest(path, fetchOptions) {
+  async function runTest(path, operation) {
     const url = `${SERVER_ROOT}/${TEST_FOLDER}/${path}`;
+    const fetchOptions = testOperations[operation];
     const writeResult = await authFetcher.fetch(url, fetchOptions);
-    expect(writeResult.status).toEqual(200);
+    expect(writeResult.status).toEqual(fetchOptions.expectedWriteStatus[path]);
     const getResult = await authFetcher.fetch(url);
-    expect(getResult.status).toEqual(200);
+    expect(getResult.status).toEqual(fetchOptions.expectedReadStatus[path]);
   }
   testUrls.forEach(testPath => {
     describe(testPath, () => {
-      Object.keys(testOperations).forEach(i => {
-        describe(i, () => {
-          it('works', () => runTest(testPath, testOperations[i]));
+      Object.keys(testOperations).forEach(operation => {
+        describe(operation, () => {
+          it('works', () => runTest(testPath, operation));
         });
       });
     });
