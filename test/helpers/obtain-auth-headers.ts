@@ -1,26 +1,25 @@
 import { customAuthFetcher } from "solid-auth-fetcher";
+import {SERVER_ROOT, USERNAME, PASSWORD } from "./global";
 import fetch from "node-fetch";
 
-export async function getAuthFetcher(idpRoot, username, password) {
+export async function getAuthFetcher() {
   const authFetcher = await customAuthFetcher();
-  const serverLoginResult = await authFetcher.fetch(`${idpRoot}/login/password`, {
+  const serverLoginResult = await authFetcher.fetch(`${SERVER_ROOT}/login/password`, {
     headers: {
       "content-type": "application/x-www-form-urlencoded"
     },
-    body: `username=${username}&password=${password}`,
+    body: `username=${USERNAME}&password=${PASSWORD}`,
     method: "POST",
     redirect: "manual"
   });
   const cookie = serverLoginResult.headers.get('set-cookie');
 
   const session = await authFetcher.login({
-    oidcIssuer: idpRoot,
+    oidcIssuer: SERVER_ROOT,
     redirect: "https://tester/redirect"
   });
   let redirectedTo = (session.neededAction as any).redirectUrl;
   do {
-    console.log('getAuthFetcher 5', redirectedTo)
-
     const result = await fetch(redirectedTo, {
       headers: { cookie },
       redirect: "manual"

@@ -1,10 +1,6 @@
+import { testFolderUrl } from '../helpers/global';
 import { getAuthFetcher } from '../helpers/obtain-auth-headers';
 import { recursiveDelete } from '../helpers/util';
-
-const SERVER_ROOT = process.env.SERVER_ROOT || "https://localhost:8443";
-const USERNAME = process.env.USERNAME || "alice";
-const PASSWORD = process.env.PASSWORD || "123";
-const TEST_FOLDER = `solid-crud-tests-${new Date().getTime()}`;
 
 const testUrls = [
   'empty/', // exists but is empty
@@ -94,37 +90,32 @@ const testOperations = {
   //   body: '<#hello> <#linked> <#world> .'
   // }
 };
-// (async () => {
-// const authFetcher = await getAuthFetcher(SERVER_ROOT, USERNAME, PASSWORD);
-// console.log('get authFetcher', authFetcher);
-// process.exit(1);
-// })();
 
 describe('Basic Sequences', () => {
   let authFetcher;
   beforeAll(async () => {
-    authFetcher = await getAuthFetcher(SERVER_ROOT, USERNAME, PASSWORD);
-    await authFetcher.fetch(`${SERVER_ROOT}/${TEST_FOLDER}/empty/`, {
+    authFetcher = await getAuthFetcher();
+    await authFetcher.fetch(`${testFolderUrl}empty/`, {
       method: 'PUT',
       headers: {
         Link: '<http://www.w3.org/ns/ldp#BasicContainer>; rel="type"' // see https://github.com/solid/node-solid-server/issues/1465
       }
     });
-    await authFetcher.fetch(`${SERVER_ROOT}/${TEST_FOLDER}/exists/exists.ttl`, {
+    await authFetcher.fetch(`${testFolderUrl}exists/exists.ttl`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'text/turtle',
       },
       body: '<#hello> <#linked> <#world> .'
     });
-    const fetchBack = await authFetcher.fetch(`${SERVER_ROOT}/${TEST_FOLDER}/exists/`, { redirect: 'manual' })
+    const fetchBack = await authFetcher.fetch(`${testFolderUrl}exists/`, { redirect: 'manual' })
     expect(fetchBack.status).toEqual(200);
     console.log(await fetchBack.text())
   });
-  afterAll(() => recursiveDelete(`${SERVER_ROOT}/${TEST_FOLDER}/`, authFetcher));
+  afterAll(() => recursiveDelete(testFolderUrl, authFetcher));
 
   async function runTest(path, operation) {
-    const url = `${SERVER_ROOT}/${TEST_FOLDER}/${path}`;
+    const url = `${testFolderUrl}${path}`;
     const fetchOptions = testOperations[operation];
     const writeResult = await authFetcher.fetch(url, fetchOptions);
     expect(writeResult.status).toEqual(fetchOptions.expectedWriteStatus[path]);
