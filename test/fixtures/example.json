@@ -1,0 +1,6 @@
+{
+    "@id": "http://store.example.com/",
+    "@type": "Store",
+    "name": "Links Bike Shop",
+    "description": "The most \"linked\" bike store on earth!"
+}

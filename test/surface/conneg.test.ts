@@ -3,9 +3,9 @@ import { testFolderUrl } from '../helpers/global';
 import { getAuthFetcher } from '../helpers/obtain-auth-headers';
 
 const example = {
-  html: readFileSync('test/fixtures/example.html'),
-  turtle: readFileSync('test/fixtures/example.ttl'),
-  json: readFileSync('test/fixtures/example.json'),
+  html: readFileSync('test/fixtures/example.html').toString(),
+  turtle: readFileSync('test/fixtures/example.ttl').toString(),
+  json: readFileSync('test/fixtures/example.json').toString(),
 };
 
 const triplesFromHtml = [
@@ -236,6 +236,44 @@ describe('Alice\'s pod', () => {
       test("Triples", async () => {
         const triples = await asTriples(text, `${testFolderUrl}example.ttl`, 'text/turtle');    
         expect(triples).toEqual(triplesFromTurtle);
+      });
+    });
+  });
+  describe('GET JSON-LD', () => {
+    describe("As JSON-LD", () => {
+      let jsonText;
+      beforeAll(async () => {
+        jsonText = await getAs(`${testFolderUrl}example.json`, 'application/ld+json');
+      });
+      test("JSON content", async () => {
+        console.log(jsonText);
+        const obj = JSON.parse(jsonText);
+        expect(obj).toEqual([
+          {
+            "@id": "http://store.example.com/",
+            "@type": "Store",
+            "name": "Links Bike Shop",
+            "description": "The most \"linked\" bike store on earth!"
+          },
+        ]);
+      });
+      test("Triples", async () => {
+        const triples = await asTriples(jsonText, `${testFolderUrl}example.json`, 'application/ld+json');    
+        expect(triples).toEqual([]);
+      });
+    });
+    describe("As Turtle", () => {
+      let text;
+      beforeAll(async () =>{
+        text = await getAs(`${testFolderUrl}example.json`, 'text/turtle');    
+      });
+      test("Turtle content", async () => {
+        console.log(text);
+        expect(text).toEqual('<http://store.example.com/> a  <Store> .\n');
+      });
+      test("Triples", async () => {
+        const triples = await asTriples(text, `${testFolderUrl}example.ttl`, 'text/turtle');    
+        expect(triples).toEqual([]);
       });
     });
   });
