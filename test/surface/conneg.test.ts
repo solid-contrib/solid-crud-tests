@@ -8,6 +8,23 @@ const example = {
   json: readFileSync('test/fixtures/example.json'),
 };
 
+const triplesFromHtml = [
+    [ '<_:b0>', '<http://www.w3.org/2000/01/rdf-schema#seeAlso>', '<http://dbpedia.org/resource/Adelaide>' ],
+  [ '<_:b0>', '<http://www.w3.org/2000/10/swap/pim/contact#city>', 'Adelaide' ],
+  [ `<${testFolderUrl}example.html>`, '<http://www.w3.org/1999/xhtml/vocab#alternate>', '<http://www.example.com/rss.xml>' ],
+  [ `<${testFolderUrl}example.html>`, '<http://www.w3.org/1999/xhtml/vocab#icon>', `<${testFolderUrl}favicon.ico>` ],
+  [ `<${testFolderUrl}example.html>`, '<http://www.w3.org/1999/xhtml/vocab#stylesheet>', `<${testFolderUrl}main.css>` ],
+  [ `<${testFolderUrl}example.html>`, '<http://www.w3.org/2000/01/rdf-schema#seeAlso>', `<${testFolderUrl}about.htm>` ],
+  [ `<${testFolderUrl}example.html>`, '<http://www.w3.org/2000/10/swap/pim/contact#address>', '<_:b0>' ],
+  [ `<${testFolderUrl}example.html>`, '<http://xmlns.com/foaf/0.1/name>', 'Jerry Smith' ],
+  [ `<${testFolderUrl}example.html>`, '<http://xmlns.com/foaf/0.1/phone>', '<tel:+6112345678>' ],
+  [ `<${testFolderUrl}example.html>`, '<http://xmlns.com/foaf/0.1/primaryTopic>', '<http://www.example.com/metadata/foaf.rdf>' ],
+];
+
+const triplesFromTurtle = [
+  [ `<${testFolderUrl}example.ttl#hello>`, `<${testFolderUrl}example.ttl#linked>`, `<${testFolderUrl}example.ttl#world>` ]
+];
+
 var rdf = require('rdflib')
 
 describe('Alice\'s pod', () => {
@@ -37,9 +54,9 @@ describe('Alice\'s pod', () => {
     });
   });
   afterAll(async () => {
-    const containerMembers = await getContainerMembers(testFolderUrl);
-    await Promise.all(containerMembers.map(url => authFetcher.fetch(url, { method: 'DELETE' })))
-    await authFetcher.fetch(testFolderUrl, { method: 'DELETE' })
+    // const containerMembers = await getContainerMembers(testFolderUrl);
+    // await Promise.all(containerMembers.map(url => authFetcher.fetch(url, { method: 'DELETE' })))
+    // await authFetcher.fetch(testFolderUrl, { method: 'DELETE' })
   });
 
   function getStore() {
@@ -51,178 +68,175 @@ describe('Alice\'s pod', () => {
   async function getContainerMembers(containerUrl) {
     const store = getStore();
     await store.fetcher.load(store.sym(containerUrl));
-    console.log('done!');
-    // console.log(store.each());
-    return store.statementsMatching(store.sym(containerUrl), store.sym('http://www.w3.org/ns/ldp#contains')).map(st => {
-      // console.log('seeing', st);
-      return st.object.value
-    });
+    return store.statementsMatching(store.sym(containerUrl), store.sym('http://www.w3.org/ns/ldp#contains')).map(st => st.object.value);
   }
   async function getAs(url, type) {
     const fetchResult = await authFetcher.fetch(url, { headers: {
       'Accept': type
     }});
     return fetchResult.text();
-    // let text = await fetchResult.text();
-    // // Trying to get it working with JSON-LD:
-    // if (type === 'application/ld+json') {
-    //   text = `
-    //   {
-    //     {
-    //       "@id": {
-    //         "termType": "NamedNode",
-    //         "value": "#owner"
-    //       },
-    //       "[object Object]": {
-    //         "termType": "NamedNode",
-    //         "value": "http://www.w3.org/ns/auth/acl#Authorization"
-    //       }
-    //     }
-    //     ,
-    //     {
-    //       "@id": {
-    //         "termType": "NamedNode",
-    //         "value": "#owner"
-    //       },
-    //       "[object Object]": {
-    //         "termType": "NamedNode",
-    //         "value": "https://localhost:8443/profile/card#me"
-    //       }
-    //     }
-    //     ,
-    //     {
-    //       "@id": {
-    //         "termType": "NamedNode",
-    //         "value": "#owner"
-    //       },
-    //       "[object Object]": {
-    //         "termType": "NamedNode",
-    //         "value": "/"
-    //       }
-    //     }
-    //     ,
-    //     {
-    //       "@id": {
-    //         "termType": "NamedNode",
-    //         "value": "#owner"
-    //       },
-    //       "[object Object]": {
-    //         "termType": "NamedNode",
-    //         "value": "/"
-    //       }
-    //     }
-    //     ,
-    //     {
-    //       "@id": {
-    //         "termType": "NamedNode",
-    //         "value": "#owner"
-    //       },
-    //       "[object Object]": {
-    //         "termType": "NamedNode",
-    //         "value": "http://www.w3.org/ns/auth/acl#Read"
-    //       }
-    //     }
-    //     ,
-    //     {
-    //       "@id": {
-    //         "termType": "NamedNode",
-    //         "value": "#owner"
-    //       },
-    //       "[object Object]": {
-    //         "termType": "NamedNode",
-    //         "value": "http://www.w3.org/ns/auth/acl#Write"
-    //       }
-    //     }
-    //     ,
-    //     {
-    //       "@id": {
-    //         "termType": "NamedNode",
-    //         "value": "#owner"
-    //       },
-    //       "[object Object]": {
-    //         "termType": "NamedNode",
-    //         "value": "http://www.w3.org/ns/auth/acl#Control"
-    //       }
-    //     }
-    //     }`;
-    // }
-    // const store = getStore();
-    // console.log('Parsing!', text);
-    // await new Promise((resolve, reject) => {
-    //   try {
-    //     rdf.parse(text, store, url, type, resolve);
-    //     if (type === 'application/ld+json') {
-    //       console.log('parsed!', store.statements);
-    //     }
-    //   } catch (e) {
-    //     reject(e);
-    //   }
-    // });
-    // console.log("parsed", type, store.each())
-    // return store;
   }
-  test("GET Turtle as JSON-LD/Turtle", async () => {
-    const asJson = await getAs(`${testFolderUrl}example.html`, 'application/ld+json');    
-    const obj = JSON.parse(asJson);
-    expect(obj).toEqual([
-      {
-        "@id": obj[0]['@id'],
-        "http://www.w3.org/2000/01/rdf-schema#seeAlso": [
-          {
-            "@id": "http://dbpedia.org/resource/Adelaide"
-          }
-        ],
-        "http://www.w3.org/2000/10/swap/pim/contact#city": [
-          {
-            "@value": "Adelaide",
-            "@language": "en"
-          }
-        ]
-      },
-      {
-        "@id": `${testFolderUrl}example.html`,
-        "http://www.w3.org/1999/xhtml/vocab#alternate": [
-          {
-            "@id": "http://www.example.com/rss.xml"
-          }
-        ],
-        "http://www.w3.org/1999/xhtml/vocab#icon": [
-          {
-            "@id": `${testFolderUrl}favicon.ico`
-          }
-        ],
-        "http://www.w3.org/1999/xhtml/vocab#stylesheet": [
-          {
-            "@id": `${testFolderUrl}main.css`
-          }
-        ],
-        "http://www.w3.org/2000/01/rdf-schema#seeAlso": [
-          {
-            "@id": `${testFolderUrl}about.htm`
-          }
-        ],
-        "http://www.w3.org/2000/10/swap/pim/contact#address": [
-          {
-            "@id": obj[0]['@id']
-          }
-        ],
-        "http://xmlns.com/foaf/0.1/name": [
-          {
-            "@value": "Jerry Smith",
-            "@language": "en"
-          }
-        ],
-        "http://xmlns.com/foaf/0.1/phone": [
-          {
-            "@id": "tel:+6112345678"
-          }
-        ],
-        "http://xmlns.com/foaf/0.1/primaryTopic": [
-          {
-            "@id": "http://www.example.com/metadata/foaf.rdf"
-          }
-        ]
+  async function asTriples(text, url, type) {
+    const store = getStore();
+    await new Promise((resolve, reject) => {
+      try {
+        rdf.parse(text, store, url, type, resolve);
+      } catch (e) {
+        reject(e);
       }
-    ]);
+    });
+    function allBlanksAsZero(str) {
+      if (str.startsWith('_:') || str.startsWith('<_:')) {
+        return '<_:b0>'
+      }
+      return str;
+    }
+    return store.statements.map(st => [
+      allBlanksAsZero(st.subject.toString()),
+      allBlanksAsZero(st.predicate.toString()),
+      allBlanksAsZero(st.object.toString()) 
+    ]).sort();
+  }
+  describe('Get RDFa', () => {
+    describe("As JSON-LD", () => {
+      let jsonText
+      beforeAll(async () => {
+        jsonText = await getAs(`${testFolderUrl}example.html`, 'application/ld+json');    
+      })
+      test("JSON content", async () => {
+        const obj = JSON.parse(jsonText);
+        expect(obj).toEqual([
+          {
+            "@id": obj[0]['@id'],
+            "http://www.w3.org/2000/01/rdf-schema#seeAlso": [
+              {
+                "@id": "http://dbpedia.org/resource/Adelaide"
+              }
+            ],
+            "http://www.w3.org/2000/10/swap/pim/contact#city": [
+              {
+                "@value": "Adelaide",
+                "@language": "en"
+              }
+            ]
+          },
+          {
+            "@id": `${testFolderUrl}example.html`,
+            "http://www.w3.org/1999/xhtml/vocab#alternate": [
+              {
+                "@id": "http://www.example.com/rss.xml"
+              }
+            ],
+            "http://www.w3.org/1999/xhtml/vocab#icon": [
+              {
+                "@id": `${testFolderUrl}favicon.ico`
+              }
+            ],
+            "http://www.w3.org/1999/xhtml/vocab#stylesheet": [
+              {
+                "@id": `${testFolderUrl}main.css`
+              }
+            ],
+            "http://www.w3.org/2000/01/rdf-schema#seeAlso": [
+              {
+                "@id": `${testFolderUrl}about.htm`
+              }
+            ],
+            "http://www.w3.org/2000/10/swap/pim/contact#address": [
+              {
+                "@id": obj[0]['@id']
+              }
+            ],
+            "http://xmlns.com/foaf/0.1/name": [
+              {
+                "@value": "Jerry Smith",
+                "@language": "en"
+              }
+            ],
+            "http://xmlns.com/foaf/0.1/phone": [
+              {
+                "@id": "tel:+6112345678"
+              }
+            ],
+            "http://xmlns.com/foaf/0.1/primaryTopic": [
+              {
+                "@id": "http://www.example.com/metadata/foaf.rdf"
+              }
+            ]
+          }
+        ]);
+      });
+      test("Triples", async () => {
+        const triples = await asTriples(jsonText, `${testFolderUrl}example.html`, 'application/ld+json');    
+        expect(triples).toEqual(triplesFromHtml);
+      });
+    });
+    describe("As Turtle", () => {
+      let text;
+      beforeAll(async() => {
+        text = await getAs(`${testFolderUrl}example.html`, 'text/turtle');
+      });
+      test("Turtle content", async () => {
+        expect(text).toEqual(`@prefix : <#>.
+@prefix voc: <http://www.w3.org/1999/xhtml/vocab#>.
+@prefix rd: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix cont: <http://www.w3.org/2000/10/swap/pim/contact#>.
+@prefix res: <http://dbpedia.org/resource/>.
+@prefix n0: <http://xmlns.com/foaf/0.1/>.
+
+<>
+    voc:alternate <http://www.example.com/rss.xml>;
+    voc:icon <favicon.ico>;
+    voc:stylesheet <main.css>;
+    rd:seeAlso <about.htm>;
+    cont:address [ rd:seeAlso res:Adelaide; cont:city "Adelaide"@en ];
+    n0:name "Jerry Smith"@en;
+    n0:phone <tel:+6112345678>;
+    n0:primaryTopic <http://www.example.com/metadata/foaf.rdf>.
+`);
+      });
+      test("Triples", async () => {
+        const triples = await asTriples(text, `${testFolderUrl}example.html`, 'text/turtle');    
+        expect(triples).toEqual(triplesFromHtml);
+      });
+    });
+  });
+  describe('GET Turtle', () => {
+    describe("As JSON-LD", () => {
+      let jsonText;
+      beforeAll(async () => {
+        jsonText = await getAs(`${testFolderUrl}example.ttl`, 'application/ld+json');
+      });
+      test("JSON content", async () => {
+        const obj = JSON.parse(jsonText);
+        expect(obj).toEqual([
+          {
+            "@id": `${testFolderUrl}example.ttl#hello`,
+            [`${testFolderUrl}example.ttl#linked`]: [
+              {
+                "@id": `${testFolderUrl}example.ttl#world`,
+              },
+            ],
+          },
+        ]);
+      });
+      test("Triples", async () => {
+        const triples = await asTriples(jsonText, `${testFolderUrl}example.ttl`, 'application/ld+json');    
+        expect(triples).toEqual(triplesFromTurtle);
+      });
+    });
+    describe("As Turtle", () => {
+      let text;
+      beforeAll(async () =>{
+        text = await getAs(`${testFolderUrl}example.ttl`, 'text/turtle');    
+      });
+      test("Turtle content", async () => {
+        expect(text).toEqual('<#hello> <#linked> <#world> .\n');
+      });
+      test("Triples", async () => {
+        const triples = await asTriples(text, `${testFolderUrl}example.ttl`, 'text/turtle');    
+        expect(triples).toEqual(triplesFromTurtle);
+      });
+    });
   });
 });
