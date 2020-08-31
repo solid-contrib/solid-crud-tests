@@ -7,16 +7,16 @@ const PASSWORD = process.env.PASSWORD || "123";
 const TEST_FOLDER = `solid-crud-tests-${new Date().getTime()}`;
 
 const testUrls = [
-  'empty/', // exists but is empty
-  'empty', // should apply the operation to empty/
-  'empty/foo.ttl',
-  'empty/foo/bar.ttl',
-  'exists/', // exists and contains exists.ttl
+  // 'empty/', // exists but is empty
+  // 'empty', // should apply the operation to empty/
+  // 'empty/foo.ttl',
+  // 'empty/foo/bar.ttl',
+  // 'exists/', // exists and contains exists.ttl
   'exists',
-  'exists/exists.ttl', // exists
-  'exists/ExIsTs.ttl',
-  'exists/exists.ttl/', // should error
-  'exists/foo.ttl'
+  // 'exists/exists.ttl', // exists
+  // 'exists/ExIsTs.ttl',
+  // 'exists/exists.ttl/', // should error
+  // 'exists/foo.ttl'
 ];
 const testOperations = {
   post: {
@@ -48,8 +48,8 @@ const testOperations = {
       'exists/ExIsTs.ttl': 404,
       'exists/exists.ttl/': 404,
       'exists/foo.ttl': 404
-    }
-
+    },
+    redirect: 'manual'
   },
   // patchIns: {
   //   method: 'POST',
@@ -112,7 +112,7 @@ describe('Basic Sequences', () => {
       },
       body: '<#hello> <#linked> <#world> .'
     });
-    const fetchBack = await authFetcher.fetch(`${SERVER_ROOT}/${TEST_FOLDER}/exists/`)
+    const fetchBack = await authFetcher.fetch(`${SERVER_ROOT}/${TEST_FOLDER}/exists/`, { redirect: 'manual' })
     expect(fetchBack.status).toEqual(200);
     console.log(await fetchBack.text())
   });
