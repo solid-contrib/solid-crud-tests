@@ -10,7 +10,7 @@ function getStore(authFetcher) {
   store.updater = new rdf.UpdateManager(store) // Add real-time live updates store.updater
   return store;
 }
-async function getContainerMembers(containerUrl, authFetcher) {
+export async function getContainerMembers(containerUrl, authFetcher) {
   const store = getStore(authFetcher);
   await store.fetcher.load(store.sym(containerUrl));
   console.log('done!');
@@ -29,3 +29,6 @@ export async function recursiveDelete(url, authFetcher) {
   return authFetcher.fetch(url, { method: 'DELETE' });
 }
 
+export async function subscribeTo(wssUrl, authFetcher) {
+  // ...
+}
