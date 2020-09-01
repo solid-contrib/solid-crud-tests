@@ -18,12 +18,10 @@ describe("Alice's storage root", () => {
 
   test("is an ldp BasicContainer", async () => {
     expect(podRoots.length).toEqual(1);
-    console.log(podRoots);
     const store = getStore({
       fetch: async (url, options) => {
         const headers = await getAuthHeaders(url, 'GET', authFetcher);
         (headers as any).Accept = 'text/turtle';
-        console.log(url, options, headers);
         const result = await fetch(url, {
           headers
         });
