@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs';
-import { testFolderUrl } from '../helpers/global';
+import { generateTestFolder } from '../helpers/global';
 import { getAuthFetcher } from '../helpers/obtain-auth-headers';
 
 const example = {
@@ -8,6 +8,7 @@ const example = {
   json: readFileSync('test/fixtures/example.json').toString(),
 };
 
+const { testFolderUrl } = generateTestFolder();
 const triplesFromHtml = [
     [ '<_:b0>', '<http://www.w3.org/2000/01/rdf-schema#seeAlso>', '<http://dbpedia.org/resource/Adelaide>' ],
   [ '<_:b0>', '<http://www.w3.org/2000/10/swap/pim/contact#city>', 'Adelaide' ],
@@ -246,7 +247,6 @@ describe('Alice\'s pod', () => {
         jsonText = await getAs(`${testFolderUrl}example.json`, 'application/ld+json');
       });
       test("JSON content", async () => {
-        console.log(jsonText);
         const obj = JSON.parse(jsonText);
         expect(obj).toEqual([
           {
@@ -268,7 +268,6 @@ describe('Alice\'s pod', () => {
         text = await getAs(`${testFolderUrl}example.json`, 'text/turtle');    
       });
       test("Turtle content", async () => {
-        console.log(text);
         expect(text).toEqual('<http://store.example.com/> a  <Store> .\n');
       });
       test("Triples", async () => {

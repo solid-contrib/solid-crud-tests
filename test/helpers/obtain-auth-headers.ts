@@ -33,3 +33,12 @@ export async function getAuthFetcher() {
   await authFetcher.handleRedirect(redirectedTo);
   return authFetcher;
 }
+
+// FIXME: This is a total hack, obviously, second-guessing the
+// DI architecture of solid-auth-fetcher:
+export async function getAuthHeaders(urlStr: string, method: string, authFetcher) {
+  return {
+    Authorization: JSON.parse(authFetcher.authenticatedFetcher.tokenRefresher.storageUtility.storage.map['solidAuthFetcherUser:global']).accessToken,
+    DPop: await authFetcher.authenticatedFetcher.tokenRefresher.tokenRequester.dpopHeaderCreator.createHeaderToken(new URL(urlStr), method)
+  };
+}

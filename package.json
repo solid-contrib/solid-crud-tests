@@ -36,7 +36,6 @@
     "rdflib": "git+https://github.com/linkeddata/rdflib.js.git#require-explicit-fetcher",
     "solid-auth-fetcher": "^1.0.1",
     "solid-namespace": "^0.4.0",
-    "tripledoc": "^4.3.4",
     "ts-jest": "^26.3.0",
     "typescript": "^4.0.2",
     "ws": "^7.3.1"

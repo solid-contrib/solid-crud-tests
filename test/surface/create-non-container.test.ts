@@ -1,6 +1,6 @@
 import { generateTestFolder } from '../helpers/global';
 import { getAuthFetcher } from '../helpers/obtain-auth-headers';
-import { recursiveDelete, getContainerMembers, subscribeTo, responseCodeGroup } from '../helpers/util';
+import { recursiveDelete, getContainerMembers, WPSClient, responseCodeGroup } from '../helpers/util';
 
 // when the tests start, xists/exists.ttl exists in the test folder,
 // and nothing else.
@@ -27,7 +27,8 @@ describe('Create non-container', () => {
           body: '<#hello> <#linked> <#world> .'
         });
 
-        websocketsPubsubClient = await subscribeTo(containerUrl, authFetcher);
+        websocketsPubsubClient = new WPSClient(containerUrl, authFetcher);
+        await websocketsPubsubClient.getReady();
         const result = await authFetcher.fetch(containerUrl, {
           method: 'POST',
           header: {
@@ -39,7 +40,10 @@ describe('Create non-container', () => {
         const updatesVia = new URL(result.headers.get('updates-via'), `${testFolderUrl}exists/`).toString();
       });
 
-      afterAll(() => recursiveDelete(testFolderUrl, authFetcher));
+      afterAll(() => {
+        websocketsPubsubClient.disconnect();
+        recursiveDelete(testFolderUrl, authFetcher);
+      });
 
       it('creates the resource', async () => {
         const result = await authFetcher.fetch(location);
@@ -56,7 +60,10 @@ describe('Create non-container', () => {
         ].sort());
       });
       it('emits websockets-pubsub on the container', () => {
-        expect(websocketsPubsubClient)
+        expect(websocketsPubsubClient.received).toEqual([
+          `ack ${testFolderUrl}exists/`,
+          `pub ${testFolderUrl}exists/`
+        ]);
       });
       afterAll(() => recursiveDelete(location, authFetcher));
     });
