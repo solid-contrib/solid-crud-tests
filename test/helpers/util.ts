@@ -32,3 +32,7 @@ export async function recursiveDelete(url, authFetcher) {
 export async function subscribeTo(wssUrl, authFetcher) {
   // ...
 }
+
+export function responseCodeGroup(code) {
+  return `${Math.floor(code / 100)}xx`;
+}

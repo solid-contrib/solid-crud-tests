@@ -1,6 +1,6 @@
 import { generateTestFolder } from '../helpers/global';
 import { getAuthFetcher } from '../helpers/obtain-auth-headers';
-import { recursiveDelete, getContainerMembers, subscribeTo } from '../helpers/util';
+import { recursiveDelete, getContainerMembers, subscribeTo, responseCodeGroup } from '../helpers/util';
 
 // when the tests start, xists/exists.ttl exists in the test folder,
 // and nothing else.
@@ -43,7 +43,7 @@ describe('Create non-container', () => {
 
       it('creates the resource', async () => {
         const result = await authFetcher.fetch(location);
-        expect(result % 100).toEqual(2);
+        expect(responseCodeGroup(result.status)).toEqual('2xx');
         expect(await result.text()).toEqual('Hello World');
         expect(result.headers.get('Content-Type')).toEqual('text/plain');
         
@@ -53,7 +53,7 @@ describe('Create non-container', () => {
         expect(containerListing.sort()).toEqual([
           `${testFolderUrl}exists/exists.ttl`,
           location
-        ]);
+        ].sort());
       });
       it('emits websockets-pubsub on the container', () => {
         expect(websocketsPubsubClient)
