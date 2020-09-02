@@ -10,6 +10,154 @@ describe('Update', () => {
   beforeAll(async () => {
     authFetcher = await getAuthFetcher();
   });
+  describe('Replace (same content type)', () => {
+    const { testFolderUrl } = generateTestFolder();
+    let websocketsPubsubClientResource;
+    const containerUrl = `${testFolderUrl}exists/`;
+    const resourceUrl = `${containerUrl}exists.ttl`;
+
+    beforeAll(async () => {
+      // this already relies on the PUT to non-existing folder functionality
+      // that will be one of the tested behaviours:
+      await authFetcher.fetch(resourceUrl, {
+        method: 'PUT',
+        body: '<#hello> <#linked> <#world> .',
+        headers: {
+          'Content-Type': 'text/turtle'
+        }
+      });
+      const getResult = await authFetcher.fetch(resourceUrl);
+      const resourceETagInQuotes = getResult.headers.get('ETag');
+      websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
+      await websocketsPubsubClientResource.getReady();
+      const result = await authFetcher.fetch(resourceUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'text/turtle',
+          'If-Match': resourceETagInQuotes
+        },
+        body: '<#replaced> <#the> <#contents> .'
+      });
+    });
+
+    afterAll(() => {
+      websocketsPubsubClientResource.disconnect();
+      recursiveDelete(testFolderUrl, authFetcher);
+    });
+
+    it('updates the resource', async () => {
+      const result = await authFetcher.fetch(resourceUrl);
+      expect(responseCodeGroup(result.status)).toEqual('2xx');
+      // FIXME: use rdflib to check just the semantics, not the syntax here:
+      expect(await result.text()).toEqual('<#replaced> <#the> <#contents> .');
+      expect(result.headers.get('Content-Type')).toEqual('text/turtle');
+    });
+    it('emits websockets-pubsub on the resource', () => {
+      expect(websocketsPubsubClientResource.received).toEqual([
+        `ack ${resourceUrl}`,
+        `pub ${resourceUrl}`
+      ]);
+    });
+    afterAll(() => recursiveDelete(location, authFetcher));
+  });
+
+  describe('Replace (different content type)', () => {
+    const { testFolderUrl } = generateTestFolder();
+    let websocketsPubsubClientResource;
+    const containerUrl = `${testFolderUrl}exists/`;
+    const resourceUrl = `${containerUrl}exists.ttl`;
+
+    beforeAll(async () => {
+      // this already relies on the PUT to non-existing folder functionality
+      // that will be one of the tested behaviours:
+      await authFetcher.fetch(resourceUrl, {
+        method: 'PUT',
+        body: '<#hello> <#linked> <#world> .',
+        headers: {
+          'Content-Type': 'text/turtle'
+        }
+      });
+      const getResult = await authFetcher.fetch(resourceUrl);
+      const resourceETagInQuotes = getResult.headers.get('ETag');
+      websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
+      await websocketsPubsubClientResource.getReady();
+      const result = await authFetcher.fetch(resourceUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'text/plain',
+          'If-Match': resourceETagInQuotes
+        },
+        body: 'replaced'
+      });
+    });
+
+    afterAll(() => {
+      websocketsPubsubClientResource.disconnect();
+      recursiveDelete(testFolderUrl, authFetcher);
+    });
+
+    it('updates the resource', async () => {
+      const result = await authFetcher.fetch(resourceUrl);
+      expect(responseCodeGroup(result.status)).toEqual('2xx');
+      // FIXME: use rdflib to check just the semantics, not the syntax here:
+      expect(await result.text()).toEqual('replaced');
+      expect(result.headers.get('Content-Type')).toEqual('text/plain');
+    });
+    it('emits websockets-pubsub on the resource', () => {
+      expect(websocketsPubsubClientResource.received).toEqual([
+        `ack ${resourceUrl}`,
+        `pub ${resourceUrl}`
+      ]);
+    });
+    afterAll(() => recursiveDelete(location, authFetcher));
+  });
+
+  describe('Replace (no If-Match header)', () => {
+    const { testFolderUrl } = generateTestFolder();
+    let websocketsPubsubClientResource;
+    const containerUrl = `${testFolderUrl}exists/`;
+    const resourceUrl = `${containerUrl}exists.ttl`;
+
+    beforeAll(async () => {
+      // this already relies on the PUT to non-existing folder functionality
+      // that will be one of the tested behaviours:
+      await authFetcher.fetch(resourceUrl, {
+        method: 'PUT',
+        body: '<#hello> <#linked> <#world> .',
+        headers: {
+          'Content-Type': 'text/turtle'
+        }
+      });
+      websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
+      await websocketsPubsubClientResource.getReady();
+      const result = await authFetcher.fetch(resourceUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'text/turtle'
+        },
+        body: '<#replaced> <#the> <#contents> .'
+      });
+    });
+
+    afterAll(() => {
+      websocketsPubsubClientResource.disconnect();
+      recursiveDelete(testFolderUrl, authFetcher);
+    });
+
+    it('does not update the resource', async () => {
+      const result = await authFetcher.fetch(resourceUrl);
+      expect(responseCodeGroup(result.status)).toEqual('2xx');
+      // FIXME: use rdflib to check just the semantics, not the syntax here:
+      expect(await result.text()).toEqual('<#hello> <#linked> <#world> .');
+      expect(result.headers.get('Content-Type')).toEqual('text/turtle');
+    });
+    it('does not emit websockets-pubsub on the resource', () => {
+      expect(websocketsPubsubClientResource.received).toEqual([
+        `ack ${resourceUrl}`
+      ]);
+    });
+    afterAll(() => recursiveDelete(location, authFetcher));
+  });
 
   describe('Add triple', () => {
     const { testFolderUrl } = generateTestFolder();
