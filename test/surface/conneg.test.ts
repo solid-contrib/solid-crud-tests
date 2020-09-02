@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs';
 import { generateTestFolder } from '../helpers/global';
 import { getAuthFetcher } from '../helpers/obtain-auth-headers';
+import { recursiveDelete } from '../helpers/util';
 
 const example = {
   html: readFileSync('test/fixtures/example.html').toString(),
@@ -54,22 +55,13 @@ describe('Alice\'s pod', () => {
       body: example.html
     });
   });
-  afterAll(async () => {
-    // const containerMembers = await getContainerMembers(testFolderUrl);
-    // await Promise.all(containerMembers.map(url => authFetcher.fetch(url, { method: 'DELETE' })))
-    // await authFetcher.fetch(testFolderUrl, { method: 'DELETE' })
-  });
+  afterAll(() => recursiveDelete(testFolderUrl, authFetcher));
 
   function getStore() {
     var store = (module.exports = rdf.graph()) // Make a Quad store
     rdf.fetcher(store, { fetch: authFetcher.fetch.bind(authFetcher) }) // Attach a web I/O module, store.fetcher
     store.updater = new rdf.UpdateManager(store) // Add real-time live updates store.updater
     return store;
-  }
-  async function getContainerMembers(containerUrl) {
-    const store = getStore();
-    await store.fetcher.load(store.sym(containerUrl));
-    return store.statementsMatching(store.sym(containerUrl), store.sym('http://www.w3.org/ns/ldp#contains')).map(st => st.object.value);
   }
   async function getAs(url, type) {
     const fetchResult = await authFetcher.fetch(url, { headers: {

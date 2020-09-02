@@ -9,21 +9,30 @@ function isContainer(url) {
 }
 
 export function getStore(authFetcher) {
+  if (!authFetcher) {
+    throw new Error('please pass authFetcher to getStore!');
+  }
   var store = (module.exports = rdf.graph()) // Make a Quad store
   rdf.fetcher(store, { fetch: authFetcher.fetch.bind(authFetcher) }) // Attach a web I/O module, store.fetcher
   store.updater = new rdf.UpdateManager(store) // Add real-time live updates store.updater
   return store;
 }
 export async function getContainerMembers(containerUrl, authFetcher) {
+  if (!authFetcher) {
+    throw new Error('please pass authFetcher to getContainerMembers!');
+  }
   const store = getStore(authFetcher);
   await store.fetcher.load(store.sym(containerUrl));
   return store.statementsMatching(store.sym(containerUrl), store.sym('http://www.w3.org/ns/ldp#contains')).map(st => st.object.value);
 }
 
 export async function recursiveDelete(url, authFetcher) {
+  if (!authFetcher) {
+    throw new Error('please pass authFetcher to recursiveDelete!');
+  }
   if (isContainer(url)) {
     const containerMembers = await getContainerMembers(url, authFetcher);
-    await Promise.all(containerMembers.map(recursiveDelete));
+    await Promise.all(containerMembers.map(url => recursiveDelete(url, authFetcher)));
   }
   return authFetcher.fetch(url, { method: 'DELETE' });
 }
