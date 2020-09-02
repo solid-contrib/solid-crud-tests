@@ -13,7 +13,7 @@ describe('Create container', () => {
 
   // use `${testFolderUrl}exists/` as the existing folder:
   describe('in an existing container', () => {
-    describe('using PUT with If-None-Match header', () => {
+    describe('using PUT', () => {
       const { testFolderUrl } = generateTestFolder();
       let websocketsPubsubClientContainer;
       let websocketsPubsubClientResource;
@@ -36,7 +36,8 @@ describe('Create container', () => {
           method: 'PUT',
           header: {
             'Content-Type': 'text/plain',
-            'If-None-Match': '*'
+            'If-None-Match': '*',
+            'Link': '<http://www.w3.org/ns/ldp#BasicContainer>; rel="type"' // See https://github.com/solid/node-solid-server/issues/1465
           },
           body: 'Hello World'
         });
