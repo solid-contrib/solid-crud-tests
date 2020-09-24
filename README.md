@@ -10,5 +10,7 @@ NODE_TLS_REJECT_UNAUTHORIZED=0 SERVER_ROOT=https://localhost ALICE_WEBID=https:/
 
 ### Against production
 ```sh
-SERVER_ROOT=https://solid.community ALICE_WEBID=https://michielbdejong.solid.community/profile/card#me npm run jest
+npm install
+cd node_modules/rdflib ; npm install ; npm run build ; cd ../..
+SERVER_ROOT=https://solid-auth-cli-test-user.solid.community ALICE_WEBID=https://solid-auth-cli-test-user.solid.community/profile/card#me USERNAME=solid-auth-cli-test-user PASSWORD=123 npm run jest
 ```
