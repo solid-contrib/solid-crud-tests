@@ -16,5 +16,5 @@ SERVER_ROOT=https://solid-auth-cli-test-user.solidcommunity.net ALICE_WEBID=http
 ```
 You should see:
 ```
-Tests:       13 failed, 17 passed, 30 total
+Tests:       22 failed, 22 passed, 44 total
 ```
