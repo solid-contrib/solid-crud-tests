@@ -43,7 +43,7 @@ describe('Alice\'s pod', () => {
     await authFetcher.fetch(`${testFolderUrl}example.json`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json+;d',
+        'Content-Type': 'application/ld+json',
       },
       body: example.json
     });
@@ -240,18 +240,20 @@ describe('Alice\'s pod', () => {
       });
       test("JSON content", async () => {
         const obj = JSON.parse(jsonText);
-        expect(obj).toEqual([
-          {
-            "@id": "http://store.example.com/",
-            "@type": "Store",
-            "name": "Links Bike Shop",
-            "description": "The most \"linked\" bike store on earth!"
-          },
-        ]);
+        expect(obj).toEqual({
+          "@id": "http://store.example.com/",
+          "@type": "Store",
+          "name": "Links Bike Shop",
+          "description": "The most \"linked\" bike store on earth!"
+        });
       });
       test("Triples", async () => {
         const triples = await asTriples(jsonText, `${testFolderUrl}example.json`, 'application/ld+json');    
-        expect(triples).toEqual([]);
+        expect(triples).toEqual([
+          [ '<http://store.example.com/>', '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', 'Store' ],
+          [ '<http://store.example.com/>', `<${testFolderUrl}description>`, 'The most \"linked\" bike store on earth!' ],
+          [ '<http://store.example.com/>', `<${testFolderUrl}name>`, 'Links Bike Shop' ],
+        ]);
       });
     });
     describe("As Turtle", () => {
@@ -260,11 +262,25 @@ describe('Alice\'s pod', () => {
         text = await getAs(`${testFolderUrl}example.json`, 'text/turtle');    
       });
       test("Turtle content", async () => {
-        expect(text).toEqual('<http://store.example.com/> a  <Store> .\n');
+        expect(text).toEqual(`\
+@prefix : <#>.
+@prefix sto: <http://store.example.com/>.
+@prefix sol: <./>.
+
+sto:
+    a "Store";
+    sol:description
+        """The most "linked" bike store on earth!""";
+    sol:name "Links Bike Shop".
+`);
       });
       test("Triples", async () => {
         const triples = await asTriples(text, `${testFolderUrl}example.ttl`, 'text/turtle');    
-        expect(triples).toEqual([]);
+        expect(triples).toEqual([
+          [ '<http://store.example.com/>', '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', 'Store' ],
+          [ '<http://store.example.com/>', `<${testFolderUrl}description>`, 'The most \"linked\" bike store on earth!' ],
+          [ '<http://store.example.com/>', `<${testFolderUrl}name>`, 'Links Bike Shop' ],
+        ]);
       });
     });
   });
