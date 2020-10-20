@@ -2,8 +2,10 @@ import { generateTestFolder } from '../helpers/global';
 import { getAuthFetcher } from '../helpers/obtain-auth-headers';
 import { recursiveDelete, getContainerMembers, WPSClient, responseCodeGroup } from '../helpers/util';
 
-// when the tests start, xists/exists.ttl exists in the test folder,
+// when the tests start, exists/exists.ttl exists in the test folder,
 // and nothing else.
+
+jest.setTimeout(60000);
 
 describe('Create non-container', () => {
   let authFetcher;
@@ -37,6 +39,7 @@ describe('Create non-container', () => {
           body: 'Hello World'
         });
         resourceUrl = new URL(result.headers.get('location'), containerUrl).toString();
+        await new Promise(resolve => setTimeout(resolve, 1000));
       });
 
       afterAll(() => {
@@ -64,7 +67,6 @@ describe('Create non-container', () => {
           `pub ${containerUrl}`
         ]);
       });
-      afterAll(() => recursiveDelete(resourceUrl, authFetcher));
     });
   
     describe('using PUT with If-None-Match header', () => {
@@ -94,6 +96,7 @@ describe('Create non-container', () => {
           },
           body: 'Hello World'
         });
+        await new Promise(resolve => setTimeout(resolve, 1000));
       });
 
       afterAll(() => {
@@ -128,7 +131,6 @@ describe('Create non-container', () => {
           `pub ${resourceUrl}`
         ]);
       });
-      afterAll(() => recursiveDelete(location, authFetcher));
     });
   
     describe('using PUT without If-None-Match header', () => {
@@ -157,6 +159,7 @@ describe('Create non-container', () => {
           },
           body: 'Hello World'
         });
+        await new Promise(resolve => setTimeout(resolve, 1000));
       });
 
       afterAll(() => {
@@ -167,7 +170,7 @@ describe('Create non-container', () => {
 
       it('creates the resource', async () => {
         const result = await authFetcher.fetch(resourceUrl);
-        expect(result.status).toEqual(404);        
+        expect(result.status).toEqual(404);
       });
       it('does not add the resource in the container listing', async () => {
         const containerListing = await getContainerMembers(containerUrl, authFetcher);
@@ -185,7 +188,6 @@ describe('Create non-container', () => {
           `ack ${resourceUrl}`
         ]);
       });
-      afterAll(() => recursiveDelete(location, authFetcher));
     });
 
     describe('using PATCH', () => {
@@ -214,6 +216,7 @@ describe('Create non-container', () => {
             'Content-Type': 'application/sparql-update'
           }
         });
+        await new Promise(resolve => setTimeout(resolve, 1000));
       });
 
       afterAll(() => {
@@ -249,7 +252,6 @@ describe('Create non-container', () => {
           `pub ${resourceUrl}`
         ]);
       });
-      afterAll(() => recursiveDelete(location, authFetcher));
     });
   });
 
@@ -277,6 +279,7 @@ describe('Create non-container', () => {
           },
           body: 'Hello World'
         });
+        await new Promise(resolve => setTimeout(resolve, 1000));
       });
 
       afterAll(() => {
@@ -318,7 +321,6 @@ describe('Create non-container', () => {
           `pub ${resourceUrl}`
         ]);
       });
-      afterAll(() => recursiveDelete(location, authFetcher));
     });
   
     describe('using PUT without If-None-Match header', () => {
@@ -343,6 +345,7 @@ describe('Create non-container', () => {
           },
           body: 'Hello World'
         });
+        await new Promise(resolve => setTimeout(resolve, 1000));
       });
 
       afterAll(() => {
@@ -354,7 +357,7 @@ describe('Create non-container', () => {
 
       it('creates the resource', async () => {
         const result = await authFetcher.fetch(resourceUrl);
-        expect(result.status).toEqual(404);        
+        expect(result.status).toEqual(404);
       });
       it('does not add the resource in the container listing', async () => {
         const containerListing = await getContainerMembers(containerUrl, authFetcher);
@@ -377,7 +380,6 @@ describe('Create non-container', () => {
           `ack ${resourceUrl}`
         ]);
       });
-      afterAll(() => recursiveDelete(location, authFetcher));
     });
 
     describe('using PATCH', () => {
@@ -402,6 +404,7 @@ describe('Create non-container', () => {
             'Content-Type': 'application/sparql-update'
           }
         });
+        await new Promise(resolve => setTimeout(resolve, 1000));
       });
 
       afterAll(() => {
@@ -417,7 +420,6 @@ describe('Create non-container', () => {
         // FIXME: Check only RDF content here, not precise Turtle syntax:
         expect(await result.text()).toEqual('@prefix : <#>.\n\n:hello :linked :world.\n\n');
         expect(result.headers.get('Content-Type')).toEqual('text/turtle');
-        
       });
       it('adds the resource in the container listing', async () => {
         const containerListing = await getContainerMembers(containerUrl, authFetcher);

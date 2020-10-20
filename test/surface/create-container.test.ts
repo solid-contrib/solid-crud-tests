@@ -5,6 +5,8 @@ import { recursiveDelete, getContainerMembers, WPSClient, responseCodeGroup } fr
 // when the tests start, xists/exists.ttl exists in the test folder,
 // and nothing else.
 
+jest.setTimeout(60000);
+
 describe('Create container', () => {
   let authFetcher;
   beforeAll(async () => {

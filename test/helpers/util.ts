@@ -56,22 +56,22 @@ export class WPSClient {
       perMessageDeflate: false
     });
     this.ws.on('message', (msg) => {
-      // console.log('WS <', msg);
+      console.log('WS <', msg);
       this.received.push(msg);
     });  
     await new Promise((resolve) => {
       this.ws.on('open', async () => {
         const authHeaders = await getAuthHeaders(this.resourceUrl, 'GET', this.authFetcher);
-        await this.send(`sub ${this.resourceUrl}`);
         await this.send(`auth ${authHeaders.Authorization}`);
         await this.send(`dpop ${authHeaders.DPop}`);
+        await this.send(`sub ${this.resourceUrl}`);
         resolve();
       });
     });
   }
   // NB: this will fail if you didn't await getReady first:
   send(str) {
-    // console.log('WS > ', str);
+    console.log('WS > ', str);
     this.sent.push(str);
     return new Promise(resolve => this.ws.send(str, resolve));
   }

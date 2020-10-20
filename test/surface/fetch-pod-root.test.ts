@@ -5,6 +5,8 @@ import { getAuthFetcher, getAuthHeaders } from "../helpers/obtain-auth-headers";
 
 const ALICE_WEBID = process.env.ALICE_WEBID;
 
+jest.setTimeout(60000);
+
 describe("Alice's storage root", () => {
   let podRoots;
   let authFetcher;

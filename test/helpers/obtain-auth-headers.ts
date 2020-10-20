@@ -4,6 +4,7 @@ import fetch from "node-fetch";
 
 export async function getAuthFetcher() {
   const authFetcher = await customAuthFetcher();
+  console.log('POSTing', `${SERVER_ROOT}/login/password`, `username=${USERNAME}&password=${PASSWORD}`);
   const serverLoginResult = await authFetcher.fetch(`${SERVER_ROOT}/login/password`, {
     headers: {
       "content-type": "application/x-www-form-urlencoded"
@@ -13,13 +14,15 @@ export async function getAuthFetcher() {
     redirect: "manual"
   });
   const cookie = serverLoginResult.headers.get('set-cookie');
-
+  console.log({ cookie });
   const session = await authFetcher.login({
     oidcIssuer: SERVER_ROOT,
     redirect: "https://tester/redirect"
   });
+  console.log('got session');
   let redirectedTo = (session.neededAction as any).redirectUrl;
   do {
+    console.log({ redirectedTo });
     const result = await fetch(redirectedTo, {
       headers: { cookie },
       redirect: "manual"
@@ -29,7 +32,7 @@ export async function getAuthFetcher() {
       throw new Error('Please add https://tester as a trusted app!');
     }
   } while(!redirectedTo?.startsWith("https://tester"));
-
+  console.log('handling', redirectedTo);
   await authFetcher.handleRedirect(redirectedTo);
   return authFetcher;
 }
