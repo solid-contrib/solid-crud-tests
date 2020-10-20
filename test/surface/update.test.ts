@@ -12,7 +12,7 @@ describe('Update', () => {
   beforeAll(async () => {
     authFetcher = await getAuthFetcher();
   });
-  describe('Replace (same content type)', () => {
+  describe('Using PUT (same content type)', () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
@@ -63,7 +63,7 @@ describe('Update', () => {
     afterAll(() => recursiveDelete(location, authFetcher));
   });
 
-  describe('Replace (different content type)', () => {
+  describe('Using PUT (different content type)', () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
@@ -114,54 +114,7 @@ describe('Update', () => {
     afterAll(() => recursiveDelete(location, authFetcher));
   });
 
-  describe('Replace (no If-Match header)', () => {
-    const { testFolderUrl } = generateTestFolder();
-    let websocketsPubsubClientResource;
-    const containerUrl = `${testFolderUrl}exists/`;
-    const resourceUrl = `${containerUrl}exists.ttl`;
-
-    beforeAll(async () => {
-      // this already relies on the PUT to non-existing folder functionality
-      // that will be one of the tested behaviours:
-      await authFetcher.fetch(resourceUrl, {
-        method: 'PUT',
-        body: '<#hello> <#linked> <#world> .',
-        headers: {
-          'Content-Type': 'text/turtle'
-        }
-      });
-      websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
-      await websocketsPubsubClientResource.getReady();
-      const result = await authFetcher.fetch(resourceUrl, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'text/turtle'
-        },
-        body: '<#replaced> <#the> <#contents> .'
-      });
-    });
-
-    afterAll(() => {
-      websocketsPubsubClientResource.disconnect();
-      recursiveDelete(testFolderUrl, authFetcher);
-    });
-
-    it('does not update the resource', async () => {
-      const result = await authFetcher.fetch(resourceUrl);
-      expect(responseCodeGroup(result.status)).toEqual('2xx');
-      // FIXME: use rdflib to check just the semantics, not the syntax here:
-      expect(await result.text()).toEqual('<#hello> <#linked> <#world> .');
-      expect(result.headers.get('Content-Type')).toEqual('text/turtle');
-    });
-    it('does not emit websockets-pubsub on the resource', () => {
-      expect(websocketsPubsubClientResource.received).toEqual([
-        `ack ${resourceUrl}`
-      ]);
-    });
-    afterAll(() => recursiveDelete(location, authFetcher));
-  });
-
-  describe('Add triple', () => {
+  describe('Using PATCH to add triple', () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
@@ -209,7 +162,7 @@ describe('Update', () => {
     });
     afterAll(() => recursiveDelete(location, authFetcher));
   });
-  describe('Replace triple (present)', () => {
+  describe('Using PATCH to replace triple (present)', () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
@@ -257,7 +210,7 @@ describe('Update', () => {
     });
     afterAll(() => recursiveDelete(location, authFetcher));
   });
-  describe('Replace triple (not present)', () => {
+  describe('Using PATCH to replace triple (not present)', () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
@@ -304,7 +257,7 @@ describe('Update', () => {
     });
     afterAll(() => recursiveDelete(location, authFetcher));
   });
-  describe('Replace triple (present)', () => {
+  describe('Using PATCH to remove triple (present)', () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
@@ -352,7 +305,7 @@ describe('Update', () => {
     });
     afterAll(() => recursiveDelete(location, authFetcher));
   });
-  describe('Remove triple (not present)', () => {
+  describe('Using PATCH to remove triple (not present)', () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
