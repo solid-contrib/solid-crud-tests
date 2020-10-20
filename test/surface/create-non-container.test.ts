@@ -198,7 +198,7 @@ describe('Create non-container', () => {
     });
   });
 
-  describe('in an non-existing container', () => {
+  describe('in a non-existing container', () => {
     describe('using PUT', () => {
       const { testFolderUrl } = generateTestFolder();
       const containerUrl = `${testFolderUrl}new/`;
@@ -242,7 +242,6 @@ describe('Create non-container', () => {
       it('adds the resource in the container listing', async () => {
         const containerListing = await getContainerMembers(containerUrl, authFetcher);
         expect(containerListing.sort()).toEqual([
-          `${containerUrl}exists.ttl`,
           resourceUrl
         ].sort());
       });
@@ -308,7 +307,6 @@ describe('Create non-container', () => {
       it('adds the resource in the container listing', async () => {
         const containerListing = await getContainerMembers(containerUrl, authFetcher);
         expect(containerListing.sort()).toEqual([
-          `${containerUrl}exists.ttl`,
           resourceUrl
         ].sort());
       });
