@@ -10,29 +10,44 @@ There are two ways to run these tests:
   - set SERVER_ROOT to the URL of this container to the OIDC issuer for this user
   - set COOKIE to a cookie that will allow this user to silently authenticate
 
-### In development
-Start your server with a self-signed cert on port 443 of localhost and run:
-```sh
-NODE_TLS_REJECT_UNAUTHORIZED=0 SERVER_ROOT=https://localhost ALICE_WEBID=https://localhost/profile/card#me npm run jest
-```
-
 ### Against production
+Get a cookie that will allow this user to silently authenticate.
+You can harvest the cookie using curl or your web browser's developer tools.
+If you're testing against a node-solid-server instance, the curl command
+would be a POST to /login/password, as follows:
+
 ```sh
 npm install
-cd node_modules/rdflib ; npm install ; npm run build ; cd ../..
-SERVER_ROOT=https://solid-auth-cli-test-user.solidcommunity.net ALICE_WEBID=https://solid-auth-cli-test-user.solidcommunity.net/profile/card#me USERNAME=solid-auth-cli-test-user PASSWORD=123 npm run jest
+
+export SERVER_ROOT=https://solid-auth-cli-test.solidcommunity.net
+export USERNAME=solid-auth-cli-test-user
+export PASSWORD=123
+# This curl command is specific to node-solid-server:
+export CURL_RESULT=`curl -i $SERVER_ROOT/login/password -d"username=$USERNAME&password=$PASSWORD" | grep Set-Cookie`
+export COOKIE=`expr "$CURL_RESULT" : '^Set-Cookie:\ \(.*\).'`
+echo Server root is $SERVER_ROOT
+echo Cookie is $COOKIE
+npm run jest
 ```
+
 
 You should see:
 ```
 Tests:       34 failed, 39 passed, 73 total
 ```
 
+### In development
+Start your server with a self-signed cert on port 443 of localhost and run with:
+```sh
+export NODE_TLS_REJECT_UNAUTHORIZED=0
+export SERVER_ROOT=https://localhost
+```
+
 ### Against NSS in mashlib-dev (no Docker required)
 ```sh
 export NODE_TLS_REJECT_UNAUTHORIZED=0
 export SERVER_ROOT=https://localhost:8443
-export COOKIE=`node ../node-solid-server/test/surface/docker/cookie/app/index.js`
+export COOKIE=`USERNAME=alice PASSWORD=alice123 node ../node-solid-server/test/surface/docker/cookie/app/index.js`
 echo Cookie is $COOKIE
 npm run jest
 ```
