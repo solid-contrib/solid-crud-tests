@@ -2,6 +2,14 @@
 Surface tests for CRUD and Websockets-pubsub functionality of a pod server
 
 ## Usage
+
+There are two ways to run these tests:
+* in a container where public read/write access is allowed
+  - set SERVER_ROOT to the URL of this container
+* in a container where some webid-oidc user has Read/Write access
+  - set SERVER_ROOT to the URL of this container to the OIDC issuer for this user
+  - set COOKIE to a cookie that will allow this user to silently authenticate
+
 ### In development
 Start your server with a self-signed cert on port 443 of localhost and run:
 ```sh
@@ -24,9 +32,6 @@ Tests:       34 failed, 39 passed, 73 total
 ```sh
 export NODE_TLS_REJECT_UNAUTHORIZED=0
 export SERVER_ROOT=https://localhost:8443
-export ALICE_WEBID=https://localhost:8443/profile/card#me
-export USERNAME=alice
-export PASSWORD=123
 export COOKIE=`node ../node-solid-server/test/surface/docker/cookie/app/index.js`
 echo Cookie is $COOKIE
 npm run jest
