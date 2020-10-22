@@ -63,7 +63,7 @@ has Solid OS as its web interface):
 * If you don't see the globe icon appear next to 'Viewers', refresh the page
 * Drag the globe icon from 'Viewers' to 'Editors'
 
-Now you can run:
+Now you can run without a COOKIE environment variable:
 ```sh
 npm install
 export SERVER_ROOT=https://solid-crud-tests-example-2.solidcommunity.net/test-folder/
@@ -76,13 +76,3 @@ Start your server with a self-signed cert on port 443 of localhost and run with:
 export NODE_TLS_REJECT_UNAUTHORIZED=0
 export SERVER_ROOT=https://localhost
 ```
-
-### Against NSS in mashlib-dev (no Docker required)
-```sh
-export NODE_TLS_REJECT_UNAUTHORIZED=0
-export SERVER_ROOT=https://localhost:8443
-export COOKIE=`USERNAME=alice PASSWORD=alice123 node ../node-solid-server/test/surface/docker/cookie/app/index.js`
-echo Cookie is $COOKIE
-npm run jest
-```
-(the add-crud-tests branch of NSS currently passes 48 out of 73 tests).
