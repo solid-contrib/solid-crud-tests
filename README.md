@@ -43,7 +43,7 @@ Tests:       13 failed, 49 passed, 62 total
 ```
 
 You can also harvest the cookie using your web browser's developer tools instead of curl.
-Or for instance for programmatically getting a for Nextcloud cookie, we [use Puppeteer](https://github.com/solid/test-suite/blob/665824a/helpers/cookie/app/index.js#L8).
+Or for instance for programmatically getting a cookie for Nextcloud, our test suites [use Puppeteer](https://github.com/solid/test-suite/blob/665824a/helpers/cookie/app/index.js#L8).
 Set it into the COOKIE env var, set the SERVER_ROOT, and run `npm run jest`.
 
 ### With public access
