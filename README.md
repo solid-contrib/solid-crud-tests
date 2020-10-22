@@ -51,11 +51,24 @@ If you run against a container with public read/write access, then it's not
 necessary to add https://tester as a trusted app. Instead (assuming the server
 has Solid OS as its web interface):
 * using your browser, log in to the pod
-* create a container
-* click the padlock icon on the newly 
- You do have to create this
-container and edit its Sharing settings to allow public read
-Set SERVER_ROOT to the URL of this container
+* click the folder icon
+* click the green +
+* click the folder icon
+* pick a folder name
+* click the triangle before the name of the newly created container
+* click the padlock icon
+* Set specific sharing for this folder
+* Click the green +
+* Click the globe icon
+* If you don't see the globe icon appear next to 'Viewers', refresh the page
+* Drag the globe icon from 'Viewers' to 'Editors'
+
+Now you can run:
+```sh
+npm install
+export SERVER_ROOT=https://solid-crud-tests-example-2.solidcommunity.net/test-folder/
+npm run jest
+```
 
 ### In development
 Start your server with a self-signed cert on port 443 of localhost and run with:
