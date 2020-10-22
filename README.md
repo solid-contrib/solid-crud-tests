@@ -4,37 +4,58 @@ Surface tests for CRUD and Websockets-pubsub functionality of a pod server
 ## Usage
 
 There are two ways to run these tests:
-* in a container where public read/write access is allowed
-  - set SERVER_ROOT to the URL of this container
-* in a container where some webid-oidc user has Read/Write access
-  - set SERVER_ROOT to the URL of this container to the OIDC issuer for this user
-  - set COOKIE to a cookie that will allow this user to silently authenticate
 
-### Against production
-Get a cookie that will allow this user to silently authenticate.
-You can harvest the cookie using curl or your web browser's developer tools.
-If you're testing against a node-solid-server instance, the curl command
-would be a POST to /login/password, as follows:
+### With some webid-oidc user
+First, add 'https://tester' as a trusted app.
+Assuming the server has Solid OS as its web interface, the steps are as follows:
+* using your browser, log in to the pod
+* top right menu
+* Preferences
+* Preferences
+* Manage your trusted applications (may require a page refresh before it displays properly),
+* Tick Read + Write,
+* Click Add
+
+
+Now, get a cookie that will allow this user to silently authenticate.
+You can use a curl command, for instance for node-solid-server it would
+POST 'username' and 'password' to /login/password and run the tests, as follows:
 
 ```sh
 npm install
 
-export SERVER_ROOT=https://solid-auth-cli-test.solidcommunity.net
-export USERNAME=solid-auth-cli-test-user
+export SERVER_ROOT=https://solid-crud-tests-example-1.solidcommunity.net
+export USERNAME=solid-crud-tests-example-1
 export PASSWORD=123
 # This curl command is specific to node-solid-server:
 export CURL_RESULT=`curl -i $SERVER_ROOT/login/password -d"username=$USERNAME&password=$PASSWORD" | grep Set-Cookie`
+# The COOKIE will be used when going through the webid-oidc flow:
 export COOKIE=`expr "$CURL_RESULT" : '^Set-Cookie:\ \(.*\).'`
+# The SERVER_ROOT will be used both for webid-oidc discovery and as the base container to run the tests against:
 echo Server root is $SERVER_ROOT
 echo Cookie is $COOKIE
 npm run jest
 ```
 
+You should see something like:
+```
+Tests:       13 failed, 49 passed, 62 total
+```
 
-You should see:
-```
-Tests:       34 failed, 39 passed, 73 total
-```
+You can also harvest the cookie using your web browser's developer tools instead of curl.
+Or for instance for programmatically getting a for Nextcloud cookie, we [use Puppeteer](https://github.com/solid/test-suite/blob/665824a/helpers/cookie/app/index.js#L8).
+Set it into the COOKIE env var, set the SERVER_ROOT, and run `npm run jest`.
+
+### With public access
+If you run against a container with public read/write access, then it's not
+necessary to add https://tester as a trusted app. Instead (assuming the server
+has Solid OS as its web interface):
+* using your browser, log in to the pod
+* create a container
+* click the padlock icon on the newly 
+ You do have to create this
+container and edit its Sharing settings to allow public read
+Set SERVER_ROOT to the URL of this container
 
 ### In development
 Start your server with a self-signed cert on port 443 of localhost and run with:
