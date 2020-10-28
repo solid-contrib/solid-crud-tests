@@ -35,7 +35,7 @@
     "rdf-namespaces": "^1.9.2",
     "rdflib": "^2.0.0",
     "solid-auth-fetcher": "^1.0.1",
-    "solid-namespace": "^0.4.0",
+    "solid-namespace": "^0.5.0",
     "ts-jest": "^26.3.0",
     "typescript": "^4.0.2",
     "ws": "^7.3.1"
