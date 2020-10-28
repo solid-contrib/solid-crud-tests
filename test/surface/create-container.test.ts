@@ -1,5 +1,7 @@
 import { generateTestFolder } from '../helpers/global';
+import { ldp, rdf, space, link } from "rdf-namespaces";
 import { getAuthFetcher } from '../helpers/obtain-auth-headers';
+import { getStore } from "../helpers/util";
 import { recursiveDelete, getContainerMembers, WPSClient, responseCodeGroup } from '../helpers/util';
 
 // when the tests start, xists/exists.ttl exists in the test folder,
@@ -9,8 +11,10 @@ jest.setTimeout(60000);
 
 describe('Create container', () => {
   let authFetcher;
+  let store;
   beforeAll(async () => {
     authFetcher = await getAuthFetcher();
+    store = getStore(authFetcher);
   });
 
   // use `${testFolderUrl}exists/` as the existing folder:
@@ -20,7 +24,7 @@ describe('Create container', () => {
       let websocketsPubsubClientContainer;
       let websocketsPubsubClientResource;
       const containerUrl = `${testFolderUrl}exists/`;
-      const resourceUrl = `${containerUrl}new/`;
+      const resourceUrl = `${containerUrl}new`;
 
       beforeAll(async () => {
         // this already relies on the PUT to non-existing folder functionality
@@ -36,12 +40,11 @@ describe('Create container', () => {
         await websocketsPubsubClientResource.getReady();
         const result = await authFetcher.fetch(resourceUrl, {
           method: 'PUT',
-          header: {
+          headers: {
             'Content-Type': 'text/plain',
             'If-None-Match': '*',
             'Link': '<http://www.w3.org/ns/ldp#BasicContainer>; rel="type"' // See https://github.com/solid/node-solid-server/issues/1465
-          },
-          body: 'Hello World'
+          }
         });
       });
 
@@ -54,9 +57,13 @@ describe('Create container', () => {
       it('creates the container', async () => {
         const result = await authFetcher.fetch(resourceUrl);
         expect(responseCodeGroup(result.status)).toEqual('2xx');
-        // FIXME: Check only RDF content here, not precise Turtle syntax:
-        expect(await result.text()).toEqual('@prefix : <#>.\n\n:hello :linked :world.\n\n');
-        expect(result.headers.get('Content-Type')).toEqual('text/turtle');        
+
+		await store.fetcher.load(store.sym(resourceUrl));
+		const containerTypes = store.statementsMatching(store.sym(resourceUrl), store.sym(rdf.type)).map(st => st.object.value);
+		expect(containerTypes.indexOf(ldp.BasicContainer) > -1).toEqual(true);
+		expect(containerTypes.indexOf(ldp.Container) > -1).toEqual(true);
+		expect(containerTypes.indexOf("http://www.w3.org/ns/iana/media-types/text/turtle#Resource") > -1).toEqual(true);
+        expect(result.headers.get('Content-Type')).toContain('text/turtle'); // use contain because it can also be text/turtle;charset=UTF-8
       });
       it('adds the resource in the existing container listing', async () => {
         const containerListing = await getContainerMembers(containerUrl, authFetcher);
@@ -65,6 +72,7 @@ describe('Create container', () => {
           resourceUrl
         ].sort());
       });
+
       it('emits websockets-pubsub on the existing container', () => {
         expect(websocketsPubsubClientContainer.received).toEqual([
           `ack ${containerUrl}`,
@@ -77,6 +85,7 @@ describe('Create container', () => {
           `pub ${resourceUrl}`
         ]);
       });
+
       afterAll(() => recursiveDelete(location, authFetcher));
     });
   });
