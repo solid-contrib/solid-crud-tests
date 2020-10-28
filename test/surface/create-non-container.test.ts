@@ -51,7 +51,7 @@ describe('Create non-container', () => {
         const result = await authFetcher.fetch(resourceUrl);
         expect(responseCodeGroup(result.status)).toEqual('2xx');
         expect(await result.text()).toEqual('Hello World');
-        expect(result.headers.get('Content-Type')).toEqual('text/plain');
+        expect(result.headers.get('Content-Type')).toContain('text/plain');
         
       });
       it('adds the resource in the container listing', async () => {
@@ -109,7 +109,7 @@ describe('Create non-container', () => {
         const result = await authFetcher.fetch(resourceUrl);
         expect(responseCodeGroup(result.status)).toEqual('2xx');
         expect(await result.text()).toEqual('Hello World');
-        expect(result.headers.get('Content-Type')).toEqual('text/plain');
+        expect(result.headers.get('Content-Type')).toContain('text/plain');
         
       });
       it('adds the resource in the container listing', async () => {
@@ -236,7 +236,7 @@ describe('Create non-container', () => {
         const result = await authFetcher.fetch(resourceUrl);
         expect(responseCodeGroup(result.status)).toEqual('2xx');
         expect(await result.text()).toEqual('Hello World');
-        expect(result.headers.get('Content-Type')).toEqual('text/plain');
+        expect(result.headers.get('Content-Type')).toContain('text/plain');
         
       });
       it('adds the resource in the container listing', async () => {
