@@ -5,7 +5,7 @@ import { recursiveDelete, getContainerMembers, WPSClient, responseCodeGroup } fr
 // when the tests start, exists/exists.ttl exists in the test folder,
 // and nothing else.
 
-jest.setTimeout(process.env.JEST_TIMEOUT || 5000);
+jest.setTimeout(parseInt(process.env.JEST_TIMEOUT, 10) || 5000);
 
 describe('Delete', () => {
   let authFetcher;
