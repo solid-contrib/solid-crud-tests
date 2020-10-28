@@ -40,7 +40,7 @@ npm run jest
 
 You should see something like:
 ```
-Tests:       13 failed, 49 passed, 62 total
+Tests:       9 failed, 53 passed, 62 total
 ```
 
 You can also harvest the cookie using your web browser's developer tools instead of curl.
