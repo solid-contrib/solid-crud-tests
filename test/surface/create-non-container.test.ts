@@ -1,5 +1,5 @@
-import { generateTestFolder } from '../helpers/global';
-import { getAuthFetcher } from '../helpers/obtain-auth-headers';
+import { generateTestFolder, oidcIssuer, cookie, appOrigin } from '../helpers/env';
+import { getAuthFetcher } from 'solid-auth-fetcher';
 import { recursiveDelete, getContainerMembers, WPSClient, responseCodeGroup } from '../helpers/util';
 
 // when the tests start, exists/exists.ttl exists in the test folder,
@@ -10,7 +10,7 @@ jest.setTimeout(parseInt(process.env.JEST_TIMEOUT, 10) || 5000);
 describe('Create non-container', () => {
   let authFetcher;
   beforeAll(async () => {
-    authFetcher = await getAuthFetcher();
+    authFetcher = await getAuthFetcher(oidcIssuer, cookie, appOrigin);
   });
 
   // use `${testFolderUrl}exists/` as the existing folder:

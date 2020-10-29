@@ -1,7 +1,8 @@
-import { generateTestFolder } from '../helpers/global';
+import { generateTestFolder } from '../helpers/env';
 import { ldp, rdf, space, link } from "rdf-namespaces";
-import { getAuthFetcher } from '../helpers/obtain-auth-headers';
+import { getAuthFetcher } from 'solid-auth-fetcher';
 import { getStore } from "../helpers/util";
+import { oidcIssuer, cookie, appOrigin } from "../helpers/env";
 import { recursiveDelete, getContainerMembers, WPSClient, responseCodeGroup } from '../helpers/util';
 
 // when the tests start, xists/exists.ttl exists in the test folder,
@@ -13,7 +14,7 @@ describe('Create container', () => {
   let authFetcher;
   let store;
   beforeAll(async () => {
-    authFetcher = await getAuthFetcher();
+    authFetcher = await getAuthFetcher(oidcIssuer, cookie, appOrigin);
     store = getStore(authFetcher);
   });
 

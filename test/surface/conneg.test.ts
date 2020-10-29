@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
-import { generateTestFolder } from '../helpers/global';
-import { getAuthFetcher } from '../helpers/obtain-auth-headers';
+import { generateTestFolder, oidcIssuer, cookie, appOrigin } from "../helpers/env";
+import { getAuthFetcher } from 'solid-auth-fetcher';
 import { recursiveDelete } from '../helpers/util';
 
 const example = {
@@ -34,7 +34,7 @@ jest.setTimeout(parseInt(process.env.JEST_TIMEOUT) || 5000);
 describe('Alice\'s pod', () => {
   let authFetcher;
   beforeAll(async () => {
-    authFetcher = await getAuthFetcher();
+    authFetcher = await getAuthFetcher(oidcIssuer, cookie, appOrigin);
     await authFetcher.fetch(`${testFolderUrl}example.ttl`, {
       method: 'PUT',
       headers: {
