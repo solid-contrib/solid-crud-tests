@@ -217,7 +217,7 @@ describe('Create non-container', () => {
       let websocketsPubsubClientParent;
       let websocketsPubsubClientContainer;
       let websocketsPubsubClientResource;
-      const resourceUrl = `${containerUrl}new.ttl`;
+      const resourceUrl = `${containerUrl}new.txt`;
 
       beforeAll(async () => {
         websocketsPubsubClientParent = new WPSClient(testFolderUrl, authFetcher);
