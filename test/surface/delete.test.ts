@@ -109,7 +109,7 @@ describe('Delete', () => {
       const result = await authFetcher.fetch(resourceUrl);
       expect(responseCodeGroup(result.status)).toEqual('2xx');
       expect(await result.text()).toEqual('<#hello> <#linked> <#world> .');
-      expect(result.headers.get('Content-Type')).toEqual('text/plain');
+      expect(result.headers.get('Content-Type')).toContain('text/turtle');
     });
 
     it('does not emit websockets-pubsub on the container', () => {
