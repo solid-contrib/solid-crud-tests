@@ -275,9 +275,16 @@ describe('Update', () => {
     it('does not update the resource', async () => {
       const result = await authFetcher.fetch(resourceUrl);
       expect(responseCodeGroup(result.status)).toEqual('2xx');
-      // FIXME: use rdflib to check just the semantics, not the syntax here:
-      expect(await result.text()).toEqual('<#hello> <#linked> <#world> .');
-      expect(result.headers.get('Content-Type')).toEqual('text/turtle');
+
+      let store1 = getStore(authFetcher);
+      let store2 = getStore(authFetcher);
+
+      rdflib.parse('<#hello> <#linked> <#world> .', store1, resourceUrl, "text/turtle");
+      rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
+
+      console.log(resourceUrl);
+      expect(store2.toString()).toEqual(store1.toString());
+      expect(result.headers.get('Content-Type')).toContain('text/turtle');
     });
     it('does not emit websockets-pubsub on the resource', () => {
       expect(websocketsPubsubClientResource.received).toEqual([
