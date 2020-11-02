@@ -1,6 +1,11 @@
 import { generateTestFolder, oidcIssuer, cookie, appOrigin } from '../helpers/env';
 import { getAuthFetcher } from 'solid-auth-fetcher';
 import { recursiveDelete, getContainerMembers, WPSClient, responseCodeGroup } from '../helpers/util';
+import { getStore } from "../helpers/util";
+import { ldp, rdf, space, link } from "rdf-namespaces";
+const rdflib = require('rdflib');
+
+const waittime = 2000;
 
 // when the tests start, exists/exists.ttl exists in the test folder,
 // and nothing else.
@@ -39,7 +44,7 @@ describe('Create non-container', () => {
           body: 'Hello World'
         });
         resourceUrl = new URL(result.headers.get('location'), containerUrl).toString();
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, waittime));
       });
 
       afterAll(() => {
@@ -74,7 +79,7 @@ describe('Create non-container', () => {
       let websocketsPubsubClientContainer;
       let websocketsPubsubClientResource;
       const containerUrl = `${testFolderUrl}exists/`;
-      const resourceUrl = `${containerUrl}new.ttl`;
+      const resourceUrl = `${containerUrl}new.txt`;
 
       beforeAll(async () => {
         // this already relies on the PUT to non-existing folder functionality
@@ -96,7 +101,7 @@ describe('Create non-container', () => {
           },
           body: 'Hello World'
         });
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, waittime));
       });
 
       afterAll(() => {
@@ -159,21 +164,28 @@ describe('Create non-container', () => {
             'Content-Type': 'application/sparql-update'
           }
         });
-        await new Promise(resolve => setTimeout(resolve, 1000));
+//		console.log(result);
+        await new Promise(resolve => setTimeout(resolve, waittime));
       });
 
       afterAll(() => {
-        websocketsPubsubClientContainer.disconnect();
-        websocketsPubsubClientResource.disconnect();
-        recursiveDelete(testFolderUrl, authFetcher);
+//        websocketsPubsubClientContainer.disconnect();
+//        websocketsPubsubClientResource.disconnect();
+//        recursiveDelete(testFolderUrl, authFetcher);
       });
 
       it('creates the resource', async () => {
         const result = await authFetcher.fetch(resourceUrl);
         expect(responseCodeGroup(result.status)).toEqual('2xx');
-        // FIXME: Check only RDF content here, not precise Turtle syntax:
-        expect(await result.text()).toEqual('@prefix : <#>.\n\n:hello :linked :world.\n\n');
-        expect(result.headers.get('Content-Type')).toEqual('text/turtle');
+
+		let store1 = getStore(authFetcher);
+		let store2 = getStore(authFetcher);
+
+		rdflib.parse('<#hello> <#linked> <#world> . ', store1, resourceUrl, "text/turtle");
+		rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
+
+		expect(store2.toString()).toEqual(store1.toString());
+        expect(result.headers.get('Content-Type')).toContain('text/turtle');
         
       });
       it('adds the resource in the container listing', async () => {
@@ -205,7 +217,7 @@ describe('Create non-container', () => {
       let websocketsPubsubClientParent;
       let websocketsPubsubClientContainer;
       let websocketsPubsubClientResource;
-      const resourceUrl = `${containerUrl}new.ttl`;
+      const resourceUrl = `${containerUrl}new.txt`;
 
       beforeAll(async () => {
         websocketsPubsubClientParent = new WPSClient(testFolderUrl, authFetcher);
@@ -222,7 +234,7 @@ describe('Create non-container', () => {
           },
           body: 'Hello World'
         });
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, waittime));
       });
 
       afterAll(() => {
@@ -287,7 +299,7 @@ describe('Create non-container', () => {
             'Content-Type': 'application/sparql-update'
           }
         });
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 2000));
       });
 
       afterAll(() => {
@@ -300,9 +312,16 @@ describe('Create non-container', () => {
       it('creates the resource', async () => {
         const result = await authFetcher.fetch(resourceUrl);
         expect(responseCodeGroup(result.status)).toEqual('2xx');
-        // FIXME: Check only RDF content here, not precise Turtle syntax:
-        expect(await result.text()).toEqual('@prefix : <#>.\n\n:hello :linked :world.\n\n');
-        expect(result.headers.get('Content-Type')).toEqual('text/turtle');
+
+		let store1 = getStore(authFetcher);
+		let store2 = getStore(authFetcher);
+
+		rdflib.parse('<#hello> <#linked> <#world> . ', store1, resourceUrl, "text/turtle");
+		rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
+
+		console.log(resourceUrl);
+		expect(store2.toString()).toEqual(store1.toString());
+        expect(result.headers.get('Content-Type')).toContain('text/turtle');
       });
       it('adds the resource in the container listing', async () => {
         const containerListing = await getContainerMembers(containerUrl, authFetcher);
