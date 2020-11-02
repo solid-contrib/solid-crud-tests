@@ -1,6 +1,6 @@
 {
   "name": "solid-crud-tests",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "A test suite with some tests for CRUD operations on containers and documents on a Solid pod.",
   "main": "jest.config.js",
   "directories": {
