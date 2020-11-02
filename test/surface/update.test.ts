@@ -1,7 +1,9 @@
 import { generateTestFolder } from '../helpers/global';
 import { getAuthFetcher } from '../helpers/obtain-auth-headers';
 import { recursiveDelete, getContainerMembers, WPSClient, responseCodeGroup } from '../helpers/util';
-
+import { getStore } from "../helpers/util";
+const rdflib = require('rdflib');
+const waittime = 2000;
 // when the tests start, exists/exists.ttl exists in the test folder,
 // and nothing else.
 
@@ -28,6 +30,7 @@ describe('Update', () => {
           'Content-Type': 'text/turtle'
         }
       });
+	  await new Promise(resolve => setTimeout(resolve, waittime));
       const getResult = await authFetcher.fetch(resourceUrl);
       const resourceETagInQuotes = getResult.headers.get('ETag');
       websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
@@ -40,6 +43,7 @@ describe('Update', () => {
         },
         body: '<#replaced> <#the> <#contents> .'
       });
+	  await new Promise(resolve => setTimeout(resolve, waittime));
     });
 
     afterAll(() => {
@@ -50,9 +54,15 @@ describe('Update', () => {
     it('updates the resource', async () => {
       const result = await authFetcher.fetch(resourceUrl);
       expect(responseCodeGroup(result.status)).toEqual('2xx');
-      // FIXME: use rdflib to check just the semantics, not the syntax here:
-      expect(await result.text()).toEqual('<#replaced> <#the> <#contents> .');
-      expect(result.headers.get('Content-Type')).toEqual('text/turtle');
+
+      let store1 = getStore(authFetcher);
+      let store2 = getStore(authFetcher);
+
+      rdflib.parse('<#replaced> <#the> <#contents> .', store1, resourceUrl, "text/turtle");
+      rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
+
+      expect(store2.toString()).toEqual(store1.toString());
+      expect(result.headers.get('Content-Type')).toContain('text/turtle');
     });
     it('emits websockets-pubsub on the resource', () => {
       expect(websocketsPubsubClientResource.received).toEqual([
@@ -67,7 +77,7 @@ describe('Update', () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
-    const resourceUrl = `${containerUrl}exists.ttl`;
+    const resourceUrl = `${containerUrl}exists.txt`;
 
     beforeAll(async () => {
       // this already relies on the PUT to non-existing folder functionality
@@ -79,6 +89,7 @@ describe('Update', () => {
           'Content-Type': 'text/turtle'
         }
       });
+	  await new Promise(resolve => setTimeout(resolve, waittime));
       const getResult = await authFetcher.fetch(resourceUrl);
       const resourceETagInQuotes = getResult.headers.get('ETag');
       websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
@@ -91,6 +102,7 @@ describe('Update', () => {
         },
         body: 'replaced'
       });
+	  await new Promise(resolve => setTimeout(resolve, waittime));
     });
 
     afterAll(() => {
@@ -101,9 +113,8 @@ describe('Update', () => {
     it('updates the resource', async () => {
       const result = await authFetcher.fetch(resourceUrl);
       expect(responseCodeGroup(result.status)).toEqual('2xx');
-      // FIXME: use rdflib to check just the semantics, not the syntax here:
       expect(await result.text()).toEqual('replaced');
-      expect(result.headers.get('Content-Type')).toEqual('text/plain');
+      expect(result.headers.get('Content-Type')).toContain('text/plain');
     });
     it('emits websockets-pubsub on the resource', () => {
       expect(websocketsPubsubClientResource.received).toEqual([
@@ -130,6 +141,7 @@ describe('Update', () => {
           'Content-Type': 'text/turtle'
         }
       });
+	  await new Promise(resolve => setTimeout(resolve, waittime));
 
       websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
       await websocketsPubsubClientResource.getReady();
@@ -140,6 +152,7 @@ describe('Update', () => {
         },
         body: 'INSERT DATA { <#that> a <#fact> . }'
       });
+	  await new Promise(resolve => setTimeout(resolve, waittime));
     });
 
     afterAll(() => {
@@ -150,9 +163,15 @@ describe('Update', () => {
     it('updates the resource', async () => {
       const result = await authFetcher.fetch(resourceUrl);
       expect(responseCodeGroup(result.status)).toEqual('2xx');
-      // FIXME: use rdflib to check just the semantics, not the syntax here:
-      expect(await result.text()).toEqual('@prefix : <#>.\n\n:hello :linked :world.\n\n:that a :fact.\n\n');
-      expect(result.headers.get('Content-Type')).toEqual('text/turtle');
+
+      let store1 = getStore(authFetcher);
+      let store2 = getStore(authFetcher);
+
+      rdflib.parse('@prefix : <#>.\n\n:hello :linked :world.\n\n:that a :fact.\n\n', store1, resourceUrl, "text/turtle");
+      rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
+
+      expect(store2.toString()).toEqual(store1.toString());
+      expect(result.headers.get('Content-Type')).toContain('text/turtle');
     });
     it('emits websockets-pubsub on the resource', () => {
       expect(websocketsPubsubClientResource.received).toEqual([
@@ -178,6 +197,7 @@ describe('Update', () => {
           'Content-Type': 'text/turtle'
         }
       });
+	  await new Promise(resolve => setTimeout(resolve, waittime));
 
       websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
       await websocketsPubsubClientResource.getReady();
@@ -188,6 +208,7 @@ describe('Update', () => {
         },
         body: 'DELETE DATA { <#hello> <#linked> <#world> . }\nINSERT DATA { <#that> a <#fact> . }'
       });
+	  await new Promise(resolve => setTimeout(resolve, waittime));
     });
 
     afterAll(() => {
@@ -198,9 +219,15 @@ describe('Update', () => {
     it('updates the resource', async () => {
       const result = await authFetcher.fetch(resourceUrl);
       expect(responseCodeGroup(result.status)).toEqual('2xx');
-      // FIXME: use rdflib to check just the semantics, not the syntax here:
-      expect(await result.text()).toEqual('@prefix : <#>.\n\n:that a :fact.\n\n');
-      expect(result.headers.get('Content-Type')).toEqual('text/turtle');
+
+      let store1 = getStore(authFetcher);
+      let store2 = getStore(authFetcher);
+
+      rdflib.parse('@prefix : <#>.\n\n:that a :fact.\n\n', store1, resourceUrl, "text/turtle");
+      rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
+
+      expect(store2.toString()).toEqual(store1.toString());
+      expect(result.headers.get('Content-Type')).toContain('text/turtle');
     });
     it('emits websockets-pubsub on the resource', () => {
       expect(websocketsPubsubClientResource.received).toEqual([
@@ -246,9 +273,16 @@ describe('Update', () => {
     it('does not update the resource', async () => {
       const result = await authFetcher.fetch(resourceUrl);
       expect(responseCodeGroup(result.status)).toEqual('2xx');
-      // FIXME: use rdflib to check just the semantics, not the syntax here:
-      expect(await result.text()).toEqual('<#hello> <#linked> <#world> .');
-      expect(result.headers.get('Content-Type')).toEqual('text/turtle');
+
+      let store1 = getStore(authFetcher);
+      let store2 = getStore(authFetcher);
+
+      rdflib.parse('<#hello> <#linked> <#world> .', store1, resourceUrl, "text/turtle");
+      rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
+
+      console.log(resourceUrl);
+      expect(store2.toString()).toEqual(store1.toString());
+      expect(result.headers.get('Content-Type')).toContain('text/turtle');
     });
     it('does not emit websockets-pubsub on the resource', () => {
       expect(websocketsPubsubClientResource.received).toEqual([
@@ -293,9 +327,14 @@ describe('Update', () => {
     it('updates the resource', async () => {
       const result = await authFetcher.fetch(resourceUrl);
       expect(responseCodeGroup(result.status)).toEqual('2xx');
-      // FIXME: use rdflib to check just the semantics, not the syntax here:
-      expect(await result.text()).toEqual('@prefix : <#>.\n\n');
-      expect(result.headers.get('Content-Type')).toEqual('text/turtle');
+      let store1 = getStore(authFetcher);
+      let store2 = getStore(authFetcher);
+
+      rdflib.parse('@prefix : <#>.', store1, resourceUrl, "text/turtle");
+      rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
+
+      expect(store2.toString()).toEqual(store1.toString());
+      expect(result.headers.get('Content-Type')).toContain('text/turtle');
     });
     it('emits websockets-pubsub on the resource', () => {
       expect(websocketsPubsubClientResource.received).toEqual([
@@ -341,9 +380,14 @@ describe('Update', () => {
     it('does not update the resource', async () => {
       const result = await authFetcher.fetch(resourceUrl);
       expect(responseCodeGroup(result.status)).toEqual('2xx');
-      // FIXME: use rdflib to check just the semantics, not the syntax here:
-      expect(await result.text()).toEqual('<#hello> <#linked> <#world> .');
-      expect(result.headers.get('Content-Type')).toEqual('text/turtle');
+      let store1 = getStore(authFetcher);
+      let store2 = getStore(authFetcher);
+
+      rdflib.parse('<#hello> <#linked> <#world> .', store1, resourceUrl, "text/turtle");
+      rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
+
+      expect(store2.toString()).toEqual(store1.toString());
+      expect(result.headers.get('Content-Type')).toContain('text/turtle');
     });
     it('does not emit websockets-pubsub on the resource', () => {
       expect(websocketsPubsubClientResource.received).toEqual([
