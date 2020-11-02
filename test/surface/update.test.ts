@@ -1,5 +1,5 @@
-import { generateTestFolder } from '../helpers/global';
-import { getAuthFetcher } from '../helpers/obtain-auth-headers';
+import { generateTestFolder, oidcIssuer, cookie, appOrigin } from '../helpers/env';
+import { getAuthFetcher } from 'solid-auth-fetcher';
 import { recursiveDelete, getContainerMembers, WPSClient, responseCodeGroup } from '../helpers/util';
 import { getStore } from "../helpers/util";
 const rdflib = require('rdflib');
@@ -12,7 +12,7 @@ jest.setTimeout(parseInt(process.env.JEST_TIMEOUT, 10) || 5000);
 describe('Update', () => {
   let authFetcher;
   beforeAll(async () => {
-    authFetcher = await getAuthFetcher();
+    authFetcher = await getAuthFetcher(oidcIssuer, cookie, appOrigin);
   });
   describe('Using PUT (same content type)', () => {
     const { testFolderUrl } = generateTestFolder();

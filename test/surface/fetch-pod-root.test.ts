@@ -1,21 +1,20 @@
 import fetch from "node-fetch";
 import { ldp, rdf, space, link } from "rdf-namespaces";
 import { getStore } from "../helpers/util";
-import { getAuthFetcher, getAuthHeaders } from "../helpers/obtain-auth-headers";
+import { aliceWebId, oidcIssuer, cookie, appOrigin } from "../helpers/env";
+import { getAuthFetcher, getAuthHeaders } from "solid-auth-fetcher";
 
-const ALICE_WEBID = process.env.ALICE_WEBID;
-
-jest.setTimeout(process.env.JEST_TIMEOUT || 5000);
+jest.setTimeout(parseInt(process.env.JEST_TIMEOUT, 10) || 5000);
 
 describe("Alice's storage root", () => {
   let podRoots;
   let authFetcher;
 
   beforeAll(async () => {
-    authFetcher = await getAuthFetcher();
+    authFetcher = await getAuthFetcher(oidcIssuer, cookie, appOrigin);
     const store = getStore(authFetcher);
-    await store.fetcher.load(store.sym(ALICE_WEBID).doc());
-    podRoots = store.statementsMatching(store.sym(ALICE_WEBID), store.sym(space.storage)).map(st => st.object.value);
+    await store.fetcher.load(store.sym(aliceWebId).doc());
+    podRoots = store.statementsMatching(store.sym(aliceWebId), store.sym(space.storage)).map(st => st.object.value);
   });
 
   test("is an ldp BasicContainer", async () => {

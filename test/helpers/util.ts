@@ -1,4 +1,4 @@
-import { getAuthHeaders } from "./obtain-auth-headers";
+import { getAuthHeaders } from "solid-auth-fetcher";
 
 const WebSocket = require('ws');
 const rdf = require('rdflib');
