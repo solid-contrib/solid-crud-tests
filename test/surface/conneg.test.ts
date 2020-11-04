@@ -29,8 +29,6 @@ const triplesFromTurtle = [
 
 var rdf = require('rdflib')
 
-jest.setTimeout(parseInt(process.env.JEST_TIMEOUT) || 5000);
-
 describe('Alice\'s pod', () => {
   let authFetcher;
   beforeAll(async () => {

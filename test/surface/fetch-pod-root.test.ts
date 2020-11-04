@@ -11,8 +11,6 @@ function getAuthHeaders(a,b,c) {
   return {};
 }
 
-jest.setTimeout(parseInt(process.env.JEST_TIMEOUT, 10) || 5000);
-
 describe("Alice's storage root", () => {
   let podRoots;
   let authFetcher;

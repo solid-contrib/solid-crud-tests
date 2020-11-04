@@ -7,8 +7,6 @@ const waittime = 2000;
 // when the tests start, exists/exists.ttl exists in the test folder,
 // and nothing else.
 
-jest.setTimeout(parseInt(process.env.JEST_TIMEOUT, 10) || 5000);
-
 describe('Update', () => {
   let authFetcher;
   beforeAll(async () => {
