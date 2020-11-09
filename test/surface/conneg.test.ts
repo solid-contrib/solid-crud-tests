@@ -2,6 +2,7 @@ import { readFileSync } from 'fs';
 import { generateTestFolder, oidcIssuer, cookie, appOrigin } from "../helpers/env";
 import { getAuthFetcher } from 'solid-auth-fetcher';
 import { recursiveDelete } from '../helpers/util';
+const rdflib = require('rdflib');
 
 const example = {
   html: readFileSync('test/fixtures/example.html').toString(),
