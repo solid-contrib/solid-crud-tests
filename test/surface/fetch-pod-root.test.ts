@@ -12,34 +12,39 @@ describe("Alice's storage root", () => {
 
     const store = getStore(authFetcher);
     await store.fetcher.load(store.sym(aliceWebId).doc());
-    podRoots = store.statementsMatching(store.sym(aliceWebId), store.sym(space.storage)).map(st => st.object.value);
+    podRoots = store
+      .statementsMatching(store.sym(aliceWebId), store.sym(space.storage))
+      .map((st) => st.object.value);
   });
 
   test("is an ldp BasicContainer", async () => {
     expect(podRoots.length).toEqual(1);
     const store = getStore({
       fetch: async (url, options) => {
-        const headers = await getAuthHeaders(url, 'GET', authFetcher);
+        const headers = await getAuthHeaders(url, "GET", authFetcher);
 
-        (headers as any).Accept = 'text/turtle';
+        (headers as any).Accept = "text/turtle";
         const result = await fetch(url, {
-          headers
+          headers,
         });
         // const text = await result.text();
         // console.log(text);
         return result;
-      }
+      },
     });
     await store.fetcher.load(store.sym(podRoots[0]));
-    const podRootTypes = store.statementsMatching(store.sym(podRoots[0]), store.sym(rdf.type)).map(st => st.object.value);
-    expect(podRootTypes.sort()).toEqual([
-      ldp.BasicContainer,
-      ldp.Container,
-      ldp.Resource,
-      link.Document,
-      link.RDFDocument,
-      "http://www.w3.org/ns/iana/media-types/text/turtle#Resource",
-    ].sort());
+    const podRootTypes = store
+      .statementsMatching(store.sym(podRoots[0]), store.sym(rdf.type))
+      .map((st) => st.object.value);
+    expect(podRootTypes.sort()).toEqual(
+      [
+        ldp.BasicContainer,
+        ldp.Container,
+        ldp.Resource,
+        link.Document,
+        link.RDFDocument,
+        "http://www.w3.org/ns/iana/media-types/text/turtle#Resource",
+      ].sort()
+    );
   });
-
 });
