@@ -2,19 +2,11 @@ import fetch from "node-fetch";
 import { ldp, rdf, space, link } from "rdf-namespaces";
 import { getStore } from "../helpers/util";
 import { aliceWebId, oidcIssuer, cookie, appOrigin } from "../helpers/env";
-// FIXME: use getAuthFetcher and getAuthHeaders from solid-auth-fetcher as soon as that is compatible;
-// import { getAuthFetcher, getAuthHeaders } from "solid-auth-fetcher";
-function getAuthFetcher(a,b,c) {
-   return {fetch};
-}
-function getAuthHeaders(a,b,c) {
-  return {};
-}
+import { getAuthFetcher, getAuthHeaders } from "solid-auth-fetcher";
 
 describe("Alice's storage root", () => {
   let podRoots;
   let authFetcher;
-
   beforeAll(async () => {
     authFetcher = await getAuthFetcher(oidcIssuer, cookie, appOrigin);
 
