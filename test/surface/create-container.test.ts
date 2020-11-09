@@ -23,7 +23,7 @@ describe('Create container', () => {
       let websocketsPubsubClientContainer;
       let websocketsPubsubClientResource;
       const containerUrl = `${testFolderUrl}exists/`;
-      const resourceUrl = `${containerUrl}new`;
+      const resourceUrl = `${containerUrl}new/`;
 
       beforeAll(async () => {
         // this already relies on the PUT to non-existing folder functionality
