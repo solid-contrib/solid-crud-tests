@@ -194,9 +194,9 @@ describe("Create non-container", () => {
       });
 
       afterAll(() => {
-        //        websocketsPubsubClientContainer.disconnect();
-        //        websocketsPubsubClientResource.disconnect();
-        //        recursiveDelete(testFolderUrl, authFetcher);
+        websocketsPubsubClientContainer.disconnect();
+        websocketsPubsubClientResource.disconnect();
+        recursiveDelete(testFolderUrl, authFetcher);
       });
 
       it("creates the resource", async () => {
