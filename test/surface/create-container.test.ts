@@ -8,8 +8,6 @@ import { recursiveDelete, getContainerMembers, WPSClient, responseCodeGroup } fr
 // when the tests start, xists/exists.ttl exists in the test folder,
 // and nothing else.
 
-jest.setTimeout(parseInt(process.env.JEST_TIMEOUT, 10) || 5000);
-
 describe('Create container', () => {
   let authFetcher;
   let store;
@@ -25,7 +23,7 @@ describe('Create container', () => {
       let websocketsPubsubClientContainer;
       let websocketsPubsubClientResource;
       const containerUrl = `${testFolderUrl}exists/`;
-      const resourceUrl = `${containerUrl}new`;
+      const resourceUrl = `${containerUrl}new/`;
 
       beforeAll(async () => {
         // this already relies on the PUT to non-existing folder functionality

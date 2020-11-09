@@ -2,9 +2,14 @@ import fetch from "node-fetch";
 import { ldp, rdf, space, link } from "rdf-namespaces";
 import { getStore } from "../helpers/util";
 import { aliceWebId, oidcIssuer, cookie, appOrigin } from "../helpers/env";
-import { getAuthFetcher, getAuthHeaders } from "solid-auth-fetcher";
-
-jest.setTimeout(parseInt(process.env.JEST_TIMEOUT, 10) || 5000);
+// FIXME: use getAuthFetcher and getAuthHeaders from solid-auth-fetcher as soon as that is compatible;
+// import { getAuthFetcher, getAuthHeaders } from "solid-auth-fetcher";
+function getAuthFetcher(a,b,c) {
+   return {fetch};
+}
+function getAuthHeaders(a,b,c) {
+  return {};
+}
 
 describe("Alice's storage root", () => {
   let podRoots;
@@ -12,6 +17,7 @@ describe("Alice's storage root", () => {
 
   beforeAll(async () => {
     authFetcher = await getAuthFetcher(oidcIssuer, cookie, appOrigin);
+
     const store = getStore(authFetcher);
     await store.fetcher.load(store.sym(aliceWebId).doc());
     podRoots = store.statementsMatching(store.sym(aliceWebId), store.sym(space.storage)).map(st => st.object.value);
@@ -22,6 +28,7 @@ describe("Alice's storage root", () => {
     const store = getStore({
       fetch: async (url, options) => {
         const headers = await getAuthHeaders(url, 'GET', authFetcher);
+
         (headers as any).Accept = 'text/turtle';
         const result = await fetch(url, {
           headers

@@ -22,7 +22,7 @@ You can use a curl command, for instance for node-solid-server it would
 POST 'username' and 'password' to /login/password and run the tests, as follows:
 
 ```sh
-npm install
+npm ci
 
 export SERVER_ROOT=https://solid-crud-tests-example-1.solidcommunity.net
 export USERNAME=solid-crud-tests-example-1
@@ -34,13 +34,13 @@ export COOKIE=`expr "$CURL_RESULT" : '^Set-Cookie:\ \(.*\).'`
 # The SERVER_ROOT will be used both for webid-oidc discovery and as the base container to run the tests against:
 echo Server root is $SERVER_ROOT
 echo Cookie is $COOKIE
-export JEST_TIMEOUT=60000
 npm run jest
+# Or: ./node_modules/.bin/jest --timeout=60000
 ```
 
 You should see something like:
 ```
-Tests:       9 failed, 53 passed, 62 total
+Tests:       17 failed, 55 passed, 62 total
 ```
 
 You can also harvest the cookie using your web browser's developer tools instead of curl.
