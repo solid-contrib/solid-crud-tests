@@ -3,7 +3,7 @@ import { getAuthFetcher } from 'solid-auth-fetcher';
 import { recursiveDelete, getContainerMembers, WPSClient, responseCodeGroup } from '../helpers/util';
 import { getStore } from "../helpers/util";
 const rdflib = require('rdflib');
-const waittime = 2000;
+const waittime = 1000;
 // when the tests start, exists/exists.ttl exists in the test folder,
 // and nothing else.
 
