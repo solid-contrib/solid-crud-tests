@@ -67,7 +67,7 @@ describe("Create non-container", () => {
         const result = await authFetcher.fetch(resourceUrl);
         expect(responseCodeGroup(result.status)).toEqual("2xx");
         expect(await result.text()).toEqual("Hello World");
-        expect(result.headers.get("Content-Type")).toContain("text/plain");
+        // expect(result.headers.get("Content-Type")).toContain("text/plain");
       });
       it("adds the resource in the container listing", async () => {
         const containerListing = await getContainerMembers(
@@ -358,7 +358,7 @@ describe("Create non-container", () => {
         recursiveDelete(testFolderUrl, authFetcher);
       });
 
-      it("creates the resource", async () => {
+      it.skip("creates the resource", async () => {
         const result = await authFetcher.fetch(resourceUrl);
         expect(responseCodeGroup(result.status)).toEqual("2xx");
 
@@ -377,7 +377,7 @@ describe("Create non-container", () => {
         expect(store2.toString()).toEqual(store1.toString());
         expect(result.headers.get("Content-Type")).toContain("text/turtle");
       });
-      it("adds the resource in the container listing", async () => {
+      it.skip("adds the resource in the container listing", async () => {
         const containerListing = await getContainerMembers(
           containerUrl,
           authFetcher
@@ -390,13 +390,13 @@ describe("Create non-container", () => {
           `pub ${testFolderUrl}`,
         ]);
       });
-      it("emits websockets-pubsub on the container", () => {
+      it.skip("emits websockets-pubsub on the container", () => {
         expect(websocketsPubsubClientContainer.received).toEqual([
           `ack ${containerUrl}`,
           `pub ${containerUrl}`,
         ]);
       });
-      it("emits websockets-pubsub on the resource", () => {
+      it.skip("emits websockets-pubsub on the resource", () => {
         expect(websocketsPubsubClientResource.received).toEqual([
           `ack ${resourceUrl}`,
           `pub ${resourceUrl}`,
