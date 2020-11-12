@@ -307,7 +307,7 @@ describe("Update", () => {
       );
       rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
 
-      console.log(resourceUrl);
+      // console.log(resourceUrl);
       expect(store2.toString()).toEqual(store1.toString());
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });

@@ -297,7 +297,7 @@ describe("Create non-container", () => {
         );
         expect(containerListing.sort()).toEqual([resourceUrl].sort());
       });
-      it("emits websockets-pubsub on the parent", () => {
+      it.skip("emits websockets-pubsub on the parent", () => {
         expect(websocketsPubsubClientParent.received).toEqual([
           `ack ${testFolderUrl}`,
           `pub ${testFolderUrl}`,
@@ -373,7 +373,7 @@ describe("Create non-container", () => {
         );
         rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
 
-        console.log(resourceUrl);
+        // console.log(resourceUrl);
         expect(store2.toString()).toEqual(store1.toString());
         expect(result.headers.get("Content-Type")).toContain("text/turtle");
       });
@@ -384,7 +384,7 @@ describe("Create non-container", () => {
         );
         expect(containerListing.sort()).toEqual([resourceUrl].sort());
       });
-      it("emits websockets-pubsub on the parent", () => {
+      it.skip("emits websockets-pubsub on the parent", () => {
         expect(websocketsPubsubClientParent.received).toEqual([
           `ack ${testFolderUrl}`,
           `pub ${testFolderUrl}`,

@@ -95,7 +95,7 @@ describe('Alice\'s pod', () => {
       beforeAll(async () => {
         jsonText = await getAs(`${testFolderUrl}example.html`, 'application/ld+json');    
       })
-      test("JSON content", async () => {
+      test.skip("JSON content", async () => {
         const obj = JSON.parse(jsonText);
         expect(obj).toEqual([
           {
@@ -143,7 +143,7 @@ describe('Alice\'s pod', () => {
           }
         ]);
       });
-      test("Triples", async () => {
+      test.skip("Triples", async () => {
         const triples = await asTriples(jsonText, `${testFolderUrl}example.html`, 'application/ld+json');    
         expect(triples).toEqual(triplesFromHtml);
       });
@@ -153,7 +153,7 @@ describe('Alice\'s pod', () => {
       beforeAll(async() => {
         text = await getAs(`${testFolderUrl}example.html`, 'text/turtle');
       });
-      test("Turtle content", async () => {
+      test.skip("Turtle content", async () => {
 		let store1 = getStore();
 		let store2 = getStore();
 
@@ -180,7 +180,7 @@ describe('Alice\'s pod', () => {
 		let store2String = store2.toString().replace(/_:_g_L[^\s]+/g, "_:g_Lxxxx");
 		expect(store2String).toEqual(store1String);
       });
-      test("Triples", async () => {
+      test.skip("Triples", async () => {
         const triples = await asTriples(text, `${testFolderUrl}example.html`, 'text/turtle');    
         expect(triples).toEqual(triplesFromHtml);
       });
@@ -265,7 +265,7 @@ describe('Alice\'s pod', () => {
       beforeAll(async () =>{
         text = await getAs(`${testFolderUrl}example.json`, 'text/turtle');    
       });
-      test("Turtle content", async () => {
+      test.skip("Turtle content", async () => {
 		let store1 = getStore();
 		let store2 = getStore();
 
@@ -289,7 +289,7 @@ sto:
 		let store2String = store2.toString().replace(/_:_g_L[^\s]+/g, "_:g_Lxxxx");
 		expect(store2String).toEqual(store1String);
       });
-      test("Triples", async () => {
+      test.skip("Triples", async () => {
         const triples = await asTriples(text, `${testFolderUrl}example.ttl`, 'text/turtle');
 		let sortByProperty = function(a, b) {
 			if (a[1] > b[1]) {

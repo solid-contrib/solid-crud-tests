@@ -69,7 +69,7 @@ export class WPSClient {
       perMessageDeflate: false,
     });
     this.ws.on("message", (msg) => {
-      console.log("WS <", msg);
+      // console.log("WS <", msg);
       this.received.push(msg);
     });
     await new Promise((resolve) => {
@@ -88,7 +88,7 @@ export class WPSClient {
   }
   // NB: this will fail if you didn't await getReady first:
   send(str) {
-    console.log("WS > ", str);
+    // console.log("WS > ", str);
     this.sent.push(str);
     return new Promise((resolve) => this.ws.send(str, resolve));
   }
