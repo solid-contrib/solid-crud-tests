@@ -13,7 +13,9 @@ import {
 } from "../helpers/util";
 import { getStore } from "../helpers/util";
 import rdflib = require("rdflib");
-const waittime = 1000;
+
+const waittime = 2000;
+jest.setTimeout(30000);
 // when the tests start, exists/exists.ttl exists in the test folder,
 // and nothing else.
 

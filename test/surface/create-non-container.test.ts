@@ -16,6 +16,7 @@ import { ldp, rdf, space, link } from "rdf-namespaces";
 const rdflib = require("rdflib");
 
 const waittime = 2000;
+jest.setTimeout(30000);
 
 // when the tests start, exists/exists.ttl exists in the test folder,
 // and nothing else.
