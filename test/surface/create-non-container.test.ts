@@ -13,7 +13,7 @@ import {
 } from "../helpers/util";
 import { getStore } from "../helpers/util";
 import { ldp, rdf, space, link } from "rdf-namespaces";
-const rdflib = require("rdflib");
+import * as rdflib from "rdflib";
 
 const waittime = 2000;
 
@@ -373,7 +373,7 @@ describe("Create non-container", () => {
         );
         rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
 
-        console.log(resourceUrl);
+        // console.log(resourceUrl);
         expect(store2.toString()).toEqual(store1.toString());
         expect(result.headers.get("Content-Type")).toContain("text/turtle");
       });
