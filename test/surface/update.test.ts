@@ -12,7 +12,7 @@ import {
   responseCodeGroup,
 } from "../helpers/util";
 import { getStore } from "../helpers/util";
-import rdflib = require("rdflib");
+import * as rdflib from "rdflib";
 const waittime = 1000;
 // when the tests start, exists/exists.ttl exists in the test folder,
 // and nothing else.
