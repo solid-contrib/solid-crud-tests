@@ -82,7 +82,7 @@ export class WPSClient {
         await this.send(`auth ${authHeaders.Authorization}`);
         await this.send(`dpop ${authHeaders.DPop}`);
         await this.send(`sub ${this.resourceUrl}`);
-        resolve(true);
+        resolve();
       });
     });
   }
