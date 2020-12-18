@@ -35,6 +35,9 @@ describe("Create container", () => {
         // that will be one of the tested behaviours:
         await authFetcher.fetch(`${containerUrl}exists.ttl`, {
           method: "PUT",
+          headers: {
+            "content-type": "text/turtle"
+          },
           body: "<#hello> <#linked> <#world> .",
         });
 
@@ -51,7 +54,7 @@ describe("Create container", () => {
         const result = await authFetcher.fetch(resourceUrl, {
           method: "PUT",
           headers: {
-            "Content-Type": "text/plain",
+            "Content-Type": "text/turtle",
             "If-None-Match": "*",
             Link: '<http://www.w3.org/ns/ldp#BasicContainer>; rel="type"', // See https://github.com/solid/node-solid-server/issues/1465
           },
