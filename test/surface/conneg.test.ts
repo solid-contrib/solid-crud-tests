@@ -338,7 +338,7 @@ describe("Alice's pod", () => {
       beforeAll(async () => {
         text = await getAs(`${testFolderUrl}example.json`, "text/turtle");
       });
-      test("Turtle content", async () => {
+      it.skip("Turtle content", async () => {
         const store1 = getStore();
         const store2 = getStore();
 
@@ -376,7 +376,7 @@ sto:
           .replace(/_:_g_L[^\s]+/g, "_:g_Lxxxx");
         expect(store2String).toEqual(store1String);
       });
-      test("Triples", async () => {
+      it.skip("Triples", async () => {
         const triples = await asTriples(
           text,
           `${testFolderUrl}example.ttl`,
