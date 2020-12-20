@@ -13,7 +13,7 @@ import {
 } from "../helpers/util";
 import { getStore } from "../helpers/util";
 import { ldp, rdf, space, link } from "rdf-namespaces";
-const rdflib = require("rdflib");
+import * as rdflib from "rdflib";
 
 const waittime = 2000;
 
@@ -39,6 +39,9 @@ describe("Create non-container", () => {
         // that will be one of the tested behaviours:
         await authFetcher.fetch(`${containerUrl}exists.ttl`, {
           method: "PUT",
+          headers: {
+            "Content-Type": "text/turtle",
+          },
           body: "<#hello> <#linked> <#world> .",
         });
 
@@ -46,7 +49,7 @@ describe("Create non-container", () => {
         await websocketsPubsubClient.getReady();
         const result = await authFetcher.fetch(containerUrl, {
           method: "POST",
-          header: {
+          headers: {
             "Content-Type": "text/plain",
           },
           body: "Hello World",
@@ -98,6 +101,9 @@ describe("Create non-container", () => {
         // that will be one of the tested behaviours:
         await authFetcher.fetch(`${containerUrl}exists.ttl`, {
           method: "PUT",
+          headers: {
+            "Content-Type": "text/turtle"
+          },
           body: "<#hello> <#linked> <#world> .",
         });
 
@@ -113,7 +119,7 @@ describe("Create non-container", () => {
         await websocketsPubsubClientResource.getReady();
         const result = await authFetcher.fetch(resourceUrl, {
           method: "PUT",
-          header: {
+          headers: {
             "Content-Type": "text/plain",
             "If-None-Match": "*",
           },
@@ -169,6 +175,9 @@ describe("Create non-container", () => {
         // that will be one of the tested behaviours:
         await authFetcher.fetch(`${containerUrl}exists.ttl`, {
           method: "PUT",
+          headers: {
+            "Content-Type": "text/turtle"
+          },
           body: "<#hello> <#linked> <#world> .",
         });
 
@@ -268,7 +277,7 @@ describe("Create non-container", () => {
         await websocketsPubsubClientResource.getReady();
         const result = await authFetcher.fetch(resourceUrl, {
           method: "PUT",
-          header: {
+          headers: {
             "Content-Type": "text/plain",
             "If-None-Match": "*",
           },

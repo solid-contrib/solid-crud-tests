@@ -34,6 +34,9 @@ describe("Delete", () => {
       // that will be one of the tested behaviours:
       await authFetcher.fetch(resourceUrl, {
         method: "PUT",
+        headers: {
+          "content-type": "text/turtle"
+        },
         body: "<#hello> <#linked> <#world> .",
       });
 
@@ -93,6 +96,9 @@ describe("Delete", () => {
       // that will be one of the tested behaviours:
       await authFetcher.fetch(resourceUrl, {
         method: "PUT",
+        headers: {
+          "content-type": "text/turtle"
+        },
         body: "<#hello> <#linked> <#world> .",
       });
 
@@ -153,6 +159,9 @@ describe("Delete", () => {
       // and on non-container delete:
       await authFetcher.fetch(resourceUrl, {
         method: "PUT",
+        headers: {
+          "content-type": "text/turtle"
+        },
         body: "<#hello> <#linked> <#world> .",
       });
       await authFetcher.fetch(resourceUrl, {

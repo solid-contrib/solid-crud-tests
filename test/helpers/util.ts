@@ -1,7 +1,7 @@
 import { getAuthHeaders } from "solid-auth-fetcher";
 
 import WebSocket = require("ws");
-import rdf = require("rdflib");
+import * as rdf from "rdflib";
 import { IndexedFormula } from "rdflib";
 import AuthFetcher from "solid-auth-fetcher/dist/AuthFetcher";
 
@@ -72,7 +72,7 @@ export class WPSClient {
       // console.log("WS <", msg);
       this.received.push(msg);
     });
-    await new Promise((resolve) => {
+    await new Promise<void>((resolve) => {
       this.ws.on("open", async () => {
         const authHeaders = await getAuthHeaders(
           this.resourceUrl,
