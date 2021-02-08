@@ -52,6 +52,7 @@ export class WPSClient {
   received: string[];
   sent: string[];
   resourceUrl: string;
+  disabled: boolean;
   authFetcher;
   ws;
   constructor(resourceUrl: string, authFetcher) {
@@ -59,8 +60,12 @@ export class WPSClient {
     this.sent = [];
     this.resourceUrl = resourceUrl;
     this.authFetcher = authFetcher;
+    this.disabled = !!process.env.SKIP_WPS;
   }
   async getReady() {
+    if (this.disabled) {
+      return;
+    }
     const result = await this.authFetcher.fetch(this.resourceUrl, {
       method: "HEAD",
     });
@@ -88,16 +93,29 @@ export class WPSClient {
   }
   // NB: this will fail if you didn't await getReady first:
   send(str) {
+    if (this.disabled) {
+      return;
+    }
     // console.log("WS > ", str);
     this.sent.push(str);
     return new Promise((resolve) => this.ws.send(str, resolve));
   }
   disconnect() {
+    if (this.disabled) {
+      return;
+    }
     if (this.ws) {
       this.ws.terminate();
       delete this.ws;
     }
   }
+}
+
+export function ifWps(name, runner) {
+  if (process.env.SKIP_WPS) {
+    return it.skip(name, runner);
+  }
+  return it(name, runner);
 }
 
 export function responseCodeGroup(code) {

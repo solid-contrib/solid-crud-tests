@@ -7,6 +7,7 @@ import {
   recursiveDelete,
   getContainerMembers,
   WPSClient,
+  ifWps,
   responseCodeGroup,
 } from "../helpers/util";
 
@@ -40,7 +41,6 @@ describe("Create container", () => {
           },
           body: "<#hello> <#linked> <#world> .",
         });
-
         websocketsPubsubClientContainer = new WPSClient(
           containerUrl,
           authFetcher
@@ -94,13 +94,13 @@ describe("Create container", () => {
         );
       });
 
-      it("emits websockets-pubsub on the existing container", () => {
+      ifWps("emits websockets-pubsub on the existing container", () => {
         expect(websocketsPubsubClientContainer.received).toEqual([
           `ack ${containerUrl}`,
           `pub ${containerUrl}`,
         ]);
       });
-      it("emits websockets-pubsub on the new container", () => {
+      ifWps("emits websockets-pubsub on the new container", () => {
         expect(websocketsPubsubClientResource.received).toEqual([
           `ack ${resourceUrl}`,
           `pub ${resourceUrl}`,

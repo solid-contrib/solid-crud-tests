@@ -9,6 +9,7 @@ import {
   recursiveDelete,
   getContainerMembers,
   WPSClient,
+  ifWps,
   responseCodeGroup,
 } from "../helpers/util";
 import { getStore } from "../helpers/util";
@@ -77,7 +78,7 @@ describe("Update", () => {
       expect(store2.toString()).toEqual(store1.toString());
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
-    it("emits websockets-pubsub on the resource", () => {
+    ifWps("emits websockets-pubsub on the resource", () => {
       expect(websocketsPubsubClientResource.received).toEqual([
         `ack ${resourceUrl}`,
         `pub ${resourceUrl}`,
@@ -128,7 +129,7 @@ describe("Update", () => {
       expect(await result.text()).toEqual("replaced");
       expect(result.headers.get("Content-Type")).toContain("text/plain");
     });
-    it("emits websockets-pubsub on the resource", () => {
+    ifWps("emits websockets-pubsub on the resource", () => {
       expect(websocketsPubsubClientResource.received).toEqual([
         `ack ${resourceUrl}`,
         `pub ${resourceUrl}`,
@@ -189,7 +190,7 @@ describe("Update", () => {
       expect(store2.toString()).toEqual(store1.toString());
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
-    it("emits websockets-pubsub on the resource", () => {
+    ifWps("emits websockets-pubsub on the resource", () => {
       expect(websocketsPubsubClientResource.received).toEqual([
         `ack ${resourceUrl}`,
         `pub ${resourceUrl}`,
@@ -251,7 +252,7 @@ describe("Update", () => {
       expect(store2.toString()).toEqual(store1.toString());
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
-    it("emits websockets-pubsub on the resource", () => {
+    ifWps("emits websockets-pubsub on the resource", () => {
       expect(websocketsPubsubClientResource.received).toEqual([
         `ack ${resourceUrl}`,
         `pub ${resourceUrl}`,
@@ -311,7 +312,7 @@ describe("Update", () => {
       expect(store2.toString()).toEqual(store1.toString());
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
-    it("does not emit websockets-pubsub on the resource", () => {
+    ifWps("does not emit websockets-pubsub on the resource", () => {
       expect(websocketsPubsubClientResource.received).toEqual([
         `ack ${resourceUrl}`,
       ]);
@@ -363,7 +364,7 @@ describe("Update", () => {
       expect(store2.toString()).toEqual(store1.toString());
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
-    it("emits websockets-pubsub on the resource", () => {
+    ifWps("emits websockets-pubsub on the resource", () => {
       expect(websocketsPubsubClientResource.received).toEqual([
         `ack ${resourceUrl}`,
         `pub ${resourceUrl}`,
@@ -421,7 +422,7 @@ describe("Update", () => {
       expect(store2.toString()).toEqual(store1.toString());
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
-    it("does not emit websockets-pubsub on the resource", () => {
+    ifWps("does not emit websockets-pubsub on the resource", () => {
       expect(websocketsPubsubClientResource.received).toEqual([
         `ack ${resourceUrl}`,
       ]);
