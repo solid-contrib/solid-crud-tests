@@ -10,6 +10,7 @@ import {
   getContainerMembers,
   WPSClient,
   responseCodeGroup,
+  ifWps,
 } from "../helpers/util";
 import { getStore } from "../helpers/util";
 import { ldp, rdf, space, link } from "rdf-namespaces";
@@ -81,7 +82,7 @@ describe("Create non-container", () => {
           [`${containerUrl}exists.ttl`, resourceUrl].sort()
         );
       });
-      it("emits websockets-pubsub on the container", () => {
+      ifWps("emits websockets-pubsub on the container", () => {
         expect(websocketsPubsubClient.received).toEqual([
           `ack ${containerUrl}`,
           `pub ${containerUrl}`,
@@ -149,13 +150,13 @@ describe("Create non-container", () => {
           [`${containerUrl}exists.ttl`, resourceUrl].sort()
         );
       });
-      it("emits websockets-pubsub on the container", () => {
+      ifWps("emits websockets-pubsub on the container", () => {
         expect(websocketsPubsubClientContainer.received).toEqual([
           `ack ${containerUrl}`,
           `pub ${containerUrl}`,
         ]);
       });
-      it("emits websockets-pubsub on the resource", () => {
+      ifWps("emits websockets-pubsub on the resource", () => {
         expect(websocketsPubsubClientResource.received).toEqual([
           `ack ${resourceUrl}`,
           `pub ${resourceUrl}`,
@@ -235,13 +236,13 @@ describe("Create non-container", () => {
           [`${containerUrl}exists.ttl`, resourceUrl].sort()
         );
       });
-      it("emits websockets-pubsub on the container", () => {
+      ifWps("emits websockets-pubsub on the container", () => {
         expect(websocketsPubsubClientContainer.received).toEqual([
           `ack ${containerUrl}`,
           `pub ${containerUrl}`,
         ]);
       });
-      it("emits websockets-pubsub on the resource", () => {
+      ifWps("emits websockets-pubsub on the resource", () => {
         expect(websocketsPubsubClientResource.received).toEqual([
           `ack ${resourceUrl}`,
           `pub ${resourceUrl}`,
@@ -306,19 +307,19 @@ describe("Create non-container", () => {
         );
         expect(containerListing.sort()).toEqual([resourceUrl].sort());
       });
-      it("emits websockets-pubsub on the parent", () => {
+      ifWps("emits websockets-pubsub on the parent", () => {
         expect(websocketsPubsubClientParent.received).toEqual([
           `ack ${testFolderUrl}`,
           `pub ${testFolderUrl}`,
         ]);
       });
-      it("emits websockets-pubsub on the container", () => {
+      ifWps("emits websockets-pubsub on the container", () => {
         expect(websocketsPubsubClientContainer.received).toEqual([
           `ack ${containerUrl}`,
           `pub ${containerUrl}`,
         ]);
       });
-      it("emits websockets-pubsub on the resource", () => {
+      ifWps("emits websockets-pubsub on the resource", () => {
         expect(websocketsPubsubClientResource.received).toEqual([
           `ack ${resourceUrl}`,
           `pub ${resourceUrl}`,
@@ -393,19 +394,19 @@ describe("Create non-container", () => {
         );
         expect(containerListing.sort()).toEqual([resourceUrl].sort());
       });
-      it("emits websockets-pubsub on the parent", () => {
+      ifWps("emits websockets-pubsub on the parent", () => {
         expect(websocketsPubsubClientParent.received).toEqual([
           `ack ${testFolderUrl}`,
           `pub ${testFolderUrl}`,
         ]);
       });
-      it("emits websockets-pubsub on the container", () => {
+      ifWps("emits websockets-pubsub on the container", () => {
         expect(websocketsPubsubClientContainer.received).toEqual([
           `ack ${containerUrl}`,
           `pub ${containerUrl}`,
         ]);
       });
-      it("emits websockets-pubsub on the resource", () => {
+      ifWps("emits websockets-pubsub on the resource", () => {
         expect(websocketsPubsubClientResource.received).toEqual([
           `ack ${resourceUrl}`,
           `pub ${resourceUrl}`,

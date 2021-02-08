@@ -9,6 +9,7 @@ import {
   recursiveDelete,
   getContainerMembers,
   WPSClient,
+  ifWps,
   responseCodeGroup,
 } from "../helpers/util";
 
@@ -69,13 +70,13 @@ describe("Delete", () => {
       );
       expect(containerListing.sort()).toEqual([]);
     });
-    it("emits websockets-pubsub on the container", () => {
+    ifWps("emits websockets-pubsub on the container", () => {
       expect(websocketsPubsubClientContainer.received).toEqual([
         `ack ${containerUrl}`,
         `pub ${containerUrl}`,
       ]);
     });
-    it("emits websockets-pubsub on the resource", () => {
+    ifWps("emits websockets-pubsub on the resource", () => {
       expect(websocketsPubsubClientResource.received).toEqual([
         `ack ${resourceUrl}`,
         `pub ${resourceUrl}`,
@@ -135,12 +136,12 @@ describe("Delete", () => {
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
 
-    it("does not emit websockets-pubsub on the container", () => {
+    ifWps("does not emit websockets-pubsub on the container", () => {
       expect(websocketsPubsubClientContainer.received).toEqual([
         `ack ${containerUrl}`,
       ]);
     });
-    it("does not emit websockets-pubsub on the resource", () => {
+    ifWps("does not emit websockets-pubsub on the resource", () => {
       expect(websocketsPubsubClientResource.received).toEqual([
         `ack ${resourceUrl}`,
       ]);
@@ -188,7 +189,7 @@ describe("Delete", () => {
       expect(result.status).toEqual(404);
     });
 
-    it("emits websockets-pubsub on the container", () => {
+    ifWps("emits websockets-pubsub on the container", () => {
       expect(websocketsPubsubClientContainer.received).toEqual([
         `ack ${containerUrl}`,
         `pub ${containerUrl}`,

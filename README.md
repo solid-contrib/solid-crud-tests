@@ -80,3 +80,10 @@ Start your server with a self-signed cert on port 443 of localhost and run with:
 export NODE_TLS_REJECT_UNAUTHORIZED=0
 export SERVER_ROOT=https://localhost
 ```
+
+### Skipping the tests that are related to websockets-pubsub
+By specifying the `SKIP_WPS` environment variable you can make
+all websockets-pubsub related tests be skipped. This means you
+don't get distracted by failing tests if you simply did not implement
+that part of the Solid spec yet, and only want to test the https part of
+your server's behaviour.
