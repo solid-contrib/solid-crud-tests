@@ -4,7 +4,7 @@ set -e
 # The SERVER_ROOT will be used both for webid-oidc discovery and as the base container to run the tests against.
 # To use a different base container set STORAGE_ROOT.
 
-export SERVER_ROOT=server
+export SERVER_ROOT=https://server
 export USERNAME=alice
 export PASSWORD=123
 export RESULTS_PATH=../NSS-crud-results.json
