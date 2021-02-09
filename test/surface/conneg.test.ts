@@ -229,10 +229,10 @@ describe("Alice's pod", () => {
         );
         const store1Array = store1
           .statementsMatching()
-          .map((item) => item.toString().replace(/_:_g_L[^\s]+/g, "_:g_Lxxxx"));
+          .map((item) => item.toString().replace(/_:[^\s]+/g, "_:xxxx"));
         const store2Array = store2
           .statementsMatching()
-          .map((item) => item.toString().replace(/_:_g_L[^\s]+/g, "_:g_Lxxxx"));
+          .map((item) => item.toString().replace(/_:[^\s]+/g, "_:xxxx"));
         expect(store2Array).toIncludeAllMembers(store1Array);
       });
       test("Triples", async () => {
@@ -370,10 +370,10 @@ sto:
 
         const store1String = store1
           .toString()
-          .replace(/_:_g_L[^\s]+/g, "_:g_Lxxxx");
+          .replace(/_:[^\s]+/g, "_:xxxx");
         const store2String = store2
           .toString()
-          .replace(/_:_g_L[^\s]+/g, "_:g_Lxxxx");
+          .replace(/_:[^\s]+/g, "_:xxxx");
         expect(store2String).toEqual(store1String);
       });
       test("Triples", async () => {
