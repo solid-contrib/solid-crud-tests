@@ -58,6 +58,7 @@ describe("Create container", () => {
             "If-None-Match": "*",
             Link: '<http://www.w3.org/ns/ldp#BasicContainer>; rel="type"', // See https://github.com/solid/node-solid-server/issues/1465
           },
+          body: ' ' // work around https://github.com/michielbdejong/community-server/issues/4#issuecomment-776222863
         });
       });
 
