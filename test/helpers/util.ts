@@ -5,6 +5,8 @@ import * as rdf from "rdflib";
 import { IndexedFormula } from "rdflib";
 import AuthFetcher from "solid-auth-fetcher/dist/AuthFetcher";
 
+const PROTOCOL_STRING = "solid-0.1";
+
 function isContainer(url) {
   return url.substr(-1) === "/";
 }
@@ -70,7 +72,7 @@ export class WPSClient {
       method: "HEAD",
     });
     const wssUrl = result.headers.get("updates-via");
-    this.ws = new WebSocket(wssUrl, {
+    this.ws = new WebSocket(wssUrl, PROTOCOL_STRING, {
       perMessageDeflate: false,
     });
     this.ws.on("message", (msg) => {

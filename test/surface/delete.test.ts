@@ -36,7 +36,7 @@ describe("Delete", () => {
       await authFetcher.fetch(resourceUrl, {
         method: "PUT",
         headers: {
-          "content-type": "text/turtle"
+          "content-type": "text/turtle",
         },
         body: "<#hello> <#linked> <#world> .",
       });
@@ -71,16 +71,14 @@ describe("Delete", () => {
       expect(containerListing.sort()).toEqual([]);
     });
     ifWps("emits websockets-pubsub on the container", () => {
-      expect(websocketsPubsubClientContainer.received).toEqual([
-        `ack ${containerUrl}`,
-        `pub ${containerUrl}`,
-      ]);
+      expect(websocketsPubsubClientContainer.received).toEqual(
+        expect.arrayContaining([`ack ${containerUrl}`, `pub ${containerUrl}`])
+      );
     });
     ifWps("emits websockets-pubsub on the resource", () => {
-      expect(websocketsPubsubClientResource.received).toEqual([
-        `ack ${resourceUrl}`,
-        `pub ${resourceUrl}`,
-      ]);
+      expect(websocketsPubsubClientResource.received).toEqual(
+        expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
+      );
     });
   });
 
@@ -98,7 +96,7 @@ describe("Delete", () => {
       await authFetcher.fetch(resourceUrl, {
         method: "PUT",
         headers: {
-          "content-type": "text/turtle"
+          "content-type": "text/turtle",
         },
         body: "<#hello> <#linked> <#world> .",
       });
@@ -137,14 +135,20 @@ describe("Delete", () => {
     });
 
     ifWps("does not emit websockets-pubsub on the container", () => {
-      expect(websocketsPubsubClientContainer.received).toEqual([
-        `ack ${containerUrl}`,
-      ]);
+      expect(websocketsPubsubClientContainer.received).toEqual(
+        expect.arrayContaining([`ack ${containerUrl}`])
+      );
+      expect(websocketsPubsubClientContainer.received).not.toEqual(
+        expect.arrayContaining([`pub ${containerUrl}`])
+      );
     });
     ifWps("does not emit websockets-pubsub on the resource", () => {
-      expect(websocketsPubsubClientResource.received).toEqual([
-        `ack ${resourceUrl}`,
-      ]);
+      expect(websocketsPubsubClientResource.received).toEqual(
+        expect.arrayContaining([`ack ${resourceUrl}`])
+      );
+      expect(websocketsPubsubClientResource.received).not.toEqual(
+        expect.arrayContaining([`pub ${resourceUrl}`])
+      );
     });
   });
 
@@ -161,7 +165,7 @@ describe("Delete", () => {
       await authFetcher.fetch(resourceUrl, {
         method: "PUT",
         headers: {
-          "content-type": "text/turtle"
+          "content-type": "text/turtle",
         },
         body: "<#hello> <#linked> <#world> .",
       });
@@ -190,10 +194,9 @@ describe("Delete", () => {
     });
 
     ifWps("emits websockets-pubsub on the container", () => {
-      expect(websocketsPubsubClientContainer.received).toEqual([
-        `ack ${containerUrl}`,
-        `pub ${containerUrl}`,
-      ]);
+      expect(websocketsPubsubClientContainer.received).toEqual(
+        expect.arrayContaining([`ack ${containerUrl}`, `pub ${containerUrl}`])
+      );
     });
   });
 });
