@@ -24,7 +24,8 @@ describe("Create container", () => {
 
   // use `${testFolderUrl}exists/` as the existing folder:
   describe("in an existing container", () => {
-    describe("using PUT", () => {
+    // FIXME: https://github.com/michielbdejong/community-server/issues/11
+    describe.skip("using PUT", () => {
       const { testFolderUrl } = generateTestFolder();
       let websocketsPubsubClientContainer;
       let websocketsPubsubClientResource;
