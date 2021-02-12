@@ -61,6 +61,37 @@ const triplesFromTurtle = [
 
 describe("Alice's pod", () => {
   let authFetcher;
+  function getStore() {
+    const store = (module.exports = rdflib.graph()); // Make a Quad store
+    rdflib.fetcher(store, { fetch: authFetcher.fetch.bind(authFetcher) }); // Attach a web I/O module, store.fetcher
+    store.updater = new rdflib.UpdateManager(store); // Add real-time live updates store.updater
+    return store;
+  }
+  
+  async function asTriples(text, url, type) {
+    const store = getStore();
+    await new Promise((resolve, reject) => {
+      try {
+        rdflib.parse(text, store, url, type, resolve);
+      } catch (e) {
+        reject(e);
+      }
+    });
+    function allBlanksAsZero(str) {
+      if (str.startsWith("_:") || str.startsWith("<_:")) {
+        return "<_:b0>";
+      }
+      return str;
+    }
+    return store.statements
+      .map((st) => [
+        allBlanksAsZero(st.subject.toString()),
+        allBlanksAsZero(st.predicate.toString()),
+        allBlanksAsZero(st.object.toString()),
+      ])
+      .sort();
+  }
+  
   beforeAll(async () => {
     authFetcher = await getAuthFetcher(oidcIssuer, cookie, appOrigin);
     await authFetcher.fetch(`${testFolderUrl}example.ttl`, {
@@ -87,12 +118,6 @@ describe("Alice's pod", () => {
   });
   afterAll(() => recursiveDelete(testFolderUrl, authFetcher));
 
-  function getStore() {
-    const store = (module.exports = rdflib.graph()); // Make a Quad store
-    rdflib.fetcher(store, { fetch: authFetcher.fetch.bind(authFetcher) }); // Attach a web I/O module, store.fetcher
-    store.updater = new rdflib.UpdateManager(store); // Add real-time live updates store.updater
-    return store;
-  }
   async function getAs(url, type) {
     const fetchResult = await authFetcher.fetch(url, {
       headers: {
@@ -100,29 +125,6 @@ describe("Alice's pod", () => {
       },
     });
     return fetchResult.text();
-  }
-  async function asTriples(text, url, type) {
-    const store = getStore();
-    await new Promise((resolve, reject) => {
-      try {
-        rdflib.parse(text, store, url, type, resolve);
-      } catch (e) {
-        reject(e);
-      }
-    });
-    function allBlanksAsZero(str) {
-      if (str.startsWith("_:") || str.startsWith("<_:")) {
-        return "<_:b0>";
-      }
-      return str;
-    }
-    return store.statements
-      .map((st) => [
-        allBlanksAsZero(st.subject.toString()),
-        allBlanksAsZero(st.predicate.toString()),
-        allBlanksAsZero(st.object.toString()),
-      ])
-      .sort();
   }
   describe("Get RDFa", () => {
     describe("As JSON-LD", () => {
@@ -153,38 +155,38 @@ describe("Alice's pod", () => {
       //     ],
       //   });
 
-        expect(example).toContainEntries(
-          Object.entries({
-            "@id": `${testFolderUrl}example.html`,
-            "http://www.w3.org/2000/01/rdf-schema#seeAlso": [
-              {
-                "@id": `${testFolderUrl}about.htm`,
-              },
-            ],
-            "http://www.w3.org/2000/10/swap/pim/contact#address": [
-              {
-                "@id": obj[0]["@id"],
-              },
-            ],
-            "http://xmlns.com/foaf/0.1/name": [
-              {
-                "@value": "Jerry Smith",
-                "@language": "en",
-              },
-            ],
-            "http://xmlns.com/foaf/0.1/phone": [
-              {
-                "@id": "tel:+6112345678",
-              },
-            ],
-            "http://xmlns.com/foaf/0.1/primaryTopic": [
-              {
-                "@id": "http://www.example.com/metadata/foaf.rdf",
-              },
-            ],
-          })
-        );
-      });
+      //   expect(example).toContainEntries(
+      //     Object.entries({
+      //       "@id": `${testFolderUrl}example.html`,
+      //       "http://www.w3.org/2000/01/rdf-schema#seeAlso": [
+      //         {
+      //           "@id": `${testFolderUrl}about.htm`,
+      //         },
+      //       ],
+      //       "http://www.w3.org/2000/10/swap/pim/contact#address": [
+      //         {
+      //           "@id": obj[0]["@id"],
+      //         },
+      //       ],
+      //       "http://xmlns.com/foaf/0.1/name": [
+      //         {
+      //           "@value": "Jerry Smith",
+      //           "@language": "en",
+      //         },
+      //       ],
+      //       "http://xmlns.com/foaf/0.1/phone": [
+      //         {
+      //           "@id": "tel:+6112345678",
+      //         },
+      //       ],
+      //       "http://xmlns.com/foaf/0.1/primaryTopic": [
+      //         {
+      //           "@id": "http://www.example.com/metadata/foaf.rdf",
+      //         },
+      //       ],
+      //     })
+      //   );
+      // });
       test("Triples", async () => {
         const triples = await asTriples(
           jsonText,
