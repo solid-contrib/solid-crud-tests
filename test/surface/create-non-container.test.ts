@@ -151,10 +151,7 @@ describe("Create non-container", () => {
       });
       ifWps("emits websockets-pubsub on the container", () => {
         expect(websocketsPubsubClientContainer.received).toEqual(
-          expect.arrayContaining([
-            `ack ${containerUrl}`,
-            // FIXME: https://github.com/michielbdejong/community-server/issues/9 `pub ${containerUrl}`,
-          ])
+          expect.arrayContaining([`ack ${containerUrl}`, `pub ${containerUrl}`])
         );
       });
       ifWps("emits websockets-pubsub on the resource", () => {
@@ -238,10 +235,7 @@ describe("Create non-container", () => {
       });
       ifWps("emits websockets-pubsub on the container", () => {
         expect(websocketsPubsubClientContainer.received).toEqual(
-          expect.arrayContaining([
-            `ack ${containerUrl}`,
-            // FIXME: https://github.com/michielbdejong/community-server/issues/9 `pub ${containerUrl}`
-          ])
+          expect.arrayContaining([`ack ${containerUrl}`, `pub ${containerUrl}`])
         );
       });
       ifWps("emits websockets-pubsub on the resource", () => {
@@ -312,24 +306,18 @@ describe("Create non-container", () => {
         expect(websocketsPubsubClientParent.received).toEqual(
           expect.arrayContaining([
             `ack ${testFolderUrl}`,
-            // FIXME: https://github.com/michielbdejong/community-server/issues/9 `pub ${testFolderUrl}`,
+            `pub ${testFolderUrl}`,
           ])
         );
       });
       ifWps("emits websockets-pubsub on the container", () => {
         expect(websocketsPubsubClientContainer.received).toEqual(
-          expect.arrayContaining([
-            `ack ${containerUrl}`,
-            // FIXME: https://github.com/michielbdejong/community-server/issues/9 `pub ${containerUrl}`,
-          ])
+          expect.arrayContaining([`ack ${containerUrl}`, `pub ${containerUrl}`])
         );
       });
       ifWps("emits websockets-pubsub on the resource", () => {
         expect(websocketsPubsubClientResource.received).toEqual(
-          expect.arrayContaining([
-            `ack ${resourceUrl}`,
-            // FIXME: https://github.com/michielbdejong/community-server/issues/9 `pub ${resourceUrl}`,
-          ])
+          expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
         );
       });
     });
@@ -405,24 +393,18 @@ describe("Create non-container", () => {
         expect(websocketsPubsubClientParent.received).toEqual(
           expect.arrayContaining([
             `ack ${testFolderUrl}`,
-            // FIXME: https://github.com/michielbdejong/community-server/issues/9 `pub ${testFolderUrl}`,
+            `pub ${testFolderUrl}`,
           ])
         );
       });
       ifWps("emits websockets-pubsub on the container", () => {
         expect(websocketsPubsubClientContainer.received).toEqual(
-          expect.arrayContaining([
-            `ack ${containerUrl}`,
-            // FIXME: https://github.com/michielbdejong/community-server/issues/9 `pub ${containerUrl}`
-          ])
+          expect.arrayContaining([`ack ${containerUrl}`, `pub ${containerUrl}`])
         );
       });
       ifWps("emits websockets-pubsub on the resource", () => {
         expect(websocketsPubsubClientResource.received).toEqual(
-          expect.arrayContaining([
-            `ack ${resourceUrl}`,
-            // FIXME: https://github.com/michielbdejong/community-server/issues/9 `pub ${resourceUrl}`
-          ])
+          expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
         );
       });
     });

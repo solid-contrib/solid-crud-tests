@@ -269,7 +269,7 @@ describe("Update", () => {
       expect(websocketsPubsubClientResource.received).toEqual(
         expect.arrayContaining([
           `ack ${resourceUrl}`,
-          // FIXME: https://github.com/michielbdejong/community-server/issues/9 `pub ${resourceUrl}`
+          `pub ${resourceUrl}`
         ])
       );
     });
