@@ -236,7 +236,7 @@ describe("Update", () => {
           "Content-Type": "application/sparql-update",
         },
         body:
-          "DELETE DATA { <#hello> <#linked> <#world> . }\nINSERT DATA { <#that> a <#fact> . }",
+          "DELETE DATA { <#hello> <#linked> <#world> . };\nINSERT DATA { <#that> a <#fact> . }",
       });
       await new Promise((resolve) => setTimeout(resolve, waittime));
     });
