@@ -15,7 +15,7 @@ import {
 import { getStore } from "../helpers/util";
 import * as rdflib from "rdflib";
 const waittime = 1000;
-// when the tests start, exists/exists.ttl exists in the test folder,
+// when the tests start, exists/exists[i].ttl exists in the test folder,
 // and nothing else.
 
 describe("Update", () => {
@@ -42,7 +42,7 @@ describe("Update", () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
-    const resourceUrl = `${containerUrl}exists.ttl`;
+    const resourceUrl = `${containerUrl}exists1.ttl`;
 
     beforeAll(async () => {
       // this already relies on the PUT to non-existing folder functionality
@@ -104,7 +104,7 @@ describe("Update", () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
-    const resourceUrl = `${containerUrl}exists.txt`;
+    const resourceUrl = `${containerUrl}exists2.txt`;
 
     beforeAll(async () => {
       // this already relies on the PUT to non-existing folder functionality
@@ -154,7 +154,7 @@ describe("Update", () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
-    const resourceUrl = `${containerUrl}exists.ttl`;
+    const resourceUrl = `${containerUrl}exists3.ttl`;
 
     beforeAll(async () => {
       // this already relies on the PUT to non-existing folder functionality
@@ -214,7 +214,7 @@ describe("Update", () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
-    const resourceUrl = `${containerUrl}exists.ttl`;
+    const resourceUrl = `${containerUrl}exists4.ttl`;
 
     beforeAll(async () => {
       // this already relies on the PUT to non-existing folder functionality
@@ -277,7 +277,7 @@ describe("Update", () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
-    const resourceUrl = `${containerUrl}exists.ttl`;
+    const resourceUrl = `${containerUrl}exists5.ttl`;
 
     beforeAll(async () => {
       // this already relies on the PUT to non-existing folder functionality
@@ -298,7 +298,7 @@ describe("Update", () => {
           "Content-Type": "application/sparql-update",
         },
         body:
-          "DELETE DATA { <#something> <#completely> <#different> . }\nINSERT DATA { <#that> a <#fact> . }",
+          "DELETE DATA { <#something> <#completely> <#different> . };\nINSERT DATA { <#that> a <#fact> . }",
       });
     });
 
@@ -336,12 +336,11 @@ describe("Update", () => {
     });
   });
 
-  // FIXME: https://github.com/michielbdejong/community-server/issues/8#issuecomment-776592443
-  describe.skip("Using PATCH to remove triple (present)", () => {
+  describe("Using PATCH to remove triple (present)", () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
-    const resourceUrl = `${containerUrl}exists.ttl`;
+    const resourceUrl = `${containerUrl}exists6.ttl`;
 
     beforeAll(async () => {
       // this already relies on the PUT to non-existing folder functionality
@@ -393,7 +392,7 @@ describe("Update", () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
-    const resourceUrl = `${containerUrl}exists.ttl`;
+    const resourceUrl = `${containerUrl}exists7.ttl`;
 
     beforeAll(async () => {
       // this already relies on the PUT to non-existing folder functionality
