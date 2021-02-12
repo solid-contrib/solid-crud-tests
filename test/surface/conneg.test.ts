@@ -133,25 +133,25 @@ describe("Alice's pod", () => {
           "application/ld+json"
         );
       });
-      test.skip("JSON content", async () => {
-        const obj = JSON.parse(jsonText);
-        // expect(obj).toHaveLength(2);
-        const address = obj.find((item) => item["@id"] !== `${testFolderUrl}example.html`);
-        const example = obj.find((item) => item["@id"] === `${testFolderUrl}example.html`);
-        expect(address).toEqual({
-          "@id": obj[0]["@id"],
-          "http://www.w3.org/2000/01/rdf-schema#seeAlso": [
-            {
-              "@id": "http://dbpedia.org/resource/Adelaide",
-            },
-          ],
-          "http://www.w3.org/2000/10/swap/pim/contact#city": [
-            {
-              "@value": "Adelaide",
-              "@language": "en",
-            },
-          ],
-        });
+      // test.skip("JSON content", async () => {
+      //   const obj = JSON.parse(jsonText);
+      //   // expect(obj).toHaveLength(2);
+      //   const address = obj.find((item) => item["@id"] !== `${testFolderUrl}example.html`);
+      //   const example = obj.find((item) => item["@id"] === `${testFolderUrl}example.html`);
+      //   expect(address).toEqual({
+      //     "@id": obj[0]["@id"],
+      //     "http://www.w3.org/2000/01/rdf-schema#seeAlso": [
+      //       {
+      //         "@id": "http://dbpedia.org/resource/Adelaide",
+      //       },
+      //     ],
+      //     "http://www.w3.org/2000/10/swap/pim/contact#city": [
+      //       {
+      //         "@value": "Adelaide",
+      //         "@language": "en",
+      //       },
+      //     ],
+      //   });
 
         expect(example).toContainEntries(
           Object.entries({
@@ -199,42 +199,42 @@ describe("Alice's pod", () => {
       beforeAll(async () => {
         text = await getAs(`${testFolderUrl}example.html`, "text/turtle");
       });
-      test.skip("Turtle content", async () => {
-        const store1 = getStore();
-        const store2 = getStore();
+    //   test.skip("Turtle content", async () => {
+    //     const store1 = getStore();
+    //     const store2 = getStore();
 
-        rdflib.parse(
-          `@prefix : <#>.
-		@prefix rd: <http://www.w3.org/2000/01/rdf-schema#>.
-		@prefix cont: <http://www.w3.org/2000/10/swap/pim/contact#>.
-		@prefix res: <http://dbpedia.org/resource/>.
-		@prefix n0: <http://xmlns.com/foaf/0.1/>.
+    //     rdflib.parse(
+    //       `@prefix : <#>.
+		// @prefix rd: <http://www.w3.org/2000/01/rdf-schema#>.
+		// @prefix cont: <http://www.w3.org/2000/10/swap/pim/contact#>.
+		// @prefix res: <http://dbpedia.org/resource/>.
+		// @prefix n0: <http://xmlns.com/foaf/0.1/>.
 
-		<>
-		n0:primaryTopic <http://www.example.com/metadata/foaf.rdf>;
-		n0:name "Jerry Smith"@en;
-		rd:seeAlso <about.htm>;
-		cont:address [ rd:seeAlso res:Adelaide; cont:city "Adelaide"@en ];
-		n0:phone <tel:+6112345678>.
-		`,
-          store1,
-          `${testFolderUrl}example.html`,
-          "text/turtle"
-        );
-        rdflib.parse(
-          text,
-          store2,
-          `${testFolderUrl}example.html`,
-          "text/turtle"
-        );
-        const store1Array = store1
-          .statementsMatching()
-          .map((item) => item.toString().replace(/_:[^\s]+/g, "_:xxxx"));
-        const store2Array = store2
-          .statementsMatching()
-          .map((item) => item.toString().replace(/_:[^\s]+/g, "_:xxxx"));
-        expect(store2Array).toIncludeAllMembers(store1Array);
-      });
+		// <>
+		// n0:primaryTopic <http://www.example.com/metadata/foaf.rdf>;
+		// n0:name "Jerry Smith"@en;
+		// rd:seeAlso <about.htm>;
+		// cont:address [ rd:seeAlso res:Adelaide; cont:city "Adelaide"@en ];
+		// n0:phone <tel:+6112345678>.
+		// `,
+    //       store1,
+    //       `${testFolderUrl}example.html`,
+    //       "text/turtle"
+    //     );
+    //     rdflib.parse(
+    //       text,
+    //       store2,
+    //       `${testFolderUrl}example.html`,
+    //       "text/turtle"
+    //     );
+    //     const store1Array = store1
+    //       .statementsMatching()
+    //       .map((item) => item.toString().replace(/_:[^\s]+/g, "_:xxxx"));
+    //     const store2Array = store2
+    //       .statementsMatching()
+    //       .map((item) => item.toString().replace(/_:[^\s]+/g, "_:xxxx"));
+    //     expect(store2Array).toIncludeAllMembers(store1Array);
+    //   });
       test("Triples", async () => {
         const triples = await asTriples(
           text,
@@ -254,19 +254,19 @@ describe("Alice's pod", () => {
           "application/ld+json"
         );
       });
-      test.skip("JSON content", async () => {
-        const obj = JSON.parse(jsonText);
-        expect(obj).toEqual([
-          {
-            "@id": `${testFolderUrl}example.ttl#hello`,
-            [`${testFolderUrl}example.ttl#linked`]: [
-              {
-                "@id": `${testFolderUrl}example.ttl#world`,
-              },
-            ],
-          },
-        ]);
-      });
+      // test.skip("JSON content", async () => {
+      //   const obj = JSON.parse(jsonText);
+      //   expect(obj).toEqual([
+      //     {
+      //       "@id": `${testFolderUrl}example.ttl#hello`,
+      //       [`${testFolderUrl}example.ttl#linked`]: [
+      //         {
+      //           "@id": `${testFolderUrl}example.ttl#world`,
+      //         },
+      //       ],
+      //     },
+      //   ]);
+      // });
       test("Triples", async () => {
         const triples = await asTriples(
           jsonText,
@@ -281,9 +281,9 @@ describe("Alice's pod", () => {
       beforeAll(async () => {
         text = await getAs(`${testFolderUrl}example.ttl`, "text/turtle");
       });
-      test.skip("Turtle content", async () => {
-        expect(text).toEqual("<#hello> <#linked> <#world> .\n");
-      });
+      // test.skip("Turtle content", async () => {
+      //   expect(text).toEqual("<#hello> <#linked> <#world> .\n");
+      // });
       test("Triples", async () => {
         const triples = await asTriples(
           text,
@@ -303,20 +303,20 @@ describe("Alice's pod", () => {
           "application/ld+json"
         );
       });
-      test.skip("JSON content", async () => {
-        const obj = JSON.parse(jsonText);
-        expect(obj).toEqual({
-          "@context": {
-            Store: "http://store.example.com/Store",
-            description: "http://store.example.com/description",
-            name: "http://store.example.com/name",
-          },
-          "@id": "http://store.example.com/",
-          "@type": "Store",
-          name: "Links Bike Shop",
-          description: 'The most "linked" bike store on earth!',
-        });
-      });
+      // test.skip("JSON content", async () => {
+      //   const obj = JSON.parse(jsonText);
+      //   expect(obj).toEqual({
+      //     "@context": {
+      //       Store: "http://store.example.com/Store",
+      //       description: "http://store.example.com/description",
+      //       name: "http://store.example.com/name",
+      //     },
+      //     "@id": "http://store.example.com/",
+      //     "@type": "Store",
+      //     name: "Links Bike Shop",
+      //     description: 'The most "linked" bike store on earth!',
+      //   });
+      // });
       // FIXME: the asTriples function doesn't handle the jsonLD with context properly, so this test is removed for now.
       /*
       test("Triples", async () => {
@@ -338,44 +338,44 @@ describe("Alice's pod", () => {
       beforeAll(async () => {
         text = await getAs(`${testFolderUrl}example.json`, "text/turtle");
       });
-      test.skip("Turtle content", async () => {
-        const store1 = getStore();
-        const store2 = getStore();
+//       test.skip("Turtle content", async () => {
+//         const store1 = getStore();
+//         const store2 = getStore();
 
-        // FIXME: this test fails because of 2 things:
-        // 1. the blank node (cont:address) will get a different number in both parses;
-        // 2. The ordering of the nodes is different, which makes the string result different as well.
-        const expected = `
-@prefix : <#>.
-@prefix sto: <http://store.example.com/>.
+//         // FIXME: this test fails because of 2 things:
+//         // 1. the blank node (cont:address) will get a different number in both parses;
+//         // 2. The ordering of the nodes is different, which makes the string result different as well.
+//         const expected = `
+// @prefix : <#>.
+// @prefix sto: <http://store.example.com/>.
 
-sto:
-    a sto:Store;
-    sto:description
-        """The most "linked" bike store on earth!""";
-    sto:name "Links Bike Shop".
-`;
-        rdflib.parse(
-          expected,
-          store1,
-          `${testFolderUrl}example.json`,
-          "text/turtle"
-        );
-        rdflib.parse(
-          text,
-          store2,
-          `${testFolderUrl}example.json`,
-          "text/turtle"
-        );
+// sto:
+//     a sto:Store;
+//     sto:description
+//         """The most "linked" bike store on earth!""";
+//     sto:name "Links Bike Shop".
+// `;
+//         rdflib.parse(
+//           expected,
+//           store1,
+//           `${testFolderUrl}example.json`,
+//           "text/turtle"
+//         );
+//         rdflib.parse(
+//           text,
+//           store2,
+//           `${testFolderUrl}example.json`,
+//           "text/turtle"
+//         );
 
-        const store1String = store1
-          .toString()
-          .replace(/_:[^\s]+/g, "_:xxxx");
-        const store2String = store2
-          .toString()
-          .replace(/_:[^\s]+/g, "_:xxxx");
-        expect(store2String).toEqual(store1String);
-      });
+//         const store1String = store1
+//           .toString()
+//           .replace(/_:[^\s]+/g, "_:xxxx");
+//         const store2String = store2
+//           .toString()
+//           .replace(/_:[^\s]+/g, "_:xxxx");
+//         expect(store2String).toEqual(store1String);
+//       });
       test("Triples", async () => {
         const triples = await asTriples(
           text,

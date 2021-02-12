@@ -11,6 +11,8 @@ import {
   responseCodeGroup,
 } from "../helpers/util";
 
+const MAX_WPS_DELAY = 1000;
+
 // when the tests start, xists/exists.ttl exists in the test folder,
 // and nothing else.
 
@@ -24,8 +26,7 @@ describe("Create container", () => {
 
   // use `${testFolderUrl}exists/` as the existing folder:
   describe("in an existing container", () => {
-    // FIXME: https://github.com/michielbdejong/community-server/issues/11
-    describe.skip("using PUT", () => {
+    describe.only("using PUT", () => {
       const { testFolderUrl } = generateTestFolder();
       let websocketsPubsubClientContainer;
       let websocketsPubsubClientResource;
@@ -59,7 +60,7 @@ describe("Create container", () => {
             "If-None-Match": "*",
             Link: '<http://www.w3.org/ns/ldp#BasicContainer>; rel="type"', // See https://github.com/solid/node-solid-server/issues/1465
           },
-          body: ' ' // work around https://github.com/michielbdejong/community-server/issues/4#issuecomment-776222863
+          body: " ", // work around https://github.com/michielbdejong/community-server/issues/4#issuecomment-776222863
         });
       });
 
@@ -96,12 +97,10 @@ describe("Create container", () => {
         );
       });
 
-      ifWps("emits websockets-pubsub on the existing container", () => {
+      ifWps("emits websockets-pubsub on the existing container", async () => {
+        await new Promise((resolve) => setTimeout(resolve, MAX_WPS_DELAY));
         expect(websocketsPubsubClientContainer.received).toEqual(
-          expect.arrayContaining([
-            `ack ${containerUrl}`,
-            // FIXME: https://github.com/michielbdejong/community-server/issues/9 `pub ${containerUrl}`
-          ])
+          expect.arrayContaining([`ack ${containerUrl}`, `pub ${containerUrl}`])
         );
       });
       ifWps("emits websockets-pubsub on the new container", () => {
