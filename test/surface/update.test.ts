@@ -246,8 +246,7 @@ describe("Update", () => {
       recursiveDelete(testFolderUrl, authFetcher);
     });
 
-    // FIXME: https://github.com/michielbdejong/community-server/issues/8#issuecomment-776595958
-    it.skip("updates the resource", async () => {
+    it("updates the resource", async () => {
       const result = await authFetcher.fetch(resourceUrl);
       expect(responseCodeGroup(result.status)).toEqual("2xx");
 
