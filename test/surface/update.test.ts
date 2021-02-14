@@ -100,6 +100,68 @@ describe("Update", () => {
     });
   });
 
+  describe("Using PUT (same content)", () => {
+    const { testFolderUrl } = generateTestFolder();
+    let websocketsPubsubClientResource;
+    const containerUrl = `${testFolderUrl}exists/`;
+    const resourceUrl = `${containerUrl}exists1.ttl`;
+
+    beforeAll(async () => {
+      // this already relies on the PUT to non-existing folder functionality
+      // that will be one of the tested behaviours:
+      await authFetcher.fetch(resourceUrl, {
+        method: "PUT",
+        body: "<#hello> <#linked> <#world> .",
+        headers: {
+          "Content-Type": "text/turtle",
+        },
+      });
+      await new Promise((resolve) => setTimeout(resolve, waittime));
+      const getResult = await authFetcher.fetch(resourceUrl);
+      const resourceETagInQuotes = getResult.headers.get("ETag");
+      websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
+      await websocketsPubsubClientResource.getReady();
+      const result = await authFetcher.fetch(resourceUrl, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "text/turtle",
+          "If-Match": resourceETagInQuotes,
+        },
+        body: "<#hello> <#linked> <#world> .",
+      });
+      await new Promise((resolve) => setTimeout(resolve, waittime));
+    });
+
+    afterAll(() => {
+      websocketsPubsubClientResource.disconnect();
+      recursiveDelete(testFolderUrl, authFetcher);
+    });
+
+    it("updates the resource", async () => {
+      const result = await authFetcher.fetch(resourceUrl);
+      expect(responseCodeGroup(result.status)).toEqual("2xx");
+
+      const store1 = getStore(authFetcher);
+      const store2 = getStore(authFetcher);
+
+      rdflib.parse(
+        "<#hello> <#linked> <#world> .",
+        store1,
+        resourceUrl,
+        "text/turtle"
+      );
+      rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
+
+      expect(store2.toString()).toEqual(store1.toString());
+      expect(result.headers.get("Content-Type")).toContain("text/turtle");
+    });
+    ifWps("emits websockets-pubsub on the resource", () => {
+      expect(websocketsPubsubClientResource.received).toEqual(
+        expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
+      );
+    });
+  });
+
   describe("Using PUT (different content type)", () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
@@ -210,6 +272,70 @@ describe("Update", () => {
     });
   });
 
+  describe("Using PATCH to replace triple (same content)", () => {
+    const { testFolderUrl } = generateTestFolder();
+    let websocketsPubsubClientResource;
+    const containerUrl = `${testFolderUrl}exists/`;
+    const resourceUrl = `${containerUrl}exists4.ttl`;
+
+    beforeAll(async () => {
+      // this already relies on the PUT to non-existing folder functionality
+      // that will be one of the tested behaviours:
+      await authFetcher.fetch(resourceUrl, {
+        method: "PUT",
+        body: "<#hello> <#linked> <#world> .",
+        headers: {
+          "Content-Type": "text/turtle",
+        },
+      });
+      await new Promise((resolve) => setTimeout(resolve, waittime));
+
+      websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
+      await websocketsPubsubClientResource.getReady();
+      const result = await authFetcher.fetch(resourceUrl, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/sparql-update",
+        },
+        body:
+          "DELETE DATA { <#hello> <#linked> <#world> . };\nINSERT DATA { <#hello> <#linked> <#world> . }",
+      });
+      await new Promise((resolve) => setTimeout(resolve, waittime));
+    });
+
+    afterAll(() => {
+      websocketsPubsubClientResource.disconnect();
+      recursiveDelete(testFolderUrl, authFetcher);
+    });
+
+    it("updates the resource", async () => {
+      const result = await authFetcher.fetch(resourceUrl);
+      expect(responseCodeGroup(result.status)).toEqual("2xx");
+
+      const store1 = getStore(authFetcher);
+      const store2 = getStore(authFetcher);
+
+      rdflib.parse(
+        "@prefix : <#>.\n\n:hello :linked :world.\n\n",
+        store1,
+        resourceUrl,
+        "text/turtle"
+      );
+      rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
+
+      expect(store2.toString()).toEqual(store1.toString());
+      expect(result.headers.get("Content-Type")).toContain("text/turtle");
+    });
+    ifWps("emits websockets-pubsub on the resource", () => {
+      expect(websocketsPubsubClientResource.received).toEqual(
+        expect.arrayContaining([
+          `ack ${resourceUrl}`,
+          `pub ${resourceUrl}`
+        ])
+      );
+    });
+  });
+
   describe("Using PATCH to replace triple (present)", () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
@@ -273,7 +399,7 @@ describe("Update", () => {
       );
     });
   });
-  
+
   // DESIRED BEHAVIOUR UNDECIDED: see https://github.com/solid/solid-crud-tests/issues/45
   describe.skip("Using PATCH to replace triple (not present)", () => {
     const { testFolderUrl } = generateTestFolder();
