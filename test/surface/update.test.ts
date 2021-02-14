@@ -273,7 +273,9 @@ describe("Update", () => {
       );
     });
   });
-  describe("Using PATCH to replace triple (not present)", () => {
+  
+  // DESIRED BEHAVIOUR UNDECIDED: see https://github.com/solid/solid-crud-tests/issues/45
+  describe.skip("Using PATCH to replace triple (not present)", () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
