@@ -201,7 +201,32 @@ describe("Alice's pod", () => {
           "application/ld+json"
         );
       });
-      // FIXME: test is missing here?
+      test("Triples", async () => {
+        const triples = await asTriples(
+          jsonText,
+          `${testFolderUrl}example.html`,
+          "application/ld+json"
+        );
+        expect(triples).toEqual(
+          expect.arrayContaining([
+            [
+              "<http://store.example.com/>",
+              "<http://store.example.com/name>",
+              "Links Bike Shop",
+            ],
+            [
+              "<http://store.example.com/>",
+              "<http://store.example.com/description>",
+              'The most "linked" bike store on earth!',
+            ],
+            [
+              "<http://store.example.com/>",
+              "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>",
+              "<http://store.example.com/Store>",
+            ],
+          ])
+        );
+      });
     });
     describe("As Turtle", () => {
       let text;
