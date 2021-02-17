@@ -212,7 +212,7 @@ describe("Update", () => {
       );
       rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
 
-      expect(store2.toString()).toEqual(store1.toString());
+      expect(store2.statements).toEqual(expect.arrayContaining(store1.statements));
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("emits websockets-pubsub on the resource", () => {
@@ -325,7 +325,7 @@ describe("Update", () => {
       );
       rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
 
-      expect(store2.toString()).toEqual(store1.toString());
+      expect(store2.statements).toEqual(expect.arrayContaining(store1.statements));
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("emits websockets-pubsub on the resource", () => {
@@ -386,7 +386,7 @@ describe("Update", () => {
       );
       rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
 
-      expect(store2.toString()).toEqual(store1.toString());
+      expect(store2.statements).toEqual(expect.arrayContaining(store1.statements));
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("emits websockets-pubsub on the resource", () => {
@@ -447,7 +447,7 @@ describe("Update", () => {
       );
       rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
 
-      expect(store2.toString()).toEqual(store1.toString());
+      expect(store2.statements).toEqual(expect.arrayContaining(store1.statements));
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("emits websockets-pubsub on the resource", () => {
@@ -508,7 +508,7 @@ describe("Update", () => {
       rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
 
       // console.log(resourceUrl);
-      expect(store2.toString()).toEqual(store1.toString());
+      expect(store2.statements).toEqual(expect.arrayContaining(store1.statements));
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("does not emit websockets-pubsub on the resource", () => {
@@ -563,7 +563,7 @@ describe("Update", () => {
       rdflib.parse("@prefix : <#>.", store1, resourceUrl, "text/turtle");
       rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
 
-      expect(store2.toString()).toEqual(store1.toString());
+      expect(store2.statements).toEqual(expect.arrayContaining(store1.statements));
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("emits websockets-pubsub on the resource", () => {
@@ -620,7 +620,7 @@ describe("Update", () => {
       );
       rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
 
-      expect(store2.toString()).toEqual(store1.toString());
+      expect(store2.statements).toEqual(expect.arrayContaining(store1.statements));
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("does not emit websockets-pubsub on the resource", () => {
