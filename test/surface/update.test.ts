@@ -222,59 +222,6 @@ describe("Update", () => {
     });
   });
 
-  describe("Using PUT (different content type)", () => {
-    const { testFolderUrl } = generateTestFolder();
-    let websocketsPubsubClientResource;
-    const containerUrl = `${testFolderUrl}exists/`;
-    const resourceUrl = `${containerUrl}exists2.txt`;
-
-    beforeAll(async () => {
-      // this already relies on the PUT to non-existing folder functionality
-      // that will be one of the tested behaviours:
-      await authFetcher.fetch(resourceUrl, {
-        method: "PUT",
-        body: "<#hello> <#linked> <#world> .",
-        headers: {
-          "Content-Type": "text/turtle",
-        },
-      });
-      await new Promise((resolve) => setTimeout(resolve, waittime));
-      const getResult = await authFetcher.fetch(resourceUrl);
-      const resourceETagInQuotes = getResult.headers.get("ETag");
-      websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
-      await websocketsPubsubClientResource.getReady();
-      const headers = {
-        "Content-Type": "text/plain",
-      };
-      if (resourceETagInQuotes) {
-        headers["If-Match"] = resourceETagInQuotes;
-      }
-      const result = await authFetcher.fetch(resourceUrl, {
-        method: "PUT",
-        headers,
-        body: "replaced",
-      });
-      await new Promise((resolve) => setTimeout(resolve, waittime));
-    });
-
-    afterAll(() => {
-      websocketsPubsubClientResource.disconnect();
-      recursiveDelete(testFolderUrl, authFetcher);
-    });
-
-    it("updates the resource", async () => {
-      const result = await authFetcher.fetch(resourceUrl);
-      expect(responseCodeGroup(result.status)).toEqual("2xx");
-      expect(await result.text()).toEqual("replaced");
-      expect(result.headers.get("Content-Type")).toContain("text/plain");
-    });
-    ifWps("emits websockets-pubsub on the resource", () => {
-      expect(websocketsPubsubClientResource.received).toEqual(
-        expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
-      );
-    });
-  });
-
   describe("Using PATCH to add triple", () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
