@@ -88,7 +88,7 @@ describe("Delete", () => {
     let websocketsPubsubClientContainer;
     let websocketsPubsubClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
-    const resourceUrl = `${containerUrl}exists.ttl`;
+    const resourceUrl = `${containerUrl}exists.txt`;
 
     beforeAll(async () => {
       // this already relies on the PUT to non-existing folder functionality
@@ -96,9 +96,9 @@ describe("Delete", () => {
       await authFetcher.fetch(resourceUrl, {
         method: "PUT",
         headers: {
-          "content-type": "text/turtle",
+          "content-type": "text/plain",
         },
-        body: "<#hello> <#linked> <#world> .",
+        body: "Hello World",
       });
 
       websocketsPubsubClientContainer = new WPSClient(
@@ -130,8 +130,8 @@ describe("Delete", () => {
     it("leaves the resource", async () => {
       const result = await authFetcher.fetch(resourceUrl);
       expect(responseCodeGroup(result.status)).toEqual("2xx");
-      expect(await result.text()).toEqual("<#hello> <#linked> <#world> .");
-      expect(result.headers.get("Content-Type")).toContain("text/turtle");
+      expect(await result.text()).toEqual("Hello World");
+      expect(result.headers.get("Content-Type")).toContain("text/plain");
     });
 
     ifWps("does not emit websockets-pubsub on the container", () => {
