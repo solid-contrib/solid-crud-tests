@@ -174,7 +174,7 @@ describe("Alice's pod", () => {
           `${testFolderUrl}example.ttl`,
           "application/ld+json"
         );
-        expect(triples).toEqual(triplesFromTurtle);
+        expect(triples).toEqual(expect.arrayContaining(triplesFromTurtle));
       });
     });
     describe("As Turtle", () => {
@@ -188,7 +188,7 @@ describe("Alice's pod", () => {
           `${testFolderUrl}example.ttl`,
           "text/turtle"
         );
-        expect(triples).toEqual(triplesFromTurtle);
+        expect(triples).toEqual(expect.arrayContaining(triplesFromTurtle));
       });
     });
   });
@@ -201,6 +201,7 @@ describe("Alice's pod", () => {
           "application/ld+json"
         );
       });
+      // FIXME: test is missing here?
     });
     describe("As Turtle", () => {
       let text;
@@ -226,7 +227,7 @@ describe("Alice's pod", () => {
           sortByProperty
         );
         expect(sortedTriples).toEqual(
-          [
+          expect.arrayContaining([
             [
               "<http://store.example.com/>",
               "<http://store.example.com/name>",
@@ -242,7 +243,7 @@ describe("Alice's pod", () => {
               "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>",
               "<http://store.example.com/Store>",
             ],
-          ].sort(sortByProperty)
+          ])
         );
       });
     });
