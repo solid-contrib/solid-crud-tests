@@ -112,12 +112,15 @@ describe("Update", () => {
       const resourceETagInQuotes = getResult.headers.get("ETag");
       websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
       await websocketsPubsubClientResource.getReady();
+      const headers = {
+        "Content-Type": "text/turtle",
+      };
+      if (resourceETagInQuotes) {
+        headers["If-Match"] = resourceETagInQuotes;
+      }
       const result = await authFetcher.fetch(resourceUrl, {
         method: "PUT",
-        headers: {
-          "Content-Type": "text/turtle",
-          "If-Match": resourceETagInQuotes,
-        },
+        headers,
         body: "<#replaced> <#the> <#contents> .",
       });
       await new Promise((resolve) => setTimeout(resolve, waittime));
@@ -176,12 +179,14 @@ describe("Update", () => {
       const resourceETagInQuotes = getResult.headers.get("ETag");
       websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
       await websocketsPubsubClientResource.getReady();
-      const result = await authFetcher.fetch(resourceUrl, {
+      const headers = {
+        "Content-Type": "text/turtle",
+      };
+      if (resourceETagInQuotes) {
+        headers["If-Match"] = resourceETagInQuotes;
+      }      const result = await authFetcher.fetch(resourceUrl, {
         method: "PUT",
-        headers: {
-          "Content-Type": "text/turtle",
-          "If-Match": resourceETagInQuotes,
-        },
+        headers,
         body: "<#hello> <#linked> <#world> .",
       });
       await new Promise((resolve) => setTimeout(resolve, waittime));
@@ -238,12 +243,15 @@ describe("Update", () => {
       const resourceETagInQuotes = getResult.headers.get("ETag");
       websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
       await websocketsPubsubClientResource.getReady();
+      const headers = {
+        "Content-Type": "text/plain",
+      };
+      if (resourceETagInQuotes) {
+        headers["If-Match"] = resourceETagInQuotes;
+      }
       const result = await authFetcher.fetch(resourceUrl, {
         method: "PUT",
-        headers: {
-          "Content-Type": "text/plain",
-          "If-Match": resourceETagInQuotes,
-        },
+        headers,
         body: "replaced",
       });
       await new Promise((resolve) => setTimeout(resolve, waittime));
