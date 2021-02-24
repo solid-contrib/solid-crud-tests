@@ -126,7 +126,8 @@ describe("Alice's pod", () => {
     });
     return fetchResult.text();
   }
-  describe("Get RDFa", () => {
+  // RDFa support is optional: https://github.com/solid/specification/issues/243
+  describe.skip("Get RDFa", () => {
     describe("As JSON-LD", () => {
       let jsonText;
       beforeAll(async () => {
