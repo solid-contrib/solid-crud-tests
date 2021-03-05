@@ -193,7 +193,7 @@ describe("Create non-container", () => {
           method: "PATCH",
           body: "INSERT DATA { <#hello> <#linked> <#world> . }",
           headers: {
-            "Content-Type": "application/sparql-update",
+            "Content-Type": "application/sparql-update-single-match",
           },
         });
         //		console.log(result);
@@ -352,7 +352,7 @@ describe("Create non-container", () => {
           method: "PATCH",
           body: "INSERT DATA { <#hello> <#linked> <#world> . }",
           headers: {
-            "Content-Type": "application/sparql-update",
+            "Content-Type": "application/sparql-update-single-match",
           },
         });
         await new Promise((resolve) => setTimeout(resolve, 2000));

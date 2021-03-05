@@ -245,7 +245,7 @@ describe("Update", () => {
       const result = await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/sparql-update",
+          "Content-Type": "application/sparql-update-single-match",
         },
         body: "INSERT DATA { <#that> a <#fact> . }",
       });
@@ -305,7 +305,7 @@ describe("Update", () => {
       const result = await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/sparql-update",
+          "Content-Type": "application/sparql-update-single-match",
         },
         body:
           "DELETE DATA { <#hello> <#linked> <#world> . };\nINSERT DATA { <#hello> <#linked> <#world> . }",
@@ -366,7 +366,7 @@ describe("Update", () => {
       const result = await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/sparql-update",
+          "Content-Type": "application/sparql-update-single-match",
         },
         body:
           "DELETE DATA { <#hello> <#linked> <#world> . };\nINSERT DATA { <#that> a <#fact> . }",
@@ -404,8 +404,7 @@ describe("Update", () => {
     });
   });
 
-  // DESIRED BEHAVIOUR UNDECIDED: see https://github.com/solid/solid-crud-tests/issues/45
-  describe.skip("Using PATCH to replace triple (not present)", () => {
+  describe("Using PATCH to replace triple (not present)", () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
@@ -427,7 +426,7 @@ describe("Update", () => {
       const result = await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/sparql-update",
+          "Content-Type": "application/sparql-update-single-match",
         },
         body:
           "DELETE DATA { <#something> <#completely> <#different> . };\nINSERT DATA { <#that> a <#fact> . }",
@@ -490,7 +489,7 @@ describe("Update", () => {
       const result = await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/sparql-update",
+          "Content-Type": "application/sparql-update-single-match",
         },
         body: "DELETE DATA { <#hello> <#linked> <#world> . }",
       });
@@ -542,7 +541,7 @@ describe("Update", () => {
       const result = await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/sparql-update",
+          "Content-Type": "application/sparql-update-single-match",
         },
         body: "DELETE DATA { <#something> <#completely> <#different> . }",
       });
