@@ -71,7 +71,7 @@ describe("Concurrency", () => {
         }
         promises.push(promise);
       }
-      results = Promise.all(promises);
+      results = await Promise.all(promises);
       await new Promise((resolve) => setTimeout(resolve, waittime));
     });
 
