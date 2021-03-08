@@ -2,7 +2,7 @@ module.exports = {
   roots: ["<rootDir>/test"],
   preset: "ts-jest",
   testEnvironment: "node",
-  testTimeout: 5000,
+  testTimeout: 10000,
   verbose: false,
   runner: "jest-serial-runner",
   collectCoverage: false,
