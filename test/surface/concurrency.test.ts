@@ -32,7 +32,7 @@ describe("Concurrency", () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientContainer;
     let websocketsPubsubClientResource;
-    const results = [];
+    let results = [];
     let bodyExpected = "who won?";
     const containerUrl = `${testFolderUrl}exists/`;
     const resourceUrl = `${containerUrl}new.txt`;
@@ -55,9 +55,10 @@ describe("Concurrency", () => {
       await websocketsPubsubClientContainer.getReady();
       websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
       await websocketsPubsubClientResource.getReady();
+      const promises = [];
       for (let i = 0; i < 10; i++) {
         const body = `${i} wins`;
-        const result = await authFetcher.fetch(resourceUrl, {
+        const promise = authFetcher.fetch(resourceUrl, {
           method: "PUT",
           headers: {
             "Content-Type": "text/plain",
@@ -65,11 +66,12 @@ describe("Concurrency", () => {
           },
           body,
         });
-        if (responseCodeGroup(result.status) === "2xx") {
+        if (responseCodeGroup(promise.status) === "2xx") {
           bodyExpected = body;
         }
-        results.push(result);
+        promises.push(promise);
       }
+      results = Promise.all(promises);
       await new Promise((resolve) => setTimeout(resolve, waittime));
     });
 
@@ -126,7 +128,7 @@ describe("Concurrency", () => {
     const results = [];
     let expectedRdf = "";
     const containerUrl = `${testFolderUrl}exists/`;
-    const resourceUrl = `${containerUrl}exists3.ttl`;
+    const resourceUrl = `${containerUrl}resource.ttl`;
 
     beforeAll(async () => {
       // this already relies on the PUT to non-existing folder functionality
