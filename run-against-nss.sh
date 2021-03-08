@@ -15,4 +15,4 @@ export COOKIE_ALICE=`expr "$CURL_RESULT_ALICE" : '^Set-Cookie:\ \(.*\).'`
 export NODE_TLS_REJECT_UNAUTHORIZED=0
 
 # npm run jest
-./node_modules/.bin/jest test/surface/concurrency.test.ts
+./node_modules/.bin/jest test/surface/
