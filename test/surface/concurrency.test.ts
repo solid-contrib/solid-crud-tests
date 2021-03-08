@@ -32,7 +32,7 @@ describe("Concurrency", () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientContainer;
     let websocketsPubsubClientResource;
-    let results = [];
+    let results;
     let bodyExpected = "who won?";
     const containerUrl = `${testFolderUrl}exists/`;
     const resourceUrl = `${containerUrl}new.txt`;
@@ -66,12 +66,14 @@ describe("Concurrency", () => {
           },
           body,
         });
-        if (responseCodeGroup(promise.status) === "2xx") {
-          bodyExpected = body;
-        }
         promises.push(promise);
       }
       results = await Promise.all(promises);
+      for (let i = 0; i < 10; i++) {
+        if (responseCodeGroup(results[i].status) === "2xx") {
+          bodyExpected = `${i} wins`;
+        }
+      }
       await new Promise((resolve) => setTimeout(resolve, waittime));
     });
 
@@ -125,7 +127,7 @@ describe("Concurrency", () => {
   describe("Use PATCH 10 times to add triple to the same resource", () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
-    const results = [];
+    let results;
     let expectedRdf = "";
     const containerUrl = `${testFolderUrl}exists/`;
     const resourceUrl = `${containerUrl}resource.ttl`;
@@ -144,9 +146,10 @@ describe("Concurrency", () => {
 
       websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
       await websocketsPubsubClientResource.getReady();
+      const promises = [];
       for (let i = 0; i < 10; i++) {
         const triple = `<#triple-${i}> <#added> <#successfully> .`;
-        const result = await authFetcher.fetch(resourceUrl, {
+        const promise = authFetcher.fetch(resourceUrl, {
           method: "PATCH",
           headers: {
             // "Content-Type": "application/sparql-update-single-match",
@@ -155,8 +158,9 @@ describe("Concurrency", () => {
           body: `INSERT DATA { ${triple} }`,
         });
         expectedRdf += `${triple}\n`;
-        results.push(result);
+        promises.push(promise);
       }
+      results = await Promise.all(promises);
       await new Promise((resolve) => setTimeout(resolve, waittime));
     });
 
