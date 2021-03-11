@@ -28,7 +28,7 @@ describe("Concurrency", () => {
   });
 
   // use `${testFolderUrl}exists/` as the existing folder:
-  describe("Try to create the same resource, using PUT 10 times", () => {
+  describe.skip("Try to create the same resource, using PUT 10 times", () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientContainer;
     let websocketsPubsubClientResource;
