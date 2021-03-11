@@ -6,7 +6,7 @@ import {
   appOrigin,
 } from "../helpers/env";
 import { getAuthFetcher } from "solid-auth-fetcher";
-import { recursiveDelete } from "../helpers/util";
+import { recursiveDelete, itIs } from "../helpers/util";
 import * as rdflib from "rdflib";
 
 const example = {
@@ -127,7 +127,7 @@ describe("Alice's pod", () => {
     return fetchResult.text();
   }
   // RDFa support is optional: https://github.com/solid/specification/issues/243
-  describe.skip("Get RDFa", () => {
+  describe("Get RDFa", () => {
     describe("As JSON-LD", () => {
       let jsonText;
       beforeAll(async () => {
@@ -136,7 +136,7 @@ describe("Alice's pod", () => {
           "application/ld+json"
         );
       });
-      test("Triples", async () => {
+      itIs('MAY')("Triples", async () => {
         const triples = await asTriples(
           jsonText,
           `${testFolderUrl}example.html`,
@@ -150,7 +150,7 @@ describe("Alice's pod", () => {
       beforeAll(async () => {
         text = await getAs(`${testFolderUrl}example.html`, "text/turtle");
       });
-      test("Triples", async () => {
+      itIs('MAY')("Triples", async () => {
         const triples = await asTriples(
           text,
           `${testFolderUrl}example.html`,
