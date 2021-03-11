@@ -152,7 +152,7 @@ describe("Concurrency", () => {
         const promise = authFetcher.fetch(resourceUrl, {
           method: "PATCH",
           headers: {
-            // "Content-Type": "application/sparql-update-single-match",
+            // "Content-Type": "application/sparql-update",
             "Content-Type": "application/sparql-update",
           },
           body: `INSERT DATA { ${triple} }`,
