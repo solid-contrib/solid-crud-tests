@@ -124,7 +124,7 @@ describe("Concurrency", () => {
       ).toEqual(1);
     });
   });
-  describe("Use PATCH 10 times to add triple to the same resource", () => {
+  describe.skip("Use PATCH 10 times to add triple to the same resource", () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
     let results;
