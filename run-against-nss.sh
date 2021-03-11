@@ -15,4 +15,5 @@ export COOKIE_ALICE=`expr "$CURL_RESULT_ALICE" : '^Set-Cookie:\ \(.*\).'`
 export NODE_TLS_REJECT_UNAUTHORIZED=0
 
 # npm run jest
-./node_modules/.bin/jest test/surface/
+export INCLUDE_MAY=1
+./node_modules/.bin/jest test/surface/ --json --outputFile="../test-suite/NSS/crud-results.json"

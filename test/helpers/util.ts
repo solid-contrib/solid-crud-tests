@@ -114,12 +114,41 @@ export class WPSClient {
 }
 
 export function ifWps(name, runner) {
+  let level = 'WPS'
+  let id = ''
   if (process.env.SKIP_WPS) {
-    return it.skip(name, runner);
+    return it.skip(`${level} ${id} ${name}`, runner);
   }
-  return it(name, runner);
+  return it(`${level} ${id} ${name}`, runner);
 }
 
 export function responseCodeGroup(code) {
   return `${Math.floor(code / 100)}xx`;
+}
+
+// env parameters are SKIP for MUST, SHOULD and INCLUDE for MAY
+export function itIs(level ='', id = '') {
+  switch (level) {
+    case 'SKIP':
+      return (name, runner) => { it.skip(`${level} ${id} ${name}`, runner); }
+    case 'MUST':
+      if (process.env.SKIP_MUST || process.env['SKIP_MUST_' + id]) {
+          return (name, runner) => { it.skip(`${level} ${id} ${name}`, runner); }
+      } else {
+          return (name, runner) => { it(`${level} ${id} ${name}`, runner); }
+      }
+    case 'SHOULD':
+      if (process.env.SKIP_SHOULD || process.env['SKIP_SHOULD_' + id]) {
+        return (name, runner) => { it.skip(`${level} ${id} ${name}`, runner); }
+      } else {
+        return (name, runner) => { it(`${level} ${id} ${name}`, runner); }
+      }
+    case 'MAY':
+      if (process.env.INCLUDE_MAY || process.env['INCLUDE_MAY_' + id]) {
+        return (name, runner) => { it(`${level} ${id} ${name}`, runner); }
+      } else {
+        return (name, runner) => { it.skip(`${level} ${id} ${name}`, runner); }
+      }
+  }
+  return (name, runner) => { it(`${level} ${id} ${name}`, runner); }
 }
