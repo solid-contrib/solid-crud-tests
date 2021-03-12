@@ -245,7 +245,7 @@ describe("Update", () => {
       const result = await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/sparql-update-single-match",
+          "Content-Type": "application/sparql-update",
         },
         body: "INSERT DATA { <#that> a <#fact> . }",
       });
@@ -305,7 +305,7 @@ describe("Update", () => {
       const result = await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/sparql-update-single-match",
+          "Content-Type": "application/sparql-update",
         },
         body:
           "DELETE DATA { <#hello> <#linked> <#world> . };\nINSERT DATA { <#hello> <#linked> <#world> . }",
@@ -366,7 +366,7 @@ describe("Update", () => {
       const result = await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/sparql-update-single-match",
+          "Content-Type": "application/sparql-update",
         },
         body:
           "DELETE DATA { <#hello> <#linked> <#world> . };\nINSERT DATA { <#that> a <#fact> . }",
@@ -426,7 +426,7 @@ describe("Update", () => {
       const result = await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/sparql-update-single-match",
+          "Content-Type": "application/sparql-update",
         },
         body:
           "DELETE DATA { <#something> <#completely> <#different> . };\nINSERT DATA { <#that> a <#fact> . }",
@@ -489,7 +489,7 @@ describe("Update", () => {
       const result = await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/sparql-update-single-match",
+          "Content-Type": "application/sparql-update",
         },
         body: "DELETE DATA { <#hello> <#linked> <#world> . }",
       });
@@ -541,7 +541,7 @@ describe("Update", () => {
       const result = await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/sparql-update-single-match",
+          "Content-Type": "application/sparql-update",
         },
         body: "DELETE DATA { <#something> <#completely> <#different> . }",
       });
