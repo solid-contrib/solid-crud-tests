@@ -3,14 +3,14 @@ set -e
 
 # npm ci
 
-export CURL_RESULT=`curl -i https://solidcommunity.net/login/password -d"username=solidtestsuite&password=Testing123" | grep Set-Cookie`
+export CURL_RESULT=`curl -i https://solidcommunity.net/login/password -d"username=solid-crud-tests-example-1&password=123" | grep Set-Cookie`
 export COOKIE=`expr "$CURL_RESULT" : '^Set-Cookie:\ \(.*\).'`
 echo $COOKIE
-export SERVER_ROOT=https://solidcommunity.net
-export STORAGE_ROOT=https://solidtestsuite.trinpod.us/solidtestsuite
-export ALICE_WEBID=https://solidtestsuite.solidcommunity.net/profile/card#me
+export OIDC_ISSUER=https://solid-crud-tests-example-1.solidcommunity.net/
+export STORAGE_ROOT=https://solid-tests.trinpod.us/solidtestsuite
+export ALICE_WEBID=https://solid-tests.trinpod.us/i
 export SKIP_WPS=1
 export DEBUG=*
 env
 export INCLUDE_MAY=1
-./node_modules/.bin/jest test/surface/ --json --outputFile="../test-suite/TRI/crud-results.json"
+./node_modules/.bin/jest test/surface/fetch-pod-root.test.ts
