@@ -11,6 +11,7 @@ export function generateTestFolder() {
   const testFolder = `solid-crud-tests-${new Date().getTime()}`;
   return {
     testFolder,
-    testFolderUrl: `${storageRoot}/${testFolder}/`,
+    // testFolderUrl: `${storageRoot}/${testFolder}/`,
+    testFolderUrl: `${storageRoot}/`,
   };
 }

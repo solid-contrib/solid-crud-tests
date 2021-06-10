@@ -7,7 +7,7 @@ export CURL_RESULT=`curl -i https://solidcommunity.net/login/password -d"usernam
 export COOKIE=`expr "$CURL_RESULT" : '^Set-Cookie:\ \(.*\).'`
 echo $COOKIE
 export OIDC_ISSUER=https://solid-crud-tests-example-1.solidcommunity.net/
-export STORAGE_ROOT=https://solid-tests.trinpod.us/solidtestsuite
+export STORAGE_ROOT=https://solid-tests.trinpod.us
 export ALICE_WEBID=https://solid-tests.trinpod.us/i
 export SKIP_WPS=1
 export DEBUG=*
