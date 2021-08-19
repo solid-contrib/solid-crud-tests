@@ -10,7 +10,7 @@ export OIDC_ISSUER=https://solid-crud-tests-example-1.solidcommunity.net/
 export STORAGE_ROOT=https://solid-tests.stage.graphmetrix.net
 export ALICE_WEBID=https://solid-tests.stage.graphmetrix.net/i
 export SKIP_WPS=1
-export DEBUG=*
+# export DEBUG=*
 env
 export INCLUDE_MAY=1
 ./node_modules/.bin/jest test/surface/
