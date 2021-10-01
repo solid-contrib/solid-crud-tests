@@ -11,6 +11,7 @@ export STORAGE_ROOT=https://pod.inrupt.com/solidtestsuite/solidtestsuite
 export ALICE_WEBID=https://solidtestsuite.solidcommunity.net/profile/card#me
 
 export SKIP_WPS=1
-export DEBUG=*
+mkdir -p ../test-suite/ESS
+#export DEBUG=*
 env
-./node_modules/.bin/jest test/surface/ --json --outputFile="../test-suite/ESS/crud-results.json"
+./node_modules/.bin/jest test/surface/ --verbose --json --outputFile="../test-suite/ESS/crud-results.json"

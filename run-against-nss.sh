@@ -16,4 +16,6 @@ export NODE_TLS_REJECT_UNAUTHORIZED=0
 
 # npm run jest
 export INCLUDE_MAY=1
-./node_modules/.bin/jest test/surface/ --json --outputFile="../test-suite/NSS/crud-results.json"
+mkdir -p ../test-suite/NSS
+./node_modules/.bin/jest test/surface/ --verbose --json --outputFile="../test-suite/NSS/crud-results.json"
+
