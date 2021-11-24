@@ -18,6 +18,11 @@ import * as rdflib from "rdflib";
 
 const waittime = 2000;
 
+if (process.env.SKIP_CONC) {
+	console.log("Skipping concurrency tests because SKIP_CONC env var is set");
+	process.exit(0);
+}
+
 // when the tests start, exists/exists.ttl exists in the test folder,
 // and nothing else.
 
