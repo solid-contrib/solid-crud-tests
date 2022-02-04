@@ -60,7 +60,7 @@ describe("Update", () => {
       websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
       await websocketsPubsubClientResource.getReady();
       const headers = {
-        "Content-Type": "text/plain"
+        "Content-Type": "text/plain",
       };
       if (resourceETagInQuotes) {
         headers["If-Match"] = resourceETagInQuotes;
@@ -184,7 +184,8 @@ describe("Update", () => {
       };
       if (resourceETagInQuotes) {
         headers["If-Match"] = resourceETagInQuotes;
-      }      const result = await authFetcher.fetch(resourceUrl, {
+      }
+      const result = await authFetcher.fetch(resourceUrl, {
         method: "PUT",
         headers,
         body: "<#hello> <#linked> <#world> .",
@@ -212,7 +213,9 @@ describe("Update", () => {
       );
       rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
 
-      expect(store2.statements).toEqual(expect.arrayContaining(store1.statements));
+      expect(store2.statements).toEqual(
+        expect.arrayContaining(store1.statements)
+      );
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("emits websockets-pubsub on the resource", () => {
@@ -242,12 +245,15 @@ describe("Update", () => {
 
       websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
       await websocketsPubsubClientResource.getReady();
-      const result = await authFetcher.fetch(resourceUrl, {
+      await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/sparql-update",
+          "Content-Type": "text/n3",
         },
-        body: "INSERT DATA { <#that> a <#fact> . }",
+        body:
+          "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
+          "#patch a solid:InsertDeletePatch;" +
+          "  solid:inserts { <#that> a <#fact> . }.",
       });
       await new Promise((resolve) => setTimeout(resolve, waittime));
     });
@@ -272,7 +278,9 @@ describe("Update", () => {
       );
       rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
 
-      expect(store2.statements).toEqual(expect.arrayContaining(store1.statements));
+      expect(store2.statements).toEqual(
+        expect.arrayContaining(store1.statements)
+      );
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("emits websockets-pubsub on the resource", () => {
@@ -305,10 +313,13 @@ describe("Update", () => {
       const result = await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/sparql-update",
+          "Content-Type": "text/n3",
         },
         body:
-          "DELETE DATA { <#hello> <#linked> <#world> . };\nINSERT DATA { <#hello> <#linked> <#world> . }",
+          "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
+          "#patch a solid:InsertDeletePatch;" +
+          "  solid:deletes { <#hello> <#linked> <#world> .}." +
+          "  solid:inserts { <#hello> <#linked> <#world> .}.",
       });
       await new Promise((resolve) => setTimeout(resolve, waittime));
     });
@@ -333,7 +344,9 @@ describe("Update", () => {
       );
       rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
 
-      expect(store2.statements).toEqual(expect.arrayContaining(store1.statements));
+      expect(store2.statements).toEqual(
+        expect.arrayContaining(store1.statements)
+      );
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("emits websockets-pubsub on the resource", () => {
@@ -363,13 +376,16 @@ describe("Update", () => {
 
       websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
       await websocketsPubsubClientResource.getReady();
-      const result = await authFetcher.fetch(resourceUrl, {
+      await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/sparql-update",
+          "Content-Type": "text/n3",
         },
         body:
-          "DELETE DATA { <#hello> <#linked> <#world> . };\nINSERT DATA { <#that> a <#fact> . }",
+          "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
+          "#patch a solid:InsertDeletePatch;" +
+          "  solid:deletes { <#hello> <#linked> <#world> .}." +
+          "  solid:inserts { <#that> a <#fact> .}.",
       });
       await new Promise((resolve) => setTimeout(resolve, waittime));
     });
@@ -394,7 +410,9 @@ describe("Update", () => {
       );
       rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
 
-      expect(store2.statements).toEqual(expect.arrayContaining(store1.statements));
+      expect(store2.statements).toEqual(
+        expect.arrayContaining(store1.statements)
+      );
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("emits websockets-pubsub on the resource", () => {
@@ -424,13 +442,16 @@ describe("Update", () => {
 
       websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
       await websocketsPubsubClientResource.getReady();
-      const result = await authFetcher.fetch(resourceUrl, {
+      await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/sparql-update",
+          "Content-Type": "text/n3",
         },
         body:
-          "DELETE DATA { <#something> <#completely> <#different> . };\nINSERT DATA { <#that> a <#fact> . }",
+          "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
+          "#patch a solid:InsertDeletePatch;" +
+          "  solid:deletes { <#something> <#completely> <#different> .}." +
+          "  solid:inserts { <#that> a <#fact> .}.",
       });
     });
 
@@ -455,7 +476,9 @@ describe("Update", () => {
       rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
 
       // console.log(resourceUrl);
-      expect(store2.statements).toEqual(expect.arrayContaining(store1.statements));
+      expect(store2.statements).toEqual(
+        expect.arrayContaining(store1.statements)
+      );
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("does not emit websockets-pubsub on the resource", () => {
@@ -487,12 +510,15 @@ describe("Update", () => {
 
       websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
       await websocketsPubsubClientResource.getReady();
-      const result = await authFetcher.fetch(resourceUrl, {
+      await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/sparql-update",
+          "Content-Type": "text/n3",
         },
-        body: "DELETE DATA { <#hello> <#linked> <#world> . }",
+        body:
+          "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
+          "#patch a solid:InsertDeletePatch;" +
+          "  solid:deletes { <#hello> <#linked> <#world> .}.",
       });
     });
 
@@ -510,7 +536,9 @@ describe("Update", () => {
       rdflib.parse("@prefix : <#>.", store1, resourceUrl, "text/turtle");
       rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
 
-      expect(store2.statements).toEqual(expect.arrayContaining(store1.statements));
+      expect(store2.statements).toEqual(
+        expect.arrayContaining(store1.statements)
+      );
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("emits websockets-pubsub on the resource", () => {
@@ -542,9 +570,12 @@ describe("Update", () => {
       const result = await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/sparql-update",
+          "Content-Type": "text/n3",
         },
-        body: "DELETE DATA { <#something> <#completely> <#different> . }",
+        body:
+          "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
+          "#patch a solid:InsertDeletePatch;" +
+          "  solid:deletes { <#something> <#completely> <#different> .}.",
       });
     });
 
@@ -567,7 +598,9 @@ describe("Update", () => {
       );
       rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
 
-      expect(store2.statements).toEqual(expect.arrayContaining(store1.statements));
+      expect(store2.statements).toEqual(
+        expect.arrayContaining(store1.statements)
+      );
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("does not emit websockets-pubsub on the resource", () => {
