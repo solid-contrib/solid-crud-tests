@@ -567,7 +567,7 @@ describe("Update", () => {
 
       websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
       await websocketsPubsubClientResource.getReady();
-      const result = await authFetcher.fetch(resourceUrl, {
+      await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
           "Content-Type": "text/n3",
