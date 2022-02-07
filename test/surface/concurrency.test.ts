@@ -157,10 +157,12 @@ describe("Concurrency", () => {
         const promise = authFetcher.fetch(resourceUrl, {
           method: "PATCH",
           headers: {
-            // "Content-Type": "application/sparql-update",
-            "Content-Type": "application/sparql-update",
+            "Content-Type": "text/n3",
           },
-          body: `INSERT DATA { ${triple} }`,
+          body:
+            "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
+            "#patch a solid:InsertDeletePatch;" +
+            `  solid:inserts { ${triple} .}.`,
         });
         expectedRdf += `${triple}\n`;
         promises.push(promise);

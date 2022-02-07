@@ -189,12 +189,15 @@ describe("Create non-container", () => {
           authFetcher
         );
         await websocketsPubsubClientResource.getReady();
-        const result = await authFetcher.fetch(resourceUrl, {
+        await authFetcher.fetch(resourceUrl, {
           method: "PATCH",
-          body: "INSERT DATA { <#hello> <#linked> <#world> . }",
           headers: {
-            "Content-Type": "application/sparql-update",
+            "Content-Type": "text/n3",
           },
+          body:
+            "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
+            "#patch a solid:InsertDeletePatch;" +
+            "  solid:inserts { <#hello> <#linked> <#world> .}.",
         });
         //		console.log(result);
         await new Promise((resolve) => setTimeout(resolve, waittime));
@@ -348,12 +351,15 @@ describe("Create non-container", () => {
           authFetcher
         );
         await websocketsPubsubClientResource.getReady();
-        const result = await authFetcher.fetch(resourceUrl, {
+        await authFetcher.fetch(resourceUrl, {
           method: "PATCH",
-          body: "INSERT DATA { <#hello> <#linked> <#world> . }",
           headers: {
-            "Content-Type": "application/sparql-update",
+            "Content-Type": "text/n3",
           },
+          body:
+            "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
+            "#patch a solid:InsertDeletePatch;" +
+            "  solid:inserts { <#hello> <#linked> <#world> .}.",
         });
         await new Promise((resolve) => setTimeout(resolve, 2000));
       });
