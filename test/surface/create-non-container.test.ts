@@ -55,6 +55,7 @@ describe("Create non-container", () => {
           },
           body: "Hello World",
         });
+
         resourceUrl = new URL(
           result.headers.get("location"),
           containerUrl
@@ -95,7 +96,6 @@ describe("Create non-container", () => {
       let websocketsPubsubClientResource;
       const containerUrl = `${testFolderUrl}exists/`;
       const resourceUrl = `${containerUrl}new.txt`;
-
       beforeAll(async () => {
         // this already relies on the PUT to non-existing folder functionality
         // that will be one of the tested behaviours:
@@ -165,8 +165,8 @@ describe("Create non-container", () => {
       const { testFolderUrl } = generateTestFolder();
       let websocketsPubsubClientContainer;
       let websocketsPubsubClientResource;
-      const containerUrl = `${testFolderUrl}exists/`;
-      const resourceUrl = `${containerUrl}new.ttl`;
+      var containerUrl = `${testFolderUrl}exists/`;
+      var resourceUrl = `${containerUrl}new.ttl`;
 
       beforeAll(async () => {
         // this already relies on the PUT to non-existing folder functionality
@@ -192,14 +192,14 @@ describe("Create non-container", () => {
         await authFetcher.fetch(resourceUrl, {
           method: "PATCH",
           headers: {
-            "Content-Type": "text/n3",
+            "Content-Type": "application/sparql-update",
           },
           body:
             "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
             "#patch a solid:InsertDeletePatch;" +
-            "  solid:inserts { <#hello> <#linked> <#world> .}.",
+            "  INSERT { <#hello> <#linked> <#world> .}.",
         });
-        //		console.log(result);
+
         await new Promise((resolve) => setTimeout(resolve, waittime));
       });
 
@@ -359,7 +359,7 @@ describe("Create non-container", () => {
           body:
             "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
             "#patch a solid:InsertDeletePatch;" +
-            "  solid:inserts { <#hello> <#linked> <#world> .}.",
+            "  INSERT { <#hello> <#linked> <#world> .}.",
         });
         await new Promise((resolve) => setTimeout(resolve, 2000));
       });

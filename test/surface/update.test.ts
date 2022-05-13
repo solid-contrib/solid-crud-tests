@@ -238,7 +238,7 @@ describe("Update", () => {
         method: "PUT",
         body: "<#hello> <#linked> <#world> .",
         headers: {
-          "Content-Type": "text/turtle",
+          "Content-Type": "application/sparql-update",
         },
       });
       await new Promise((resolve) => setTimeout(resolve, waittime));
@@ -248,12 +248,12 @@ describe("Update", () => {
       await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
-          "Content-Type": "text/n3",
+          "Content-Type": "application/sparql-update",
         },
         body:
           "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
           "#patch a solid:InsertDeletePatch;" +
-          "  solid:inserts { <#that> a <#fact> . }.",
+          "  INSERT { <#that> a <#fact> . }.",
       });
       await new Promise((resolve) => setTimeout(resolve, waittime));
     });
@@ -313,13 +313,13 @@ describe("Update", () => {
       const result = await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
-          "Content-Type": "text/n3",
+          "Content-Type": "application/sparql-update",
         },
         body:
           "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
           "#patch a solid:InsertDeletePatch;" +
-          "  solid:deletes { <#hello> <#linked> <#world> .}." +
-          "  solid:inserts { <#hello> <#linked> <#world> .}.",
+          "  DELETE { <#hello> <#linked> <#world> .}." +
+          "\r\n INSERT { <#hello> <#linked> <#world> .}.",
       });
       await new Promise((resolve) => setTimeout(resolve, waittime));
     });
@@ -369,7 +369,7 @@ describe("Update", () => {
         method: "PUT",
         body: "<#hello> <#linked> <#world> .",
         headers: {
-          "Content-Type": "text/turtle",
+          "Content-Type": "application/sparql-update",
         },
       });
       await new Promise((resolve) => setTimeout(resolve, waittime));
@@ -379,13 +379,13 @@ describe("Update", () => {
       await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
-          "Content-Type": "text/n3",
+          "Content-Type": "application/sparql-update",
         },
         body:
           "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
           "#patch a solid:InsertDeletePatch;" +
-          "  solid:deletes { <#hello> <#linked> <#world> .}." +
-          "  solid:inserts { <#that> a <#fact> .}.",
+          "  DELETE { <#hello> <#linked> <#world> .}." +
+          "\r\n INSERT { <#that> a <#fact> .}.",
       });
       await new Promise((resolve) => setTimeout(resolve, waittime));
     });
@@ -445,13 +445,13 @@ describe("Update", () => {
       await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
-          "Content-Type": "text/n3",
+          "Content-Type": "application/sparql-update",
         },
         body:
           "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
           "#patch a solid:InsertDeletePatch;" +
-          "  solid:deletes { <#something> <#completely> <#different> .}." +
-          "  solid:inserts { <#that> a <#fact> .}.",
+          "  DELETE { <#something> <#completely> <#different> .}." +
+          "\r\n INSERT { <#that> a <#fact> .}.",
       });
     });
 
@@ -513,12 +513,12 @@ describe("Update", () => {
       await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
-          "Content-Type": "text/n3",
+          "Content-Type": "application/sparql-update",
         },
         body:
           "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
           "#patch a solid:InsertDeletePatch;" +
-          "  solid:deletes { <#hello> <#linked> <#world> .}.",
+          "  DELETE { <#hello> <#linked> <#world> .}.",
       });
     });
 
@@ -570,12 +570,12 @@ describe("Update", () => {
       await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
-          "Content-Type": "text/n3",
+          "Content-Type": "application/sparql-update",
         },
         body:
           "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
           "#patch a solid:InsertDeletePatch;" +
-          "  solid:deletes { <#something> <#completely> <#different> .}.",
+          "  DELETE { <#something> <#completely> <#different> .}.",
       });
     });
 
