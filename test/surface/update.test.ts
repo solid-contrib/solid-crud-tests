@@ -251,8 +251,8 @@ describe("Update", () => {
           "Content-Type": "text/n3",
         },
         body:
-          "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
-          "#patch a solid:InsertDeletePatch;" +
+          "@prefix solid: <http://www.w3.org/ns/solid/terms#>.\n" +
+          "<#patch> a solid:InsertDeletePatch;\n" +
           "  solid:inserts { <#that> a <#fact> . }.",
       });
       await new Promise((resolve) => setTimeout(resolve, waittime));
@@ -316,8 +316,8 @@ describe("Update", () => {
           "Content-Type": "text/n3",
         },
         body:
-          "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
-          "#patch a solid:InsertDeletePatch;" +
+          "@prefix solid: <http://www.w3.org/ns/solid/terms#>.\n" +
+          "<#patch> a solid:InsertDeletePatch;\n" +
           "  solid:deletes { <#hello> <#linked> <#world> .}." +
           "  solid:inserts { <#hello> <#linked> <#world> .}.",
       });
@@ -382,8 +382,8 @@ describe("Update", () => {
           "Content-Type": "text/n3",
         },
         body:
-          "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
-          "#patch a solid:InsertDeletePatch;" +
+          "@prefix solid: <http://www.w3.org/ns/solid/terms#>.\n" +
+          "<#patch> a solid:InsertDeletePatch;\n" +
           "  solid:deletes { <#hello> <#linked> <#world> .}." +
           "  solid:inserts { <#that> a <#fact> .}.",
       });
@@ -448,8 +448,8 @@ describe("Update", () => {
           "Content-Type": "text/n3",
         },
         body:
-          "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
-          "#patch a solid:InsertDeletePatch;" +
+          "@prefix solid: <http://www.w3.org/ns/solid/terms#>.\n" +
+          "<#patch> a solid:InsertDeletePatch;\n" +
           "  solid:deletes { <#something> <#completely> <#different> .}." +
           "  solid:inserts { <#that> a <#fact> .}.",
       });
@@ -516,8 +516,8 @@ describe("Update", () => {
           "Content-Type": "text/n3",
         },
         body:
-          "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
-          "#patch a solid:InsertDeletePatch;" +
+          "@prefix solid: <http://www.w3.org/ns/solid/terms#>.\n" +
+          "<#patch> a solid:InsertDeletePatch;\n" +
           "  solid:deletes { <#hello> <#linked> <#world> .}.",
       });
     });
@@ -573,8 +573,8 @@ describe("Update", () => {
           "Content-Type": "text/n3",
         },
         body:
-          "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
-          "#patch a solid:InsertDeletePatch;" +
+          "@prefix solid: <http://www.w3.org/ns/solid/terms#>.\n" +
+          "<#patch> a solid:InsertDeletePatch;\n" +
           "  solid:deletes { <#something> <#completely> <#different> .}.",
       });
     });

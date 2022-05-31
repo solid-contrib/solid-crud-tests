@@ -164,8 +164,8 @@ if (process.env.SKIP_CONC) {
               "Content-Type": "text/n3",
             },
             body:
-                "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
-                "#patch a solid:InsertDeletePatch;" +
+                "@prefix solid: <http://www.w3.org/ns/solid/terms#>.\n" +
+                "<#patch> a solid:InsertDeletePatch;\n" +
                 `  solid:inserts { ${triple} .}.`,
           });
           expectedRdf += `${triple}\n`;
