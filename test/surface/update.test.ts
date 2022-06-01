@@ -318,7 +318,7 @@ describe("Update", () => {
         body:
           "@prefix solid: <http://www.w3.org/ns/solid/terms#>.\n" +
           "<#patch> a solid:InsertDeletePatch;\n" +
-          "  solid:deletes { <#hello> <#linked> <#world> .}.\n" +
+          "  solid:deletes { <#hello> <#linked> <#world> .};\n" +
           "  solid:inserts { <#hello> <#linked> <#world> .}.\n",
       });
       await new Promise((resolve) => setTimeout(resolve, waittime));
@@ -384,7 +384,7 @@ describe("Update", () => {
         body:
           "@prefix solid: <http://www.w3.org/ns/solid/terms#>.\n" +
           "<#patch> a solid:InsertDeletePatch;\n" +
-          "  solid:deletes { <#hello> <#linked> <#world> .}.\n" +
+          "  solid:deletes { <#hello> <#linked> <#world> .};\n" +
           "  solid:inserts { <#that> a <#fact> .}.\n",
       });
       await new Promise((resolve) => setTimeout(resolve, waittime));
@@ -450,7 +450,7 @@ describe("Update", () => {
         body:
           "@prefix solid: <http://www.w3.org/ns/solid/terms#>.\n" +
           "<#patch> a solid:InsertDeletePatch;\n" +
-          "  solid:deletes { <#something> <#completely> <#different> .}.\n" +
+          "  solid:deletes { <#something> <#completely> <#different> .};\n" +
           "  solid:inserts { <#that> a <#fact> .}.\n",
       });
     });
