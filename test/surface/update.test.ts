@@ -38,6 +38,7 @@ describe("Update", () => {
     }
     authFetcher = await getAuthFetcher(oidcIssuer, newCookie, appOrigin);
   });
+
   describe("Using PUT, overwriting plain text with plain text", () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
@@ -318,7 +319,7 @@ describe("Update", () => {
         body:
           "@prefix solid: <http://www.w3.org/ns/solid/terms#>.\n" +
           "<#patch> a solid:InsertDeletePatch;\n" +
-          "  solid:deletes { <#hello> <#linked> <#world> .}." +
+          "  solid:deletes { <#hello> <#linked> <#world> .};\n" +
           "  solid:inserts { <#hello> <#linked> <#world> .}.",
       });
       await new Promise((resolve) => setTimeout(resolve, waittime));
@@ -384,7 +385,7 @@ describe("Update", () => {
         body:
           "@prefix solid: <http://www.w3.org/ns/solid/terms#>.\n" +
           "<#patch> a solid:InsertDeletePatch;\n" +
-          "  solid:deletes { <#hello> <#linked> <#world> .}." +
+          "  solid:deletes { <#hello> <#linked> <#world> .};\n" +
           "  solid:inserts { <#that> a <#fact> .}.",
       });
       await new Promise((resolve) => setTimeout(resolve, waittime));
@@ -450,7 +451,7 @@ describe("Update", () => {
         body:
           "@prefix solid: <http://www.w3.org/ns/solid/terms#>.\n" +
           "<#patch> a solid:InsertDeletePatch;\n" +
-          "  solid:deletes { <#something> <#completely> <#different> .}." +
+          "  solid:deletes { <#something> <#completely> <#different> .};\n" +
           "  solid:inserts { <#that> a <#fact> .}.",
       });
     });
