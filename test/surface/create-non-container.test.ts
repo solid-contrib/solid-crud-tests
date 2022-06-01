@@ -195,9 +195,9 @@ describe("Create non-container", () => {
             "Content-Type": "text/n3",
           },
           body:
-            "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
-            "#patch a solid:InsertDeletePatch;" +
-            "  solid:inserts { <#hello> <#linked> <#world> .}.",
+            "@prefix solid: <http://www.w3.org/ns/solid/terms#>.\n" +
+            "<#patch> a solid:InsertDeletePatch;\n" +
+            "  solid:inserts { <#hello> <#linked> <#world> .}.\n",
         });
         //		console.log(result);
         await new Promise((resolve) => setTimeout(resolve, waittime));
@@ -357,9 +357,9 @@ describe("Create non-container", () => {
             "Content-Type": "text/n3",
           },
           body:
-            "@prefix solid: <http://www.w3.org/ns/solid/terms#>." +
-            "#patch a solid:InsertDeletePatch;" +
-            "  solid:inserts { <#hello> <#linked> <#world> .}.",
+            "@prefix solid: <http://www.w3.org/ns/solid/terms#>.\n" +
+            "<#patch> a solid:InsertDeletePatch;\n" +
+            "  solid:inserts { <#hello> <#linked> <#world> .}.\n",
         });
         await new Promise((resolve) => setTimeout(resolve, 2000));
       });
