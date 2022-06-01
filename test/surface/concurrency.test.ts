@@ -166,7 +166,7 @@ if (process.env.SKIP_CONC) {
             body:
                 "@prefix solid: <http://www.w3.org/ns/solid/terms#>.\n" +
                 "<#patch> a solid:InsertDeletePatch;\n" +
-                `  solid:inserts { ${triple} .}.`,
+                `  solid:inserts { ${triple} .}.\n`,
           });
           expectedRdf += `${triple}\n`;
           promises.push(promise);
