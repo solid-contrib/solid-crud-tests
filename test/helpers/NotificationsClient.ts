@@ -1,3 +1,8 @@
+import { getAuthHeaders } from "solid-auth-fetcher";
+import AuthFetcher from "solid-auth-fetcher/dist/AuthFetcher";
+import WebSocket = require("ws");
+
+const PROTOCOL_STRING = "solid-0.1";
 
 export class WPSClient {
   received: string[];
@@ -6,14 +11,14 @@ export class WPSClient {
   disabled: boolean;
   authFetcher;
   ws;
-  constructor(resourceUrl: string, authFetcher) {
+  constructor(resourceUrl: string, authFetcher: AuthFetcher) {
     this.received = [];
     this.sent = [];
     this.resourceUrl = resourceUrl;
     this.authFetcher = authFetcher;
     this.disabled = !!process.env.SKIP_WPS;
   }
-  async getReady() {
+  async getReady(): Promise<void> {
     if (this.disabled) {
       return;
     }
@@ -21,9 +26,7 @@ export class WPSClient {
       method: "HEAD",
     });
     const wssUrl = result.headers.get("updates-via");
-    this.ws = new WebSocket(wssUrl, PROTOCOL_STRING, {
-      perMessageDeflate: false,
-    });
+    this.ws = new WebSocket(wssUrl, PROTOCOL_STRING);
     this.ws.on("message", (msg) => {
       // console.log("WS <", msg);
       this.received.push(msg);

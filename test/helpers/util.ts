@@ -1,17 +1,12 @@
-import { getAuthHeaders } from "solid-auth-fetcher";
-
-import WebSocket = require("ws");
 import * as rdf from "rdflib";
 import { IndexedFormula } from "rdflib";
 import AuthFetcher from "solid-auth-fetcher/dist/AuthFetcher";
-
-const PROTOCOL_STRING = "solid-0.1";
 
 function isContainer(url) {
   return url.substr(-1) === "/";
 }
 
-export function getStore(authFetcher): IndexedFormula {
+export function getStore(authFetcher: AuthFetcher): IndexedFormula {
   if (!authFetcher) {
     throw new Error("please pass authFetcher to getStore!");
   }
@@ -37,7 +32,10 @@ export async function getContainerMembers(
     .map((st) => st.object.value);
 }
 
-export async function recursiveDelete(url, authFetcher) {
+export async function recursiveDelete(
+  url: string,
+  authFetcher: AuthFetcher
+): Promise<Response> {
   if (!authFetcher) {
     throw new Error("please pass authFetcher to recursiveDelete!");
   }
@@ -50,10 +48,9 @@ export async function recursiveDelete(url, authFetcher) {
   return authFetcher.fetch(url, { method: "DELETE" });
 }
 
-
-export function ifWps(name, runner) {
-  let level = 'WPS'
-  let id = ''
+export function ifWps(name: string, runner: () => any): any {
+  const level = "WPS";
+  const id = "";
   if (process.env.SKIP_WPS) {
     return it.skip(`${level} ${id} ${name}`, runner);
   }
@@ -65,28 +62,44 @@ export function responseCodeGroup(code) {
 }
 
 // env parameters are SKIP for MUST, SHOULD and INCLUDE for MAY
-export function itIs(level ='', id = '') {
+export function itIs(level = "", id = "") {
   switch (level) {
-    case 'SKIP':
-      return (name, runner) => { it.skip(`${level} ${id} ${name}`, runner); }
-    case 'MUST':
-      if (process.env.SKIP_MUST || process.env['SKIP_MUST_' + id]) {
-          return (name, runner) => { it.skip(`${level} ${id} ${name}`, runner); }
+    case "SKIP":
+      return (name, runner) => {
+        it.skip(`${level} ${id} ${name}`, runner);
+      };
+    case "MUST":
+      if (process.env.SKIP_MUST || process.env["SKIP_MUST_" + id]) {
+        return (name, runner) => {
+          it.skip(`${level} ${id} ${name}`, runner);
+        };
       } else {
-          return (name, runner) => { it(`${level} ${id} ${name}`, runner); }
+        return (name, runner) => {
+          it(`${level} ${id} ${name}`, runner);
+        };
       }
-    case 'SHOULD':
-      if (process.env.SKIP_SHOULD || process.env['SKIP_SHOULD_' + id]) {
-        return (name, runner) => { it.skip(`${level} ${id} ${name}`, runner); }
+    case "SHOULD":
+      if (process.env.SKIP_SHOULD || process.env["SKIP_SHOULD_" + id]) {
+        return (name, runner) => {
+          it.skip(`${level} ${id} ${name}`, runner);
+        };
       } else {
-        return (name, runner) => { it(`${level} ${id} ${name}`, runner); }
+        return (name, runner) => {
+          it(`${level} ${id} ${name}`, runner);
+        };
       }
-    case 'MAY':
-      if (process.env.INCLUDE_MAY || process.env['INCLUDE_MAY_' + id]) {
-        return (name, runner) => { it(`${level} ${id} ${name}`, runner); }
+    case "MAY":
+      if (process.env.INCLUDE_MAY || process.env["INCLUDE_MAY_" + id]) {
+        return (name, runner) => {
+          it(`${level} ${id} ${name}`, runner);
+        };
       } else {
-        return (name, runner) => { it.skip(`${level} ${id} ${name}`, runner); }
+        return (name, runner) => {
+          it.skip(`${level} ${id} ${name}`, runner);
+        };
       }
   }
-  return (name, runner) => { it(`${level} ${id} ${name}`, runner); }
+  return (name, runner) => {
+    it(`${level} ${id} ${name}`, runner);
+  };
 }
