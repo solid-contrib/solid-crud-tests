@@ -31,7 +31,9 @@ describe("Alice's storage root", () => {
     );
     mock.fetch = async (url: string): Promise<any> => {
       const headers = await getAuthHeaders(url, "GET", authFetcher);
-
+      // Work around https://github.com/solid-contrib/solid-auth-fetcher/pull/33
+      headers["Authorization"] = "dpop " + headers["Authorization"];
+      console.log(headers);
       (headers as any).Accept = "text/turtle";
       const result = await fetch(url, {
         headers,
