@@ -1,0 +1,9 @@
+notifications:
+
+* WPS tests that already exist https://github.com/pdsinterop/solid-nextcloud/pull/85/files#diff-a4c66415bf4c03a7240b331cd9954dcaff97581d735516e2819660fc4c324f2c
+* secure websocket
+* webhook https://github.com/pdsinterop/solid-nextcloud/pull/85/files#diff-f77530c143e43e0e7ea63eb31ae13794ae65cccff03fbdcf5b7c3fba93499a5e
+
+* register a webhook https://github.com/pdsinterop/solid-nextcloud/pull/85/files#diff-3413d5b6b5d579e0fcdfbf98e59bb5afdf592c3417a7741775c7e6e69c24ccb0R55
+
+* see test/registerWebhook.js
