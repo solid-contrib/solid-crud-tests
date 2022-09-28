@@ -6,10 +6,10 @@ import { oidcIssuer, cookie, appOrigin } from "../helpers/env";
 import {
   recursiveDelete,
   getContainerMembers,
-  WPSClient,
   ifWps,
   responseCodeGroup,
 } from "../helpers/util";
+import { WPSClient } from "../helpers/NotificationsClient";
 
 const MAX_WPS_DELAY = 1000;
 

@@ -8,10 +8,10 @@ import { getAuthFetcher } from "solid-auth-fetcher";
 import {
   recursiveDelete,
   getContainerMembers,
-  WPSClient,
   ifWps,
   responseCodeGroup,
 } from "../helpers/util";
+import { WPSClient } from "../helpers/NotificationsClient";
 
 // when the tests start, exists/exists.ttl exists in the test folder,
 // and nothing else.
