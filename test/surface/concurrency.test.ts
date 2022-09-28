@@ -12,7 +12,7 @@ import {
   ifWps,
   getStore,
 } from "../helpers/util";
-import { WPSClient } from "../helpers/NotificationsClient";
+import { NotificationsClient } from "../helpers/NotificationsClient";
 import * as rdflib from "rdflib";
 
 const waittime = 2000;
@@ -55,12 +55,12 @@ if (process.env.SKIP_CONC) {
           body: "<#hello> <#linked> <#world> .",
         });
 
-        websocketsPubsubClientContainer = new WPSClient(
+        websocketsPubsubClientContainer = new NotificationsClient(
           containerUrl,
           authFetcher
         );
         await websocketsPubsubClientContainer.getReady();
-        websocketsPubsubClientResource = new WPSClient(
+        websocketsPubsubClientResource = new NotificationsClient(
           resourceUrl,
           authFetcher
         );
@@ -154,7 +154,7 @@ if (process.env.SKIP_CONC) {
         });
         await new Promise((resolve) => setTimeout(resolve, waittime));
 
-        websocketsPubsubClientResource = new WPSClient(
+        websocketsPubsubClientResource = new NotificationsClient(
           resourceUrl,
           authFetcher
         );

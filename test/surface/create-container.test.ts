@@ -9,7 +9,7 @@ import {
   ifWps,
   responseCodeGroup,
 } from "../helpers/util";
-import { WPSClient } from "../helpers/NotificationsClient";
+import { NotificationsClient } from "../helpers/NotificationsClient";
 
 const MAX_WPS_DELAY = 1000;
 
@@ -43,12 +43,12 @@ describe("Create container", () => {
           },
           body: "<#hello> <#linked> <#world> .",
         });
-        websocketsPubsubClientContainer = new WPSClient(
+        websocketsPubsubClientContainer = new NotificationsClient(
           containerUrl,
           authFetcher
         );
         await websocketsPubsubClientContainer.getReady();
-        websocketsPubsubClientResource = new WPSClient(
+        websocketsPubsubClientResource = new NotificationsClient(
           resourceUrl,
           authFetcher
         );

@@ -6,7 +6,7 @@ import {
 } from "../helpers/env";
 import { getAuthFetcher, getNodeSolidServerCookie } from "solid-auth-fetcher";
 import { getStore, ifWps, responseCodeGroup } from "../helpers/util";
-import { WPSClient } from "../helpers/NotificationsClient";
+import { NotificationsClient } from "../helpers/NotificationsClient";
 import * as rdflib from "rdflib";
 
 const waittime = 1000;
@@ -54,7 +54,7 @@ describe("Update", () => {
       console.log(res.headers.get("Location"));
       await new Promise((resolve) => setTimeout(resolve, waittime));
 
-      websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
+      websocketsPubsubClientResource = new NotificationsClient(resourceUrl, authFetcher);
       await websocketsPubsubClientResource.getReady();
       await authFetcher.fetch(resourceUrl, {
         method: "PATCH",

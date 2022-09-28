@@ -4,7 +4,7 @@ import WebSocket = require("ws");
 
 const PROTOCOL_STRING = "solid-0.1";
 
-export class WPSClient {
+export class NotificationsClient {
   received: string[];
   sent: string[];
   resourceUrl: string;

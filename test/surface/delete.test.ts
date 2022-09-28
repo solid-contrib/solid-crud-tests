@@ -11,7 +11,7 @@ import {
   ifWps,
   responseCodeGroup,
 } from "../helpers/util";
-import { WPSClient } from "../helpers/NotificationsClient";
+import { NotificationsClient } from "../helpers/NotificationsClient";
 
 // when the tests start, exists/exists.ttl exists in the test folder,
 // and nothing else.
@@ -41,12 +41,12 @@ describe("Delete", () => {
         body: "<#hello> <#linked> <#world> .",
       });
 
-      websocketsPubsubClientContainer = new WPSClient(
+      websocketsPubsubClientContainer = new NotificationsClient(
         containerUrl,
         authFetcher
       );
       await websocketsPubsubClientContainer.getReady();
-      websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
+      websocketsPubsubClientResource = new NotificationsClient(resourceUrl, authFetcher);
       await websocketsPubsubClientResource.getReady();
       await authFetcher.fetch(resourceUrl, {
         method: "DELETE",
@@ -101,12 +101,12 @@ describe("Delete", () => {
         body: "Hello World",
       });
 
-      websocketsPubsubClientContainer = new WPSClient(
+      websocketsPubsubClientContainer = new NotificationsClient(
         containerUrl,
         authFetcher
       );
       await websocketsPubsubClientContainer.getReady();
-      websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
+      websocketsPubsubClientResource = new NotificationsClient(resourceUrl, authFetcher);
       await websocketsPubsubClientResource.getReady();
       await authFetcher.fetch(containerUrl, {
         method: "DELETE",
@@ -173,7 +173,7 @@ describe("Delete", () => {
         method: "DELETE",
       });
 
-      websocketsPubsubClientContainer = new WPSClient(
+      websocketsPubsubClientContainer = new NotificationsClient(
         containerUrl,
         authFetcher
       );

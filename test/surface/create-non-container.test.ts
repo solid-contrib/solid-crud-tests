@@ -12,7 +12,7 @@ import {
   responseCodeGroup,
   ifWps,
 } from "../helpers/util";
-import { WPSClient } from "../helpers/NotificationsClient";
+import { NotificationsClient } from "../helpers/NotificationsClient";
 import * as rdflib from "rdflib";
 
 const waittime = 2000;
@@ -45,7 +45,7 @@ describe("Create non-container", () => {
           body: "<#hello> <#linked> <#world> .",
         });
 
-        websocketsPubsubClient = new WPSClient(containerUrl, authFetcher);
+        websocketsPubsubClient = new NotificationsClient(containerUrl, authFetcher);
         await websocketsPubsubClient.getReady();
         const result = await authFetcher.fetch(containerUrl, {
           method: "POST",
@@ -106,12 +106,12 @@ describe("Create non-container", () => {
           body: "<#hello> <#linked> <#world> .",
         });
 
-        websocketsPubsubClientContainer = new WPSClient(
+        websocketsPubsubClientContainer = new NotificationsClient(
           containerUrl,
           authFetcher
         );
         await websocketsPubsubClientContainer.getReady();
-        websocketsPubsubClientResource = new WPSClient(
+        websocketsPubsubClientResource = new NotificationsClient(
           resourceUrl,
           authFetcher
         );
@@ -178,12 +178,12 @@ describe("Create non-container", () => {
           body: "<#hello> <#linked> <#world> .",
         });
 
-        websocketsPubsubClientContainer = new WPSClient(
+        websocketsPubsubClientContainer = new NotificationsClient(
           containerUrl,
           authFetcher
         );
         await websocketsPubsubClientContainer.getReady();
-        websocketsPubsubClientResource = new WPSClient(
+        websocketsPubsubClientResource = new NotificationsClient(
           resourceUrl,
           authFetcher
         );
@@ -260,17 +260,17 @@ describe("Create non-container", () => {
       const resourceUrl = `${containerUrl}new.txt`;
 
       beforeAll(async () => {
-        websocketsPubsubClientParent = new WPSClient(
+        websocketsPubsubClientParent = new NotificationsClient(
           testFolderUrl,
           authFetcher
         );
         await websocketsPubsubClientParent.getReady();
-        websocketsPubsubClientContainer = new WPSClient(
+        websocketsPubsubClientContainer = new NotificationsClient(
           containerUrl,
           authFetcher
         );
         await websocketsPubsubClientContainer.getReady();
-        websocketsPubsubClientResource = new WPSClient(
+        websocketsPubsubClientResource = new NotificationsClient(
           resourceUrl,
           authFetcher
         );
@@ -335,17 +335,17 @@ describe("Create non-container", () => {
       const resourceUrl = `${containerUrl}new.ttl`;
 
       beforeAll(async () => {
-        websocketsPubsubClientParent = new WPSClient(
+        websocketsPubsubClientParent = new NotificationsClient(
           testFolderUrl,
           authFetcher
         );
         await websocketsPubsubClientParent.getReady();
-        websocketsPubsubClientContainer = new WPSClient(
+        websocketsPubsubClientContainer = new NotificationsClient(
           containerUrl,
           authFetcher
         );
         await websocketsPubsubClientContainer.getReady();
-        websocketsPubsubClientResource = new WPSClient(
+        websocketsPubsubClientResource = new NotificationsClient(
           resourceUrl,
           authFetcher
         );
