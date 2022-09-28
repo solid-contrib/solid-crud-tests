@@ -48,7 +48,7 @@ describe("Delete", () => {
       await websocketsPubsubClientContainer.getReady();
       websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
       await websocketsPubsubClientResource.getReady();
-      const result = await authFetcher.fetch(resourceUrl, {
+      await authFetcher.fetch(resourceUrl, {
         method: "DELETE",
       });
     });
@@ -108,7 +108,7 @@ describe("Delete", () => {
       await websocketsPubsubClientContainer.getReady();
       websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
       await websocketsPubsubClientResource.getReady();
-      const result = await authFetcher.fetch(containerUrl, {
+      await authFetcher.fetch(containerUrl, {
         method: "DELETE",
       });
     });

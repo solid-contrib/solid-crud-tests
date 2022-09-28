@@ -13,7 +13,6 @@ import {
   getStore,
 } from "../helpers/util";
 import { WPSClient } from "../helpers/NotificationsClient";
-import { ldp, rdf, space, link } from "rdf-namespaces";
 import * as rdflib from "rdflib";
 
 const waittime = 2000;

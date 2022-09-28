@@ -136,7 +136,7 @@ describe("Alice's pod", () => {
           "application/ld+json"
         );
       });
-      itIs('MAY')("Triples", async () => {
+      itIs("MAY")("Triples", async () => {
         const triples = await asTriples(
           jsonText,
           `${testFolderUrl}example.html`,
@@ -150,7 +150,7 @@ describe("Alice's pod", () => {
       beforeAll(async () => {
         text = await getAs(`${testFolderUrl}example.html`, "text/turtle");
       });
-      itIs('MAY')("Triples", async () => {
+      itIs("MAY")("Triples", async () => {
         const triples = await asTriples(
           text,
           `${testFolderUrl}example.html`,

@@ -13,7 +13,6 @@ import {
   ifWps,
 } from "../helpers/util";
 import { WPSClient } from "../helpers/NotificationsClient";
-import { ldp, rdf, space, link } from "rdf-namespaces";
 import * as rdflib from "rdflib";
 
 const waittime = 2000;
@@ -117,7 +116,7 @@ describe("Create non-container", () => {
           authFetcher
         );
         await websocketsPubsubClientResource.getReady();
-        const result = await authFetcher.fetch(resourceUrl, {
+        await authFetcher.fetch(resourceUrl, {
           method: "PUT",
           headers: {
             "Content-Type": "text/plain",
@@ -276,7 +275,7 @@ describe("Create non-container", () => {
           authFetcher
         );
         await websocketsPubsubClientResource.getReady();
-        const result = await authFetcher.fetch(resourceUrl, {
+        await authFetcher.fetch(resourceUrl, {
           method: "PUT",
           headers: {
             "Content-Type": "text/plain",

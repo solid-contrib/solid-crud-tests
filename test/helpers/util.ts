@@ -57,12 +57,15 @@ export function ifWps(name: string, runner: () => any): any {
   return it(`${level} ${id} ${name}`, runner);
 }
 
-export function responseCodeGroup(code) {
+export function responseCodeGroup(code: number): string {
   return `${Math.floor(code / 100)}xx`;
 }
 
 // env parameters are SKIP for MUST, SHOULD and INCLUDE for MAY
-export function itIs(level = "", id = "") {
+export function itIs(
+  level = "",
+  id = ""
+): (name: string, runner: () => any) => any {
   switch (level) {
     case "SKIP":
       return (name, runner) => {

@@ -1,5 +1,5 @@
 import { generateTestFolder } from "../helpers/env";
-import { ldp, rdf, space, link } from "rdf-namespaces";
+import { ldp, rdf } from "rdf-namespaces";
 import { getAuthFetcher } from "solid-auth-fetcher";
 import { getStore } from "../helpers/util";
 import { oidcIssuer, cookie, appOrigin } from "../helpers/env";
@@ -53,7 +53,7 @@ describe("Create container", () => {
           authFetcher
         );
         await websocketsPubsubClientResource.getReady();
-        const result = await authFetcher.fetch(resourceUrl, {
+        await authFetcher.fetch(resourceUrl, {
           method: "PUT",
           headers: {
             "Content-Type": "text/turtle",

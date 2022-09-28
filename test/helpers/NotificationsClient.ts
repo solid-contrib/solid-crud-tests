@@ -46,7 +46,7 @@ export class WPSClient {
     });
   }
   // NB: this will fail if you didn't await getReady first:
-  send(str) {
+  send(str: string): Promise<any> {
     if (this.disabled) {
       return;
     }
@@ -54,7 +54,7 @@ export class WPSClient {
     this.sent.push(str);
     return new Promise((resolve) => this.ws.send(str, resolve));
   }
-  disconnect() {
+  disconnect(): any {
     if (this.disabled) {
       return;
     }
