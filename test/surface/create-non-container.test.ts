@@ -28,7 +28,7 @@ describe("Create non-container", () => {
 
   // use `${testFolderUrl}exists/` as the existing folder:
   describe("in an existing container", () => {
-    describe("using POST", () => {
+    describe.only("using POST", () => {
       const { testFolderUrl } = generateTestFolder();
       let resourceUrl;
       let websocketsPubsubClient;

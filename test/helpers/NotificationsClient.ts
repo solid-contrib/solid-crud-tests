@@ -25,6 +25,12 @@ export class NotificationsClient {
     const result = await this.authFetcher.fetch(this.resourceUrl, {
       method: "HEAD",
     });
+    const linkHeaders = result.headers.get("link");
+    console.log(linkHeaders);
+    for (const header of result.headers) {
+      console.log(header);
+    }
+    console.log("pairs done");
     const wssUrl = result.headers.get("updates-via");
     this.ws = new WebSocket(wssUrl, PROTOCOL_STRING);
     this.ws.on("message", (msg) => {
