@@ -6,7 +6,9 @@ function isContainer(url) {
   return url.substr(-1) === "/";
 }
 
-export function getStore(authFetcher: AuthFetcher): IndexedFormula {
+export function getStore(
+  authFetcher: AuthFetcher | { fetch: () => any }
+): IndexedFormula {
   if (!authFetcher) {
     throw new Error("please pass authFetcher to getStore!");
   }
