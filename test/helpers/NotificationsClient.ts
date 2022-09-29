@@ -1,6 +1,7 @@
 import { getAuthHeaders } from "solid-auth-fetcher";
 import AuthFetcher from "solid-auth-fetcher/dist/AuthFetcher";
 import WebSocket = require("ws");
+import parseLinkHeader = require("parse-link-header");
 
 const PROTOCOL_STRING = "solid-0.1";
 
@@ -25,12 +26,21 @@ export class NotificationsClient {
     const result = await this.authFetcher.fetch(this.resourceUrl, {
       method: "HEAD",
     });
-    const linkHeaders = result.headers.get("link");
-    console.log(linkHeaders);
-    for (const header of result.headers) {
-      console.log(header);
+    const linkHeaders = result.headers.raw()["link"];
+    if (Array.isArray(linkHeaders) && linkHeaders.length > 0) {
+      let obj = {};
+      for (let i = 0; i < linkHeaders.length; i++) {
+        obj = {
+          ...parseLinkHeader(linkHeaders[i]),
+          ...obj,
+        };
+      }
+      console.log(obj);
     }
-    console.log("pairs done");
+    const serverWideNotificationsDescription = obj["http://www.w3.org/ns/solid#storageDescription"];
+
+    /// tbc!
+    
     const wssUrl = result.headers.get("updates-via");
     if (wssUrl.length > 0) {
       this.setupInsecureWs(wssUrl);
