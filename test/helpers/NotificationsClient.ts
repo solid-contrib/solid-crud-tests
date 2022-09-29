@@ -10,7 +10,7 @@ export class NotificationsClient {
   resourceUrl: string;
   disabled: boolean;
   authFetcher;
-  ws;
+  insecureWs;
   constructor(resourceUrl: string, authFetcher: AuthFetcher) {
     this.received = [];
     this.sent = [];
@@ -32,13 +32,18 @@ export class NotificationsClient {
     }
     console.log("pairs done");
     const wssUrl = result.headers.get("updates-via");
-    this.ws = new WebSocket(wssUrl, PROTOCOL_STRING);
-    this.ws.on("message", (msg) => {
+    if (wssUrl.length > 0) {
+      this.setupInsecureWs(wssUrl);
+    }
+  }
+  async setupInsecureWs(wssUrl: string): Promise<void> {
+    this.insecureWs = new WebSocket(wssUrl, PROTOCOL_STRING);
+    this.insecureWs.on("message", (msg) => {
       // console.log("WS <", msg);
       this.received.push(msg);
     });
     await new Promise<void>((resolve) => {
-      this.ws.on("open", async () => {
+      this.insecureWs.on("open", async () => {
         const authHeaders = await getAuthHeaders(
           this.resourceUrl,
           "GET",
@@ -58,15 +63,15 @@ export class NotificationsClient {
     }
     // console.log("WS > ", str);
     this.sent.push(str);
-    return new Promise((resolve) => this.ws.send(str, resolve));
+    return new Promise((resolve) => this.insecureWs.send(str, resolve));
   }
   disconnect(): any {
     if (this.disabled) {
       return;
     }
-    if (this.ws) {
-      this.ws.terminate();
-      delete this.ws;
+    if (this.insecureWs) {
+      this.insecureWs.terminate();
+      delete this.insecureWs;
     }
   }
 }
