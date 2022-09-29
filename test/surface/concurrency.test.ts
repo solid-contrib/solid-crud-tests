@@ -37,8 +37,8 @@ if (process.env.SKIP_CONC) {
     // use `${testFolderUrl}exists/` as the existing folder:
     describe("Try to create the same resource, using PUT 10 times", () => {
       const { testFolderUrl } = generateTestFolder();
-      let websocketsPubsubClientContainer;
-      let websocketsPubsubClientResource;
+      let notificationsClientContainer;
+      let notificationsClientResource;
       let results;
       let bodyExpected = "who won?";
       const containerUrl = `${testFolderUrl}exists/`;
@@ -55,16 +55,16 @@ if (process.env.SKIP_CONC) {
           body: "<#hello> <#linked> <#world> .",
         });
 
-        websocketsPubsubClientContainer = new NotificationsClient(
+        notificationsClientContainer = new NotificationsClient(
           containerUrl,
           authFetcher
         );
-        await websocketsPubsubClientContainer.getReady();
-        websocketsPubsubClientResource = new NotificationsClient(
+        await notificationsClientContainer.getReady();
+        notificationsClientResource = new NotificationsClient(
           resourceUrl,
           authFetcher
         );
-        await websocketsPubsubClientResource.getReady();
+        await notificationsClientResource.getReady();
         const promises = [];
         for (let i = 0; i < 10; i++) {
           const body = `${i} wins`;
@@ -88,8 +88,8 @@ if (process.env.SKIP_CONC) {
       });
 
       afterAll(() => {
-        websocketsPubsubClientContainer.disconnect();
-        websocketsPubsubClientResource.disconnect();
+        notificationsClientContainer.disconnect();
+        notificationsClientResource.disconnect();
         recursiveDelete(testFolderUrl, authFetcher);
       });
 
@@ -121,14 +121,14 @@ if (process.env.SKIP_CONC) {
       });
       ifWps("emits websockets-pubsub on the container exactly once", () => {
         expect(
-          websocketsPubsubClientContainer.received.filter(
+          notificationsClientContainer.received.filter(
             (x) => x === `pub ${containerUrl}`
           ).length
         ).toEqual(1);
       });
       ifWps("emits websockets-pubsub on the resource exactly once", () => {
         expect(
-          websocketsPubsubClientResource.received.filter(
+          notificationsClientResource.received.filter(
             (x) => x === `pub ${resourceUrl}`
           ).length
         ).toEqual(1);
@@ -136,7 +136,7 @@ if (process.env.SKIP_CONC) {
     });
     describe("Use PATCH 10 times to add triple to the same resource", () => {
       const { testFolderUrl } = generateTestFolder();
-      let websocketsPubsubClientResource;
+      let notificationsClientResource;
       let results;
       let expectedRdf = "";
       const containerUrl = `${testFolderUrl}exists/`;
@@ -154,11 +154,11 @@ if (process.env.SKIP_CONC) {
         });
         await new Promise((resolve) => setTimeout(resolve, waittime));
 
-        websocketsPubsubClientResource = new NotificationsClient(
+        notificationsClientResource = new NotificationsClient(
           resourceUrl,
           authFetcher
         );
-        await websocketsPubsubClientResource.getReady();
+        await notificationsClientResource.getReady();
         const promises = [];
         for (let i = 0; i < 10; i++) {
           const triple = `<#triple-${i}> <#added> <#successfully> .`;
@@ -180,7 +180,7 @@ if (process.env.SKIP_CONC) {
       });
 
       afterAll(() => {
-        websocketsPubsubClientResource.disconnect();
+        notificationsClientResource.disconnect();
         recursiveDelete(testFolderUrl, authFetcher);
       });
 
@@ -206,7 +206,7 @@ if (process.env.SKIP_CONC) {
       });
       ifWps("emits websockets-pubsub on the resource 10 times", () => {
         expect(
-          websocketsPubsubClientResource.received.filter(
+          notificationsClientResource.received.filter(
             (x) => x === `pub ${resourceUrl}`
           ).length
         ).toEqual(10);

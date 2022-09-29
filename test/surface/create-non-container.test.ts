@@ -31,7 +31,7 @@ describe("Create non-container", () => {
     describe.only("using POST", () => {
       const { testFolderUrl } = generateTestFolder();
       let resourceUrl;
-      let websocketsPubsubClient;
+      let notificationsClient;
       const containerUrl = `${testFolderUrl}exists/`;
 
       beforeAll(async () => {
@@ -45,8 +45,8 @@ describe("Create non-container", () => {
           body: "<#hello> <#linked> <#world> .",
         });
 
-        websocketsPubsubClient = new NotificationsClient(containerUrl, authFetcher);
-        await websocketsPubsubClient.getReady();
+        notificationsClient = new NotificationsClient(containerUrl, authFetcher);
+        await notificationsClient.getReady();
         const result = await authFetcher.fetch(containerUrl, {
           method: "POST",
           headers: {
@@ -62,7 +62,7 @@ describe("Create non-container", () => {
       });
 
       afterAll(() => {
-        websocketsPubsubClient.disconnect();
+        notificationsClient.disconnect();
         recursiveDelete(testFolderUrl, authFetcher);
       });
 
@@ -82,7 +82,7 @@ describe("Create non-container", () => {
         );
       });
       ifWps("emits websockets-pubsub on the container", () => {
-        expect(websocketsPubsubClient.received).toEqual(
+        expect(notificationsClient.received).toEqual(
           expect.arrayContaining([`ack ${containerUrl}`, `pub ${containerUrl}`])
         );
       });
@@ -90,8 +90,8 @@ describe("Create non-container", () => {
 
     describe("using PUT", () => {
       const { testFolderUrl } = generateTestFolder();
-      let websocketsPubsubClientContainer;
-      let websocketsPubsubClientResource;
+      let notificationsClientContainer;
+      let notificationsClientResource;
       const containerUrl = `${testFolderUrl}exists/`;
       const resourceUrl = `${containerUrl}new.txt`;
 
@@ -106,16 +106,16 @@ describe("Create non-container", () => {
           body: "<#hello> <#linked> <#world> .",
         });
 
-        websocketsPubsubClientContainer = new NotificationsClient(
+        notificationsClientContainer = new NotificationsClient(
           containerUrl,
           authFetcher
         );
-        await websocketsPubsubClientContainer.getReady();
-        websocketsPubsubClientResource = new NotificationsClient(
+        await notificationsClientContainer.getReady();
+        notificationsClientResource = new NotificationsClient(
           resourceUrl,
           authFetcher
         );
-        await websocketsPubsubClientResource.getReady();
+        await notificationsClientResource.getReady();
         await authFetcher.fetch(resourceUrl, {
           method: "PUT",
           headers: {
@@ -128,8 +128,8 @@ describe("Create non-container", () => {
       });
 
       afterAll(() => {
-        websocketsPubsubClientContainer.disconnect();
-        websocketsPubsubClientResource.disconnect();
+        notificationsClientContainer.disconnect();
+        notificationsClientResource.disconnect();
         recursiveDelete(testFolderUrl, authFetcher);
       });
 
@@ -149,12 +149,12 @@ describe("Create non-container", () => {
         );
       });
       ifWps("emits websockets-pubsub on the container", () => {
-        expect(websocketsPubsubClientContainer.received).toEqual(
+        expect(notificationsClientContainer.received).toEqual(
           expect.arrayContaining([`ack ${containerUrl}`, `pub ${containerUrl}`])
         );
       });
       ifWps("emits websockets-pubsub on the resource", () => {
-        expect(websocketsPubsubClientResource.received).toEqual(
+        expect(notificationsClientResource.received).toEqual(
           expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
         );
       });
@@ -162,8 +162,8 @@ describe("Create non-container", () => {
 
     describe("using PATCH", () => {
       const { testFolderUrl } = generateTestFolder();
-      let websocketsPubsubClientContainer;
-      let websocketsPubsubClientResource;
+      let notificationsClientContainer;
+      let notificationsClientResource;
       const containerUrl = `${testFolderUrl}exists/`;
       const resourceUrl = `${containerUrl}new.ttl`;
 
@@ -178,16 +178,16 @@ describe("Create non-container", () => {
           body: "<#hello> <#linked> <#world> .",
         });
 
-        websocketsPubsubClientContainer = new NotificationsClient(
+        notificationsClientContainer = new NotificationsClient(
           containerUrl,
           authFetcher
         );
-        await websocketsPubsubClientContainer.getReady();
-        websocketsPubsubClientResource = new NotificationsClient(
+        await notificationsClientContainer.getReady();
+        notificationsClientResource = new NotificationsClient(
           resourceUrl,
           authFetcher
         );
-        await websocketsPubsubClientResource.getReady();
+        await notificationsClientResource.getReady();
         await authFetcher.fetch(resourceUrl, {
           method: "PATCH",
           headers: {
@@ -203,8 +203,8 @@ describe("Create non-container", () => {
       });
 
       afterAll(() => {
-        websocketsPubsubClientContainer.disconnect();
-        websocketsPubsubClientResource.disconnect();
+        notificationsClientContainer.disconnect();
+        notificationsClientResource.disconnect();
         recursiveDelete(testFolderUrl, authFetcher);
       });
 
@@ -238,12 +238,12 @@ describe("Create non-container", () => {
         );
       });
       ifWps("emits websockets-pubsub on the container", () => {
-        expect(websocketsPubsubClientContainer.received).toEqual(
+        expect(notificationsClientContainer.received).toEqual(
           expect.arrayContaining([`ack ${containerUrl}`, `pub ${containerUrl}`])
         );
       });
       ifWps("emits websockets-pubsub on the resource", () => {
-        expect(websocketsPubsubClientResource.received).toEqual(
+        expect(notificationsClientResource.received).toEqual(
           expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
         );
       });
@@ -254,27 +254,27 @@ describe("Create non-container", () => {
     describe("using PUT", () => {
       const { testFolderUrl } = generateTestFolder();
       const containerUrl = `${testFolderUrl}new/`;
-      let websocketsPubsubClientParent;
-      let websocketsPubsubClientContainer;
-      let websocketsPubsubClientResource;
+      let notificationsClientParent;
+      let notificationsClientContainer;
+      let notificationsClientResource;
       const resourceUrl = `${containerUrl}new.txt`;
 
       beforeAll(async () => {
-        websocketsPubsubClientParent = new NotificationsClient(
+        notificationsClientParent = new NotificationsClient(
           testFolderUrl,
           authFetcher
         );
-        await websocketsPubsubClientParent.getReady();
-        websocketsPubsubClientContainer = new NotificationsClient(
+        await notificationsClientParent.getReady();
+        notificationsClientContainer = new NotificationsClient(
           containerUrl,
           authFetcher
         );
-        await websocketsPubsubClientContainer.getReady();
-        websocketsPubsubClientResource = new NotificationsClient(
+        await notificationsClientContainer.getReady();
+        notificationsClientResource = new NotificationsClient(
           resourceUrl,
           authFetcher
         );
-        await websocketsPubsubClientResource.getReady();
+        await notificationsClientResource.getReady();
         await authFetcher.fetch(resourceUrl, {
           method: "PUT",
           headers: {
@@ -287,9 +287,9 @@ describe("Create non-container", () => {
       });
 
       afterAll(() => {
-        websocketsPubsubClientParent.disconnect();
-        websocketsPubsubClientContainer.disconnect();
-        websocketsPubsubClientResource.disconnect();
+        notificationsClientParent.disconnect();
+        notificationsClientContainer.disconnect();
+        notificationsClientResource.disconnect();
         recursiveDelete(testFolderUrl, authFetcher);
       });
 
@@ -307,7 +307,7 @@ describe("Create non-container", () => {
         expect(containerListing.sort()).toEqual([resourceUrl].sort());
       });
       ifWps("emits websockets-pubsub on the parent", () => {
-        expect(websocketsPubsubClientParent.received).toEqual(
+        expect(notificationsClientParent.received).toEqual(
           expect.arrayContaining([
             `ack ${testFolderUrl}`,
             `pub ${testFolderUrl}`,
@@ -315,12 +315,12 @@ describe("Create non-container", () => {
         );
       });
       ifWps("emits websockets-pubsub on the container", () => {
-        expect(websocketsPubsubClientContainer.received).toEqual(
+        expect(notificationsClientContainer.received).toEqual(
           expect.arrayContaining([`ack ${containerUrl}`, `pub ${containerUrl}`])
         );
       });
       ifWps("emits websockets-pubsub on the resource", () => {
-        expect(websocketsPubsubClientResource.received).toEqual(
+        expect(notificationsClientResource.received).toEqual(
           expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
         );
       });
@@ -328,28 +328,28 @@ describe("Create non-container", () => {
 
     describe("using PATCH", () => {
       const { testFolderUrl } = generateTestFolder();
-      let websocketsPubsubClientParent;
-      let websocketsPubsubClientContainer;
-      let websocketsPubsubClientResource;
+      let notificationsClientParent;
+      let notificationsClientContainer;
+      let notificationsClientResource;
       const containerUrl = `${testFolderUrl}new/`;
       const resourceUrl = `${containerUrl}new.ttl`;
 
       beforeAll(async () => {
-        websocketsPubsubClientParent = new NotificationsClient(
+        notificationsClientParent = new NotificationsClient(
           testFolderUrl,
           authFetcher
         );
-        await websocketsPubsubClientParent.getReady();
-        websocketsPubsubClientContainer = new NotificationsClient(
+        await notificationsClientParent.getReady();
+        notificationsClientContainer = new NotificationsClient(
           containerUrl,
           authFetcher
         );
-        await websocketsPubsubClientContainer.getReady();
-        websocketsPubsubClientResource = new NotificationsClient(
+        await notificationsClientContainer.getReady();
+        notificationsClientResource = new NotificationsClient(
           resourceUrl,
           authFetcher
         );
-        await websocketsPubsubClientResource.getReady();
+        await notificationsClientResource.getReady();
         await authFetcher.fetch(resourceUrl, {
           method: "PATCH",
           headers: {
@@ -364,9 +364,9 @@ describe("Create non-container", () => {
       });
 
       afterAll(() => {
-        websocketsPubsubClientParent.disconnect();
-        websocketsPubsubClientContainer.disconnect();
-        websocketsPubsubClientResource.disconnect();
+        notificationsClientParent.disconnect();
+        notificationsClientContainer.disconnect();
+        notificationsClientResource.disconnect();
         recursiveDelete(testFolderUrl, authFetcher);
       });
 
@@ -398,7 +398,7 @@ describe("Create non-container", () => {
         expect(containerListing.sort()).toEqual([resourceUrl].sort());
       });
       ifWps("emits websockets-pubsub on the parent", () => {
-        expect(websocketsPubsubClientParent.received).toEqual(
+        expect(notificationsClientParent.received).toEqual(
           expect.arrayContaining([
             `ack ${testFolderUrl}`,
             `pub ${testFolderUrl}`,
@@ -406,12 +406,12 @@ describe("Create non-container", () => {
         );
       });
       ifWps("emits websockets-pubsub on the container", () => {
-        expect(websocketsPubsubClientContainer.received).toEqual(
+        expect(notificationsClientContainer.received).toEqual(
           expect.arrayContaining([`ack ${containerUrl}`, `pub ${containerUrl}`])
         );
       });
       ifWps("emits websockets-pubsub on the resource", () => {
-        expect(websocketsPubsubClientResource.received).toEqual(
+        expect(notificationsClientResource.received).toEqual(
           expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
         );
       });

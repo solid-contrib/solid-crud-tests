@@ -43,7 +43,7 @@ describe("Notifications", () => {
   });
   describe("When overwriting plain text with plain text using PUT", () => {
     const { testFolderUrl } = generateTestFolder();
-    let websocketsPubsubClientResource;
+    let notificationsClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
     const resourceUrl = `${containerUrl}exists1.txt`;
 
@@ -60,8 +60,8 @@ describe("Notifications", () => {
       await new Promise((resolve) => setTimeout(resolve, waittime));
       const getResult = await authFetcher.fetch(resourceUrl);
       const resourceETagInQuotes = getResult.headers.get("ETag");
-      websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
-      await websocketsPubsubClientResource.getReady();
+      notificationsClientResource = new NotificationsClient(resourceUrl, authFetcher);
+      await notificationsClientResource.getReady();
       const headers = {
         "Content-Type": "text/plain",
       };
@@ -77,11 +77,11 @@ describe("Notifications", () => {
     });
 
     afterAll(() => {
-      websocketsPubsubClientResource.disconnect();
+      notificationsClientResource.disconnect();
       recursiveDelete(testFolderUrl, authFetcher);
     });
     ifWps("emits websockets-pubsub on the resource", () => {
-      expect(websocketsPubsubClientResource.received).toEqual(
+      expect(notificationsClientResource.received).toEqual(
         expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
       );
     });

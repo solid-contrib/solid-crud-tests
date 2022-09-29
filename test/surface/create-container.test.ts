@@ -28,8 +28,8 @@ describe("Create container", () => {
   describe("in an existing container", () => {
     describe("using PUT", () => {
       const { testFolderUrl } = generateTestFolder();
-      let websocketsPubsubClientContainer;
-      let websocketsPubsubClientResource;
+      let notificationsClientContainer;
+      let notificationsClientResource;
       const containerUrl = `${testFolderUrl}exists/`;
       const resourceUrl = `${containerUrl}new/`;
 
@@ -43,16 +43,16 @@ describe("Create container", () => {
           },
           body: "<#hello> <#linked> <#world> .",
         });
-        websocketsPubsubClientContainer = new NotificationsClient(
+        notificationsClientContainer = new NotificationsClient(
           containerUrl,
           authFetcher
         );
-        await websocketsPubsubClientContainer.getReady();
-        websocketsPubsubClientResource = new NotificationsClient(
+        await notificationsClientContainer.getReady();
+        notificationsClientResource = new NotificationsClient(
           resourceUrl,
           authFetcher
         );
-        await websocketsPubsubClientResource.getReady();
+        await notificationsClientResource.getReady();
         await authFetcher.fetch(resourceUrl, {
           method: "PUT",
           headers: {
@@ -65,8 +65,8 @@ describe("Create container", () => {
       });
 
       afterAll(() => {
-        websocketsPubsubClientContainer.disconnect();
-        websocketsPubsubClientResource.disconnect();
+        notificationsClientContainer.disconnect();
+        notificationsClientResource.disconnect();
         recursiveDelete(testFolderUrl, authFetcher);
       });
 
@@ -99,12 +99,12 @@ describe("Create container", () => {
 
       ifWps("emits websockets-pubsub on the existing container", async () => {
         await new Promise((resolve) => setTimeout(resolve, MAX_WPS_DELAY));
-        expect(websocketsPubsubClientContainer.received).toEqual(
+        expect(notificationsClientContainer.received).toEqual(
           expect.arrayContaining([`ack ${containerUrl}`, `pub ${containerUrl}`])
         );
       });
       ifWps("emits websockets-pubsub on the new container", () => {
-        expect(websocketsPubsubClientResource.received).toEqual(
+        expect(notificationsClientResource.received).toEqual(
           expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
         );
       });
