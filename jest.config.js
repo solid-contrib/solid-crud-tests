@@ -4,7 +4,7 @@ module.exports = {
   testEnvironment: "node",
   testTimeout: 60000,
   verbose: false,
-  runner: "@codejedi365/jest-serial-runner",
+  runner: "jest-serial-runner",
   collectCoverage: false,
   setupFilesAfterEnv: ["jest-extended"],
   globals: {
