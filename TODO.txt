@@ -7,3 +7,7 @@ notifications:
 * register a webhook https://github.com/pdsinterop/solid-nextcloud/pull/85/files#diff-3413d5b6b5d579e0fcdfbf98e59bb5afdf592c3417a7741775c7e6e69c24ccb0R55
 
 * see test/registerWebhook.js
+
+next: open a port and listen
+
+check if ESS advertises a POWDER doc?

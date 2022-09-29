@@ -38,6 +38,10 @@ describe("Alice's storage root", () => {
       const result = await fetch(url, {
         headers,
       });
+      console.log(result.headers.get('link'));
+//	for (const header of result.headers) {
+		console.log(result.headers);
+//}
       // const text = await result.text();
       // console.log(text);
       return result as unknown;
