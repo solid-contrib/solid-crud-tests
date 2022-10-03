@@ -71,12 +71,12 @@ describe("Delete", () => {
       expect(containerListing.sort()).toEqual([]);
     });
     ifWps("emits websockets-pubsub on the container", () => {
-      expect(notificationsClientContainer.received).toEqual(
+      expect(notificationsClientContainer.receivedInsecure).toEqual(
         expect.arrayContaining([`ack ${containerUrl}`, `pub ${containerUrl}`])
       );
     });
     ifWps("emits websockets-pubsub on the resource", () => {
-      expect(notificationsClientResource.received).toEqual(
+      expect(notificationsClientResource.receivedInsecure).toEqual(
         expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
       );
     });
@@ -135,18 +135,18 @@ describe("Delete", () => {
     });
 
     ifWps("does not emit websockets-pubsub on the container", () => {
-      expect(notificationsClientContainer.received).toEqual(
+      expect(notificationsClientContainer.receivedInsecure).toEqual(
         expect.arrayContaining([`ack ${containerUrl}`])
       );
-      expect(notificationsClientContainer.received).not.toEqual(
+      expect(notificationsClientContainer.receivedInsecure).not.toEqual(
         expect.arrayContaining([`pub ${containerUrl}`])
       );
     });
     ifWps("does not emit websockets-pubsub on the resource", () => {
-      expect(notificationsClientResource.received).toEqual(
+      expect(notificationsClientResource.receivedInsecure).toEqual(
         expect.arrayContaining([`ack ${resourceUrl}`])
       );
-      expect(notificationsClientResource.received).not.toEqual(
+      expect(notificationsClientResource.receivedInsecure).not.toEqual(
         expect.arrayContaining([`pub ${resourceUrl}`])
       );
     });
@@ -194,7 +194,7 @@ describe("Delete", () => {
     });
 
     ifWps("emits websockets-pubsub on the container", () => {
-      expect(notificationsClientContainer.received).toEqual(
+      expect(notificationsClientContainer.receivedInsecure).toEqual(
         expect.arrayContaining([`ack ${containerUrl}`, `pub ${containerUrl}`])
       );
     });

@@ -99,12 +99,12 @@ describe("Create container", () => {
 
       ifWps("emits websockets-pubsub on the existing container", async () => {
         await new Promise((resolve) => setTimeout(resolve, MAX_WPS_DELAY));
-        expect(notificationsClientContainer.received).toEqual(
+        expect(notificationsClientContainer.receivedInsecure).toEqual(
           expect.arrayContaining([`ack ${containerUrl}`, `pub ${containerUrl}`])
         );
       });
       ifWps("emits websockets-pubsub on the new container", () => {
-        expect(notificationsClientResource.received).toEqual(
+        expect(notificationsClientResource.receivedInsecure).toEqual(
           expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
         );
       });
