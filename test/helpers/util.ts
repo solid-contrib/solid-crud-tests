@@ -59,6 +59,24 @@ export function ifWps(name: string, runner: () => any): any {
   return it(`${level} ${id} ${name}`, runner);
 }
 
+export function ifSecureWebsockets(name: string, runner: () => any): any {
+  const level = "SECURE_WEBSOCKETS";
+  const id = "";
+  if (process.env.SKIP_SECURE_WEBSOCKETS) {
+    return it.skip(`${level} ${id} ${name}`, runner);
+  }
+  return it(`${level} ${id} ${name}`, runner);
+}
+
+export function ifWebhooks(name: string, runner: () => any): any {
+  const level = "WEBHOOKS";
+  const id = "";
+  if (process.env.SKIP_WEBHOOKS) {
+    return it.skip(`${level} ${id} ${name}`, runner);
+  }
+  return it(`${level} ${id} ${name}`, runner);
+}
+
 export function responseCodeGroup(code: number): string {
   return `${Math.floor(code / 100)}xx`;
 }

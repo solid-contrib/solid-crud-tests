@@ -8,12 +8,13 @@ import { getAuthFetcher, getNodeSolidServerCookie } from "solid-auth-fetcher";
 import {
   recursiveDelete,
   getContainerMembers,
-  NotificationsClient,
   ifWps,
   responseCodeGroup,
 } from "../helpers/util";
 import { getStore } from "../helpers/util";
 import * as rdflib from "rdflib";
+import { NotificationsClient } from "../helpers/NotificationsClient";
+
 const waittime = 1000;
 // when the tests start, exists/exists[i].ttl exists in the test folder,
 // and nothing else.

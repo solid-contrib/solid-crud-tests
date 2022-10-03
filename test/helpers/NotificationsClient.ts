@@ -88,10 +88,10 @@ export class NotificationsClient {
     for (let i = 0; i < channels.length; i++) {
       // console.log(channels[i]);
       if (channels[i].type == "WebSocketNotifications2021") {
-        this.setupSecureWs(channels[i].subscription);
+        await this.setupSecureWs(channels[i].subscription);
       }
       if (channels[i].type == "WebHookNotifications2022") {
-        this.setupWebHookClient(channels[i].subscription);
+        await this.setupWebHookClient(channels[i].subscription);
       }
     }
   }
@@ -105,19 +105,19 @@ export class NotificationsClient {
       typeof descriptions.insecureWs === "string" &&
       descriptions.insecureWs.length > 0
     ) {
-      this.setupInsecureWs(descriptions.insecureWs);
+      await this.setupInsecureWs(descriptions.insecureWs);
     }
     if (
       typeof descriptions.storageWide === "string" &&
       descriptions.storageWide.length > 0
     ) {
-      this.subscribeToChannels(descriptions.storageWide);
+      await this.subscribeToChannels(descriptions.storageWide);
     }
     if (
       typeof descriptions.resourceSpecific === "string" &&
       descriptions.resourceSpecific.length > 0
     ) {
-      this.subscribeToChannels(descriptions.resourceSpecific);
+      await this.subscribeToChannels(descriptions.resourceSpecific);
     }
   }
 
@@ -135,7 +135,7 @@ export class NotificationsClient {
 
     this.insecureWs = new WebSocket(wssUrl, PROTOCOL_STRING);
     this.insecureWs.on("message", (msg) => {
-      // console.log("WS <", msg);
+      console.log("WS <", msg);
       this.received.push(msg);
     });
     await new Promise<void>((resolve) => {
@@ -145,8 +145,8 @@ export class NotificationsClient {
           "GET",
           this.authFetcher
         );
-        await this.send(`auth ${authHeaders.Authorization}`);
-        await this.send(`dpop ${authHeaders.DPop}`);
+        // await this.send(`auth ${authHeaders.Authorization}`);
+        // await this.send(`dpop ${authHeaders.DPop}`);
         await this.send(`sub ${this.resourceUrl}`);
         resolve();
       });
@@ -157,7 +157,7 @@ export class NotificationsClient {
     if (this.disabled) {
       return;
     }
-    // console.log("WS > ", str);
+    console.log("WS > ", str);
     this.sent.push(str);
     return new Promise((resolve) => this.insecureWs.send(str, resolve));
   }
