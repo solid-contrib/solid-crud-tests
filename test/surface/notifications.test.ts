@@ -5,7 +5,12 @@ import {
   appOrigin,
 } from "../helpers/env";
 import { getAuthFetcher, getNodeSolidServerCookie } from "solid-auth-fetcher";
-import { ifSecureWebsockets, ifWebhooks, ifWps, recursiveDelete } from "../helpers/util";
+import {
+  ifSecureWebsockets,
+  ifWebhooks,
+  ifWps,
+  recursiveDelete,
+} from "../helpers/util";
 import { NotificationsClient } from "../helpers/NotificationsClient";
 
 // note that these tests do one basic check of which types of notifications
@@ -16,7 +21,7 @@ import { NotificationsClient } from "../helpers/NotificationsClient";
 // and delete tests, because there those actions are already being taken so that we can
 // check their effect; the check for the notification is just an addition there.
 
-const waittime = 5000;
+const waittime = 1000;
 
 // when the tests start, exists/exists[i].ttl exists in the test folder,
 // and nothing else.
@@ -51,7 +56,7 @@ describe("Notifications", () => {
     beforeAll(async () => {
       // this already relies on the PUT to non-existing folder functionality
       // that will be one of the tested behaviours:
-      console.log('PUT hello world start...');
+      console.log("PUT hello world start...");
       await authFetcher.fetch(resourceUrl, {
         method: "PUT",
         body: "Hello World",
@@ -59,33 +64,35 @@ describe("Notifications", () => {
           "Content-Type": "text/plain",
         },
       });
-      console.log('Done PUT hello world, waiting...');
+      console.log("Done PUT hello world, waiting...");
       await new Promise((resolve) => setTimeout(resolve, waittime));
-      console.log('...finished waiting, doing get');
+      console.log("...finished waiting, doing get");
       const getResult = await authFetcher.fetch(resourceUrl);
       const resourceETagInQuotes = getResult.headers.get("ETag");
       notificationsClientResource = new NotificationsClient(
         resourceUrl,
         authFetcher
       );
-      console.log('get ready start');
+      console.log("get ready start");
       await notificationsClientResource.getReady();
-      console.log('get ready done');
+      console.log("get ready done");
       const headers = {
         "Content-Type": "text/plain",
       };
       if (resourceETagInQuotes) {
         headers["If-Match"] = resourceETagInQuotes;
       }
-      console.log('PUT something else start...');
+      console.log("PUT something else start...");
       const result = await authFetcher.fetch(resourceUrl, {
         method: "PUT",
         headers,
         body: "Replaced the contents.",
       });
-      console.log('Done PUT somethign else, waiting...');
+      console.log("Done PUT somethign else, waiting...");
       await new Promise((resolve) => setTimeout(resolve, waittime));
-      console.log('...finished waiting, done with beforeAll, going to first test');
+      console.log(
+        "...finished waiting, done with beforeAll, going to first test"
+      );
     });
 
     afterAll(() => {
@@ -95,7 +102,10 @@ describe("Notifications", () => {
     ifWps(
       "insecure websockets-pubsub advertised using Updates-Via Link header",
       () => {
-        expect(1 + 1).toEqual(2);
+        expect(typeof notificationsClientResource.discoveryLinks.insecureWs).toBe(
+          "string"
+        );
+        expect(notificationsClientResource.discoveryLinks.insecureWs.startsWith("http")).toBe(true);
       }
     );
     ifWps("emits insecure websockets-pubsub on the resource", () => {
@@ -106,10 +116,26 @@ describe("Notifications", () => {
     ifSecureWebsockets(
       "secure websockets advertised using server-wide or resource-specific Link header",
       () => {
+        let describedBy =
+          notificationsClientResource.discoveryLinks.storageWide;
+        if (
+          typeof notificationsClientResource.discoveryLinks.resourceSpecific ===
+          "string"
+        ) {
+          // resource specific has preference over storage-wide, see
+          // https://github.com/solid/notifications/issues/58#issuecomment-1219511774
+          // > it could (non-?)normatively state that when both relations are available,
+          // > the client should use the resource specific one for channel information
+          describedBy =
+            notificationsClientResource.discoveryLinks.resourceSpecific;
+        }
+
         // note that we interpret the spec as per
         // https://github.com/solid/notifications/issues/58#issuecomment-1265144088
         // so at least one of the two should be available.
-        expect(1 + 1).toEqual(2);
+        expect(typeof describedBy).toBe("string");
+
+        // TODO: follow nose to that doc.
       }
     );
     ifSecureWebsockets(
@@ -121,10 +147,26 @@ describe("Notifications", () => {
     ifWebhooks(
       "secure websockets advertised using server-wide or resource-specific Link header",
       () => {
+        let describedBy =
+          notificationsClientResource.discoveryLinks.storageWide;
+        if (
+          typeof notificationsClientResource.discoveryLinks.resourceSpecific ===
+          "string"
+        ) {
+          // resource specific has preference over storage-wide, see
+          // https://github.com/solid/notifications/issues/58#issuecomment-1219511774
+          // > it could (non-?)normatively state that when both relations are available,
+          // > the client should use the resource specific one for channel information
+          describedBy =
+            notificationsClientResource.discoveryLinks.resourceSpecific;
+        }
+
         // note that we interpret the spec as per
         // https://github.com/solid/notifications/issues/58#issuecomment-1265144088
         // so at least one of the two should be available.
-        expect(1 + 1).toEqual(2);
+        expect(typeof describedBy).toBe("string");
+
+        // TODO: follow nose to that doc.
       }
     );
     ifWebhooks("emits secure websockets notification on the resource", () => {

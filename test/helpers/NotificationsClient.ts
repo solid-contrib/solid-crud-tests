@@ -26,23 +26,32 @@ export class NotificationsClient {
   disabled: boolean;
   authFetcher;
   insecureWs;
+  discoveryLinks: {
+    insecureWs?: string;
+    storageWide?: string;
+    resourceSpecific?: string;
+  };
+  description: {
+    [url: string]: any,
+  };
   constructor(resourceUrl: string, authFetcher: AuthFetcher) {
     this.received = [];
     this.sent = [];
     this.resourceUrl = resourceUrl;
     this.authFetcher = authFetcher;
     this.disabled = !!process.env.SKIP_WPS;
+    this.discoveryLinks = {
+      insecureWs: undefined,
+      storageWide: undefined,
+      resourceSpecific: undefined,
+    };
+    this.description = {};
   }
   async getLinksToNotifications(): Promise<{
     insecureWs?: string;
     storageWide?: string;
     resourceSpecific?: string;
   }> {
-    const result = {
-      insecureWs: undefined,
-      storageWide: undefined,
-      resourceSpecific: undefined,
-    };
     const resourceFetchResult = await this.authFetcher.fetch(this.resourceUrl, {
       method: "HEAD",
     });
@@ -55,20 +64,20 @@ export class NotificationsClient {
           ...obj,
         };
       }
-      if (!result.storageWide) {
-        result.storageWide = tryRel(
+      if (!this.discoveryLinks.storageWide) {
+        this.discoveryLinks.storageWide = tryRel(
           obj,
           "http://www.w3.org/ns/solid#storageDescription",
           this.resourceUrl
         );
       }
-      if (!result.resourceSpecific) {
-        result.resourceSpecific = tryRel(obj, "describedby", this.resourceUrl);
+      if (!this.discoveryLinks.resourceSpecific) {
+        this.discoveryLinks.resourceSpecific = tryRel(obj, "describedby", this.resourceUrl);
       }
     }
 
-    result.insecureWs = resourceFetchResult.headers.get("updates-via");
-    return result;
+    this.discoveryLinks.insecureWs = resourceFetchResult.headers.get("updates-via");
+    return this.discoveryLinks;
   }
   async fetchAndParseDescription(url: string) {
     // console.log("absolute", serverWideNotificationsDescription);
@@ -77,13 +86,13 @@ export class NotificationsClient {
         Accept: "application/ld_json",
       },
     });
-    const obj = await descriptionFetchResult.json();
-    return obj.notificationChannel;
+    this.description[url] = await descriptionFetchResult.json();
+    return this.description[url].notificationChannel;
     /// tbc!
   }
 
   async subscribeToChannels(descriptionUrl: string): Promise<void> {
-    // console.log("subscribing to channels", descriptionUrl);
+    console.log("subscribing to channels", descriptionUrl);
     const channels = await this.fetchAndParseDescription(descriptionUrl);
     for (let i = 0; i < channels.length; i++) {
       // console.log(channels[i]);

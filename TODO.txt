@@ -45,4 +45,11 @@ npm install parse-link-header
 docker run --rm --network=testnet --env COOKIE="$COOKIE_server" --env COOKIE_ALICE="$COOKIE_server" --env COOKIE_BOB="$COOKIE_thirdparty" --env-file ./env-vars-testers.list -it -v /Users/michiel/gh/solid-contrib/solid-crud-tests/test:/app/test solid-crud-tests /bin/bash
 ```
 
-And then `./node_modules/.bin/jest test/surface/notifications.test.ts` inside that.
+And then inside that:
+```
+npm install parse-link-header
+./node_modules/.bin/jest test/surface/notifications.test.ts
+```
+
+notifications-tests now passes all 6 dummy tests.
+next step: fill them in, especially for webhooks, for the RfP.
