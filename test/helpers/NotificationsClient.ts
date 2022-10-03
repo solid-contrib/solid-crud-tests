@@ -121,14 +121,18 @@ export class NotificationsClient {
     }
   }
 
-  async setupSecureWs(wssUrl: string): Promise<void> {
+  async setupSecureWs(subscribeUrl: string): Promise<void> {
+    console.log("Setting up Secure Ws!", subscribeUrl);
     // TODO: implement
   }
   async setupWebHookClient(subscribeUrl: string): Promise<void> {
+    console.log("Setting up Webhook!", subscribeUrl);
     // TODO: implement
   }
 
   async setupInsecureWs(wssUrl: string): Promise<void> {
+    console.log("Setting up Insecure Ws!", wssUrl);
+
     this.insecureWs = new WebSocket(wssUrl, PROTOCOL_STRING);
     this.insecureWs.on("message", (msg) => {
       // console.log("WS <", msg);
