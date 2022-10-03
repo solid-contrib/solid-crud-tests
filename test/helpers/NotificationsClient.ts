@@ -8,7 +8,6 @@ const PROTOCOL_STRING = "solid-0.1";
 export const SECURE_WEBSOCKETS_TYPE = "WebSocketSubscription2021";
 export const WEBHOOKS_TYPE = "WebHookSubscription2022"; // see https://github.com/solid/specification/issues/457
 
-
 function tryRel(obj: any, rel: string, base: string): string | undefined {
   // console.log(obj);
   if (obj[rel] === undefined) {
@@ -40,7 +39,7 @@ export class NotificationsClient {
     resourceSpecific?: string;
   };
   description: {
-    [url: string]: any,
+    [url: string]: any;
   };
   constructor(resourceUrl: string, authFetcher: AuthFetcher) {
     this.receivedInsecure = [];
@@ -84,18 +83,24 @@ export class NotificationsClient {
         );
       }
       if (!this.discoveryLinks.resourceSpecific) {
-        this.discoveryLinks.resourceSpecific = tryRel(obj, "describedby", this.resourceUrl);
+        this.discoveryLinks.resourceSpecific = tryRel(
+          obj,
+          "describedby",
+          this.resourceUrl
+        );
       }
     }
 
-    this.discoveryLinks.insecureWs = resourceFetchResult.headers.get("updates-via");
+    this.discoveryLinks.insecureWs = resourceFetchResult.headers.get(
+      "updates-via"
+    );
     return this.discoveryLinks;
   }
-  async fetchAndParseDescription(url: string):Promise<any> {
+  async fetchAndParseDescription(url: string): Promise<any> {
     console.log("absolute", url);
     const descriptionFetchResult = await this.authFetcher.fetch(url, {
       headers: {
-        Accept: "application/ld_json",
+        Accept: "application/ld+json",
       },
     });
     this.description[url] = await descriptionFetchResult.json();
@@ -156,7 +161,14 @@ export class NotificationsClient {
     const result = await this.authFetcher.fetch(subscribeUrl, {
       headers: {
         Accept: "application/json",
+        // Accept: "application/ld+json",
       },
+      method: "POST",
+      body: JSON.stringify({
+        "@context": ["https://www.w3.org/ns/solid/notification/v1"],
+        type: "WebSocketSubscription2021",
+        topic: this.resourceUrl,
+      }),
     });
     const obj = await result.json();
     console.log(obj);
@@ -186,7 +198,7 @@ export class NotificationsClient {
     JSON.stringify({
       topic: "https://server/apps/solid/@alice/storage/foo/bar",
       target: "https://tester",
-    })
+    });
   }
 
   async setupInsecureWs(wssUrl: string): Promise<void> {
