@@ -172,21 +172,22 @@ export class NotificationsClient {
     });
     const obj = await result.json();
     console.log(obj);
-    this.secureWs = new WebSocket(subscribeUrl, PROTOCOL_STRING);
+    if (typeof obj.source !== "string" || !obj.source.startsWith("http")) {
+      throw new Error(
+        "could not find source for secure websockets subscription"
+      );
+    }
+    const wssUrl = "ws" + obj.source.substring("http".length);
+    console.log({ wssUrl });
+    this.secureWs = new WebSocket(wssUrl, PROTOCOL_STRING);
     this.secureWs.on("message", (msg) => {
       console.log("SWS <", msg);
       this.receivedSecure.push(msg);
     });
     await new Promise<void>((resolve) => {
       this.secureWs.on("open", async () => {
-        // const authHeaders = await getAuthHeaders(
-        //   this.resourceUrl,
-        //   "GET",
-        //   this.authFetcher
-        // );
-        // await this.send(`auth ${authHeaders.Authorization}`);
-        // await this.send(`dpop ${authHeaders.DPop}`);
-        await this.send(`sub ${this.resourceUrl}`); // FIXME presumably this will no longer be necessary?
+        // FIXME presumably this will no longer be necessary?
+        // await this.send(`sub ${this.resourceUrl}`);
         resolve();
       });
     });
@@ -211,13 +212,6 @@ export class NotificationsClient {
     });
     await new Promise<void>((resolve) => {
       this.insecureWs.on("open", async () => {
-        const authHeaders = await getAuthHeaders(
-          this.resourceUrl,
-          "GET",
-          this.authFetcher
-        );
-        // await this.send(`auth ${authHeaders.Authorization}`);
-        // await this.send(`dpop ${authHeaders.DPop}`);
         await this.send(`sub ${this.resourceUrl}`);
         resolve();
       });

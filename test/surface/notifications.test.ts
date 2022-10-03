@@ -165,7 +165,7 @@ describe("Notifications", () => {
       }
     );
     ifWps("emits insecure websockets-pubsub on the resource", () => {
-      expect(notificationsClientResource.received).toEqual(
+      expect(notificationsClientResource.receivedInsecure).toEqual(
         expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
       );
     });
@@ -178,16 +178,19 @@ describe("Notifications", () => {
     ifSecureWebsockets(
       "emits secure websockets notification on the resource",
       () => {
-        expect(1 + 1).toEqual(2);
+        // FIXME: expect the new format!
+        // expect(notificationsClientResource.receivedSecure).toEqual(
+        //   expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
+        // );
       }
     );
     ifWebhooks(
-      "secure websockets advertised using server-wide or resource-specific Link header",
+      "webhooks advertised using server-wide or resource-specific Link header",
       () => {
         checkDescription(WEBHOOKS_TYPE);
       }
     );
-    ifWebhooks("emits secure websockets notification on the resource", () => {
+    ifWebhooks("emits webhook notification on the resource", () => {
       expect(1 + 1).toEqual(2);
     });
   });
