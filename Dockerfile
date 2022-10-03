@@ -10,5 +10,6 @@ RUN openssl req -new -x509 -days 365 -nodes \
 ADD . /app
 WORKDIR /app
 RUN npm install
+RUN npm install parse-link-header
 ENV NODE_TLS_REJECT_UNAUTHORIZED 0
 CMD npm run jest

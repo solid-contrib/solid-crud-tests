@@ -1,6 +1,6 @@
 {
   "name": "solid-crud-tests",
-  "version": "7.0.1",
+  "version": "5.3.0",
   "description": "A test suite with some tests for CRUD operations on containers and documents on a Solid pod.",
   "main": "jest.config.js",
   "directories": {
@@ -35,7 +35,6 @@
     "jsonwebtoken": "^8.5.1",
     "node-fetch": "^2.6.1",
     "node-rsa": "^1.1.1",
-    "parse-link-header": "^2.0.0",
     "rdf-namespaces": "^1.9.2",
     "rdflib": "^2.1.7",
     "solid-auth-fetcher": "^1.5.1",
