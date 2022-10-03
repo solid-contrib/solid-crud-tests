@@ -1,0 +1,54 @@
+notifications:
+
+* WPS tests that already exist https://github.com/pdsinterop/solid-nextcloud/pull/85/files#diff-a4c66415bf4c03a7240b331cd9954dcaff97581d735516e2819660fc4c324f2c
+* secure websocket
+* webhook https://github.com/pdsinterop/solid-nextcloud/pull/85/files#diff-f77530c143e43e0e7ea63eb31ae13794ae65cccff03fbdcf5b7c3fba93499a5e
+
+* register a webhook https://github.com/pdsinterop/solid-nextcloud/pull/85/files#diff-3413d5b6b5d579e0fcdfbf98e59bb5afdf592c3417a7741775c7e6e69c24ccb0R55
+
+* see test/registerWebhook.js
+
+next: open a port and listen
+
+Solid-Nextcloud server with solid app mounted from host:
+```
+function startSolidNextcloud {
+  docker run -d --name $1 --network=testnet --env-file ./env-vars-$1.list -v /Users/michiel/gh/pdsinterop/solid-nextcloud/solid:/var/www/html/apps/solid solid-nextcloud
+  until docker run --rm --network=testnet solidtestsuite/webid-provider-tests curl -kI https://$1 2> /dev/null > /dev/null
+  do
+    echo Waiting for $1 to start, this can take up to a minute ...
+    docker ps -a
+    docker logs $1
+    sleep 1
+  done
+
+  docker logs $1
+  echo Running init script for Nextcloud $1 ...
+  docker exec -u www-data -it -e SERVER_ROOT=https://$1 $1 sh /init.sh
+  docker exec -u root -it $1 service apache2 reload
+  echo Getting cookie for $1...
+  export COOKIE_$1="`docker run --cap-add=SYS_ADMIN --network=testnet --env-file ./env-vars-$1.list michielbdejong/nextcloud-cookie`"
+}
+```
+
+You can check this with `type -a startSolidNextcloud`. Interactively, run:
+```
+teardown
+setup
+startPubSub
+startSolidNextcloud server
+```
+
+And then run the tester interactively and with code mounted from the host:
+```
+docker run --rm --network=testnet --env COOKIE="$COOKIE_server" --env COOKIE_ALICE="$COOKIE_server" --env COOKIE_BOB="$COOKIE_thirdparty" --env-file ./env-vars-testers.list -it -v /Users/michiel/gh/solid-contrib/solid-crud-tests/test:/app/test --name tester solid-crud-tests /bin/bash
+```
+
+And then inside that:
+```
+npm install parse-link-header
+./node_modules/.bin/jest test/surface/notifications.test.ts
+```
+
+notifications-tests now passes all 6 dummy tests.
+next step: fill them in, especially for webhooks, for the RfP.

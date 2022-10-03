@@ -1,15 +1,15 @@
 import { generateTestFolder } from "../helpers/env";
-import { ldp, rdf, space, link } from "rdf-namespaces";
+import { ldp, rdf } from "rdf-namespaces";
 import { getAuthFetcher } from "solid-auth-fetcher";
 import { getStore } from "../helpers/util";
 import { oidcIssuer, cookie, appOrigin } from "../helpers/env";
 import {
   recursiveDelete,
   getContainerMembers,
-  WPSClient,
   ifWps,
   responseCodeGroup,
 } from "../helpers/util";
+import { NotificationsClient } from "../helpers/NotificationsClient";
 
 const MAX_WPS_DELAY = 1000;
 
@@ -28,8 +28,8 @@ describe("Create container", () => {
   describe("in an existing container", () => {
     describe("using PUT", () => {
       const { testFolderUrl } = generateTestFolder();
-      let websocketsPubsubClientContainer;
-      let websocketsPubsubClientResource;
+      let notificationsClientContainer;
+      let notificationsClientResource;
       const containerUrl = `${testFolderUrl}exists/`;
       const resourceUrl = `${containerUrl}new/`;
 
@@ -43,17 +43,17 @@ describe("Create container", () => {
           },
           body: "<#hello> <#linked> <#world> .",
         });
-        websocketsPubsubClientContainer = new WPSClient(
+        notificationsClientContainer = new NotificationsClient(
           containerUrl,
           authFetcher
         );
-        await websocketsPubsubClientContainer.getReady();
-        websocketsPubsubClientResource = new WPSClient(
+        await notificationsClientContainer.getReady();
+        notificationsClientResource = new NotificationsClient(
           resourceUrl,
           authFetcher
         );
-        await websocketsPubsubClientResource.getReady();
-        const result = await authFetcher.fetch(resourceUrl, {
+        await notificationsClientResource.getReady();
+        await authFetcher.fetch(resourceUrl, {
           method: "PUT",
           headers: {
             "Content-Type": "text/turtle",
@@ -65,8 +65,8 @@ describe("Create container", () => {
       });
 
       afterAll(() => {
-        websocketsPubsubClientContainer.disconnect();
-        websocketsPubsubClientResource.disconnect();
+        notificationsClientContainer.disconnect();
+        notificationsClientResource.disconnect();
         recursiveDelete(testFolderUrl, authFetcher);
       });
 
@@ -99,12 +99,12 @@ describe("Create container", () => {
 
       ifWps("emits websockets-pubsub on the existing container", async () => {
         await new Promise((resolve) => setTimeout(resolve, MAX_WPS_DELAY));
-        expect(websocketsPubsubClientContainer.received).toEqual(
+        expect(notificationsClientContainer.received).toEqual(
           expect.arrayContaining([`ack ${containerUrl}`, `pub ${containerUrl}`])
         );
       });
       ifWps("emits websockets-pubsub on the new container", () => {
-        expect(websocketsPubsubClientResource.received).toEqual(
+        expect(notificationsClientResource.received).toEqual(
           expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
         );
       });

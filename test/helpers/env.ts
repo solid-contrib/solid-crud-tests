@@ -7,7 +7,7 @@ export const appOrigin = "https://tester";
 export const storageRoot = process.env.STORAGE_ROOT || process.env.SERVER_ROOT;
 export const aliceWebId = process.env.ALICE_WEBID;
 
-export function generateTestFolder() {
+export function generateTestFolder(): any {
   const testFolder = `solid-crud-tests-${new Date().getTime()}`;
   return {
     testFolder,

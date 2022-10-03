@@ -8,10 +8,10 @@ import { getAuthFetcher } from "solid-auth-fetcher";
 import {
   recursiveDelete,
   getContainerMembers,
-  WPSClient,
   ifWps,
   responseCodeGroup,
 } from "../helpers/util";
+import { NotificationsClient } from "../helpers/NotificationsClient";
 
 // when the tests start, exists/exists.ttl exists in the test folder,
 // and nothing else.
@@ -25,8 +25,8 @@ describe("Delete", () => {
   // use `${testFolderUrl}exists/` as the existing folder:
   describe("non-container", () => {
     const { testFolderUrl } = generateTestFolder();
-    let websocketsPubsubClientContainer;
-    let websocketsPubsubClientResource;
+    let notificationsClientContainer;
+    let notificationsClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
     const resourceUrl = `${containerUrl}exists.ttl`;
 
@@ -41,21 +41,21 @@ describe("Delete", () => {
         body: "<#hello> <#linked> <#world> .",
       });
 
-      websocketsPubsubClientContainer = new WPSClient(
+      notificationsClientContainer = new NotificationsClient(
         containerUrl,
         authFetcher
       );
-      await websocketsPubsubClientContainer.getReady();
-      websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
-      await websocketsPubsubClientResource.getReady();
-      const result = await authFetcher.fetch(resourceUrl, {
+      await notificationsClientContainer.getReady();
+      notificationsClientResource = new NotificationsClient(resourceUrl, authFetcher);
+      await notificationsClientResource.getReady();
+      await authFetcher.fetch(resourceUrl, {
         method: "DELETE",
       });
     });
 
     afterAll(() => {
-      websocketsPubsubClientContainer.disconnect();
-      websocketsPubsubClientResource.disconnect();
+      notificationsClientContainer.disconnect();
+      notificationsClientResource.disconnect();
       recursiveDelete(testFolderUrl, authFetcher);
     });
 
@@ -71,12 +71,12 @@ describe("Delete", () => {
       expect(containerListing.sort()).toEqual([]);
     });
     ifWps("emits websockets-pubsub on the container", () => {
-      expect(websocketsPubsubClientContainer.received).toEqual(
+      expect(notificationsClientContainer.received).toEqual(
         expect.arrayContaining([`ack ${containerUrl}`, `pub ${containerUrl}`])
       );
     });
     ifWps("emits websockets-pubsub on the resource", () => {
-      expect(websocketsPubsubClientResource.received).toEqual(
+      expect(notificationsClientResource.received).toEqual(
         expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
       );
     });
@@ -85,8 +85,8 @@ describe("Delete", () => {
   // use `${testFolderUrl}exists/` as the existing folder:
   describe("non-empty container", () => {
     const { testFolderUrl } = generateTestFolder();
-    let websocketsPubsubClientContainer;
-    let websocketsPubsubClientResource;
+    let notificationsClientContainer;
+    let notificationsClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
     const resourceUrl = `${containerUrl}exists.txt`;
 
@@ -101,21 +101,21 @@ describe("Delete", () => {
         body: "Hello World",
       });
 
-      websocketsPubsubClientContainer = new WPSClient(
+      notificationsClientContainer = new NotificationsClient(
         containerUrl,
         authFetcher
       );
-      await websocketsPubsubClientContainer.getReady();
-      websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
-      await websocketsPubsubClientResource.getReady();
-      const result = await authFetcher.fetch(containerUrl, {
+      await notificationsClientContainer.getReady();
+      notificationsClientResource = new NotificationsClient(resourceUrl, authFetcher);
+      await notificationsClientResource.getReady();
+      await authFetcher.fetch(containerUrl, {
         method: "DELETE",
       });
     });
 
     afterAll(() => {
-      websocketsPubsubClientContainer.disconnect();
-      websocketsPubsubClientResource.disconnect();
+      notificationsClientContainer.disconnect();
+      notificationsClientResource.disconnect();
       recursiveDelete(testFolderUrl, authFetcher);
     });
 
@@ -135,18 +135,18 @@ describe("Delete", () => {
     });
 
     ifWps("does not emit websockets-pubsub on the container", () => {
-      expect(websocketsPubsubClientContainer.received).toEqual(
+      expect(notificationsClientContainer.received).toEqual(
         expect.arrayContaining([`ack ${containerUrl}`])
       );
-      expect(websocketsPubsubClientContainer.received).not.toEqual(
+      expect(notificationsClientContainer.received).not.toEqual(
         expect.arrayContaining([`pub ${containerUrl}`])
       );
     });
     ifWps("does not emit websockets-pubsub on the resource", () => {
-      expect(websocketsPubsubClientResource.received).toEqual(
+      expect(notificationsClientResource.received).toEqual(
         expect.arrayContaining([`ack ${resourceUrl}`])
       );
-      expect(websocketsPubsubClientResource.received).not.toEqual(
+      expect(notificationsClientResource.received).not.toEqual(
         expect.arrayContaining([`pub ${resourceUrl}`])
       );
     });
@@ -155,7 +155,7 @@ describe("Delete", () => {
   // use `${testFolderUrl}exists/` as the existing folder:
   describe("empty container", () => {
     const { testFolderUrl } = generateTestFolder();
-    let websocketsPubsubClientContainer;
+    let notificationsClientContainer;
     const containerUrl = `${testFolderUrl}exists/`;
     const resourceUrl = `${containerUrl}exists.ttl`;
 
@@ -173,18 +173,18 @@ describe("Delete", () => {
         method: "DELETE",
       });
 
-      websocketsPubsubClientContainer = new WPSClient(
+      notificationsClientContainer = new NotificationsClient(
         containerUrl,
         authFetcher
       );
-      await websocketsPubsubClientContainer.getReady();
+      await notificationsClientContainer.getReady();
       await authFetcher.fetch(containerUrl, {
         method: "DELETE",
       });
     });
 
     afterAll(() => {
-      websocketsPubsubClientContainer.disconnect();
+      notificationsClientContainer.disconnect();
       recursiveDelete(testFolderUrl, authFetcher);
     });
 
@@ -194,7 +194,7 @@ describe("Delete", () => {
     });
 
     ifWps("emits websockets-pubsub on the container", () => {
-      expect(websocketsPubsubClientContainer.received).toEqual(
+      expect(notificationsClientContainer.received).toEqual(
         expect.arrayContaining([`ack ${containerUrl}`, `pub ${containerUrl}`])
       );
     });

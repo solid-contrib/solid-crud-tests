@@ -35,6 +35,7 @@
     "jsonwebtoken": "^8.5.1",
     "node-fetch": "^2.6.1",
     "node-rsa": "^1.1.1",
+    "parse-link-header": "^2.0.0",
     "rdf-namespaces": "^1.9.2",
     "rdflib": "^2.1.7",
     "solid-auth-fetcher": "^1.5.1",

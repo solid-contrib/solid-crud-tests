@@ -8,12 +8,13 @@ import { getAuthFetcher, getNodeSolidServerCookie } from "solid-auth-fetcher";
 import {
   recursiveDelete,
   getContainerMembers,
-  WPSClient,
   ifWps,
   responseCodeGroup,
 } from "../helpers/util";
 import { getStore } from "../helpers/util";
 import * as rdflib from "rdflib";
+import { NotificationsClient } from "../helpers/NotificationsClient";
+
 const waittime = 1000;
 // when the tests start, exists/exists[i].ttl exists in the test folder,
 // and nothing else.
@@ -40,7 +41,7 @@ describe("Update", () => {
   });
   describe("Using PUT, overwriting plain text with plain text", () => {
     const { testFolderUrl } = generateTestFolder();
-    let websocketsPubsubClientResource;
+    let notificationsClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
     const resourceUrl = `${containerUrl}exists1.txt`;
 
@@ -57,8 +58,8 @@ describe("Update", () => {
       await new Promise((resolve) => setTimeout(resolve, waittime));
       const getResult = await authFetcher.fetch(resourceUrl);
       const resourceETagInQuotes = getResult.headers.get("ETag");
-      websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
-      await websocketsPubsubClientResource.getReady();
+      notificationsClientResource = new NotificationsClient(resourceUrl, authFetcher);
+      await notificationsClientResource.getReady();
       const headers = {
         "Content-Type": "text/plain",
       };
@@ -74,7 +75,7 @@ describe("Update", () => {
     });
 
     afterAll(() => {
-      websocketsPubsubClientResource.disconnect();
+      notificationsClientResource.disconnect();
       recursiveDelete(testFolderUrl, authFetcher);
     });
 
@@ -85,7 +86,7 @@ describe("Update", () => {
       expect(result.headers.get("Content-Type")).toContain("text/plain");
     });
     ifWps("emits websockets-pubsub on the resource", () => {
-      expect(websocketsPubsubClientResource.received).toEqual(
+      expect(notificationsClientResource.received).toEqual(
         expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
       );
     });
@@ -93,7 +94,7 @@ describe("Update", () => {
 
   describe("Using PUT, overwriting Turtle with Turtle", () => {
     const { testFolderUrl } = generateTestFolder();
-    let websocketsPubsubClientResource;
+    let notificationsClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
     const resourceUrl = `${containerUrl}exists1.ttl`;
 
@@ -110,8 +111,8 @@ describe("Update", () => {
       await new Promise((resolve) => setTimeout(resolve, waittime));
       const getResult = await authFetcher.fetch(resourceUrl);
       const resourceETagInQuotes = getResult.headers.get("ETag");
-      websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
-      await websocketsPubsubClientResource.getReady();
+      notificationsClientResource = new NotificationsClient(resourceUrl, authFetcher);
+      await notificationsClientResource.getReady();
       const headers = {
         "Content-Type": "text/turtle",
       };
@@ -127,7 +128,7 @@ describe("Update", () => {
     });
 
     afterAll(() => {
-      websocketsPubsubClientResource.disconnect();
+      notificationsClientResource.disconnect();
       recursiveDelete(testFolderUrl, authFetcher);
     });
 
@@ -152,7 +153,7 @@ describe("Update", () => {
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("emits websockets-pubsub on the resource", () => {
-      expect(websocketsPubsubClientResource.received).toEqual(
+      expect(notificationsClientResource.received).toEqual(
         expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
       );
     });
@@ -160,7 +161,7 @@ describe("Update", () => {
 
   describe("Using PUT (same Turtle content)", () => {
     const { testFolderUrl } = generateTestFolder();
-    let websocketsPubsubClientResource;
+    let notificationsClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
     const resourceUrl = `${containerUrl}exists1.ttl`;
 
@@ -177,8 +178,8 @@ describe("Update", () => {
       await new Promise((resolve) => setTimeout(resolve, waittime));
       const getResult = await authFetcher.fetch(resourceUrl);
       const resourceETagInQuotes = getResult.headers.get("ETag");
-      websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
-      await websocketsPubsubClientResource.getReady();
+      notificationsClientResource = new NotificationsClient(resourceUrl, authFetcher);
+      await notificationsClientResource.getReady();
       const headers = {
         "Content-Type": "text/turtle",
       };
@@ -194,7 +195,7 @@ describe("Update", () => {
     });
 
     afterAll(() => {
-      websocketsPubsubClientResource.disconnect();
+      notificationsClientResource.disconnect();
       recursiveDelete(testFolderUrl, authFetcher);
     });
 
@@ -219,7 +220,7 @@ describe("Update", () => {
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("emits websockets-pubsub on the resource", () => {
-      expect(websocketsPubsubClientResource.received).toEqual(
+      expect(notificationsClientResource.received).toEqual(
         expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
       );
     });
@@ -227,7 +228,7 @@ describe("Update", () => {
 
   describe("Using PATCH to add triple", () => {
     const { testFolderUrl } = generateTestFolder();
-    let websocketsPubsubClientResource;
+    let notificationsClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
     const resourceUrl = `${containerUrl}exists3.ttl`;
 
@@ -243,8 +244,8 @@ describe("Update", () => {
       });
       await new Promise((resolve) => setTimeout(resolve, waittime));
 
-      websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
-      await websocketsPubsubClientResource.getReady();
+      notificationsClientResource = new NotificationsClient(resourceUrl, authFetcher);
+      await notificationsClientResource.getReady();
       await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
@@ -259,7 +260,7 @@ describe("Update", () => {
     });
 
     afterAll(() => {
-      websocketsPubsubClientResource.disconnect();
+      notificationsClientResource.disconnect();
       recursiveDelete(testFolderUrl, authFetcher);
     });
 
@@ -284,7 +285,7 @@ describe("Update", () => {
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("emits websockets-pubsub on the resource", () => {
-      expect(websocketsPubsubClientResource.received).toEqual(
+      expect(notificationsClientResource.received).toEqual(
         expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
       );
     });
@@ -292,7 +293,7 @@ describe("Update", () => {
 
   describe("Using PATCH to replace triple (same content)", () => {
     const { testFolderUrl } = generateTestFolder();
-    let websocketsPubsubClientResource;
+    let notificationsClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
     const resourceUrl = `${containerUrl}exists4.ttl`;
 
@@ -308,8 +309,8 @@ describe("Update", () => {
       });
       await new Promise((resolve) => setTimeout(resolve, waittime));
 
-      websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
-      await websocketsPubsubClientResource.getReady();
+      notificationsClientResource = new NotificationsClient(resourceUrl, authFetcher);
+      await notificationsClientResource.getReady();
       const result = await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
@@ -325,7 +326,7 @@ describe("Update", () => {
     });
 
     afterAll(() => {
-      websocketsPubsubClientResource.disconnect();
+      notificationsClientResource.disconnect();
       recursiveDelete(testFolderUrl, authFetcher);
     });
 
@@ -350,7 +351,7 @@ describe("Update", () => {
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("emits websockets-pubsub on the resource", () => {
-      expect(websocketsPubsubClientResource.received).toEqual(
+      expect(notificationsClientResource.received).toEqual(
         expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
       );
     });
@@ -358,7 +359,7 @@ describe("Update", () => {
 
   describe("Using PATCH to replace triple (present)", () => {
     const { testFolderUrl } = generateTestFolder();
-    let websocketsPubsubClientResource;
+    let notificationsClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
     const resourceUrl = `${containerUrl}exists4.ttl`;
 
@@ -374,8 +375,8 @@ describe("Update", () => {
       });
       await new Promise((resolve) => setTimeout(resolve, waittime));
 
-      websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
-      await websocketsPubsubClientResource.getReady();
+      notificationsClientResource = new NotificationsClient(resourceUrl, authFetcher);
+      await notificationsClientResource.getReady();
       await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
@@ -391,7 +392,7 @@ describe("Update", () => {
     });
 
     afterAll(() => {
-      websocketsPubsubClientResource.disconnect();
+      notificationsClientResource.disconnect();
       recursiveDelete(testFolderUrl, authFetcher);
     });
 
@@ -416,7 +417,7 @@ describe("Update", () => {
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("emits websockets-pubsub on the resource", () => {
-      expect(websocketsPubsubClientResource.received).toEqual(
+      expect(notificationsClientResource.received).toEqual(
         expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
       );
     });
@@ -425,7 +426,7 @@ describe("Update", () => {
   // DISPUTED: https://github.com/solid/specification/issues/139#issuecomment-797338177
   describe.skip("Using PATCH to replace triple (not present)", () => {
     const { testFolderUrl } = generateTestFolder();
-    let websocketsPubsubClientResource;
+    let notificationsClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
     const resourceUrl = `${containerUrl}exists5.ttl`;
 
@@ -440,8 +441,8 @@ describe("Update", () => {
         },
       });
 
-      websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
-      await websocketsPubsubClientResource.getReady();
+      notificationsClientResource = new NotificationsClient(resourceUrl, authFetcher);
+      await notificationsClientResource.getReady();
       await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
@@ -456,7 +457,7 @@ describe("Update", () => {
     });
 
     afterAll(() => {
-      websocketsPubsubClientResource.disconnect();
+      notificationsClientResource.disconnect();
       recursiveDelete(testFolderUrl, authFetcher);
     });
 
@@ -482,10 +483,10 @@ describe("Update", () => {
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("does not emit websockets-pubsub on the resource", () => {
-      expect(websocketsPubsubClientResource.received).toEqual(
+      expect(notificationsClientResource.received).toEqual(
         expect.arrayContaining([`ack ${resourceUrl}`])
       );
-      expect(websocketsPubsubClientResource.received).not.toEqual(
+      expect(notificationsClientResource.received).not.toEqual(
         expect.arrayContaining([`pub ${resourceUrl}`])
       );
     });
@@ -493,7 +494,7 @@ describe("Update", () => {
 
   describe("Using PATCH to remove triple (present)", () => {
     const { testFolderUrl } = generateTestFolder();
-    let websocketsPubsubClientResource;
+    let notificationsClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
     const resourceUrl = `${containerUrl}exists6.ttl`;
 
@@ -508,8 +509,8 @@ describe("Update", () => {
         },
       });
 
-      websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
-      await websocketsPubsubClientResource.getReady();
+      notificationsClientResource = new NotificationsClient(resourceUrl, authFetcher);
+      await notificationsClientResource.getReady();
       await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
@@ -523,7 +524,7 @@ describe("Update", () => {
     });
 
     afterAll(() => {
-      websocketsPubsubClientResource.disconnect();
+      notificationsClientResource.disconnect();
       recursiveDelete(testFolderUrl, authFetcher);
     });
 
@@ -542,7 +543,7 @@ describe("Update", () => {
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("emits websockets-pubsub on the resource", () => {
-      expect(websocketsPubsubClientResource.received).toEqual(
+      expect(notificationsClientResource.received).toEqual(
         expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
       );
     });
@@ -550,7 +551,7 @@ describe("Update", () => {
 
   describe("Using PATCH to remove triple (not present)", () => {
     const { testFolderUrl } = generateTestFolder();
-    let websocketsPubsubClientResource;
+    let notificationsClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
     const resourceUrl = `${containerUrl}exists7.ttl`;
 
@@ -565,8 +566,8 @@ describe("Update", () => {
         },
       });
 
-      websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
-      await websocketsPubsubClientResource.getReady();
+      notificationsClientResource = new NotificationsClient(resourceUrl, authFetcher);
+      await notificationsClientResource.getReady();
       await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
@@ -580,7 +581,7 @@ describe("Update", () => {
     });
 
     afterAll(() => {
-      websocketsPubsubClientResource.disconnect();
+      notificationsClientResource.disconnect();
       recursiveDelete(testFolderUrl, authFetcher);
     });
 
@@ -605,11 +606,11 @@ describe("Update", () => {
     });
     ifWps("does not emit websockets-pubsub on the resource", () => {
       // Should see ack but not pub
-      expect(websocketsPubsubClientResource.received).toEqual(
+      expect(notificationsClientResource.received).toEqual(
         expect.arrayContaining([`ack ${resourceUrl}`])
       );
       // FIXME: https://github.com/michielbdejong/community-server/issues/9#issuecomment-776595324
-      // expect(websocketsPubsubClientResource.received).not.toEqual(
+      // expect(notificationsClientResource.received).not.toEqual(
       //   expect.arrayContaining([`pub ${resourceUrl}`])
       // );
     });
