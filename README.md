@@ -87,3 +87,7 @@ all websockets-pubsub related tests be skipped. This means you
 don't get distracted by failing tests if you simply did not implement
 that part of the Solid spec yet, and only want to test the https part of
 your server's behaviour.
+
+Same for `SKIP_SECURE_WEBSOCKETS` and `SKIP_WEBHOOKS`. We recommend to set these
+both for the time being, until these two fresh new features become more developed
+in the Solid spec.
