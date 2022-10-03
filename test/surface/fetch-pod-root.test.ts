@@ -23,6 +23,8 @@ describe("Alice's storage root", () => {
       fetch: async (url, options) => {
         const headers = await getAuthHeaders(url, "GET", authFetcher);
 
+        // Work around https://github.com/solid-contrib/solid-auth-fetcher/pull/33
+        headers["Authorization"] = "dpop " + headers["Authorization"];
         (headers as any).Accept = "text/turtle";
         const result = await fetch(url, {
           headers,
