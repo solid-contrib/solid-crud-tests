@@ -11,7 +11,11 @@ import {
   ifWps,
   recursiveDelete,
 } from "../helpers/util";
-import { NotificationsClient } from "../helpers/NotificationsClient";
+import {
+  NotificationsClient,
+  SECURE_WEBSOCKETS_TYPE,
+  WEBHOOKS_TYPE
+} from "../helpers/NotificationsClient";
 
 // note that these tests do one basic check of which types of notifications
 // are discoverable and whether they emit a change event for basic PUT-to-update
@@ -88,7 +92,7 @@ describe("Notifications", () => {
           .notificationChannel;
       let found = 0;
       for (let i = 0; i < arr.length; i++) {
-        console.log('channel description', arr[i]);
+        console.log("channel description", arr[i]);
         const types = arr[i].type;
         for (let j = 0; j < types.length; j++) {
           console.log(types[j]);
@@ -168,7 +172,7 @@ describe("Notifications", () => {
     ifSecureWebsockets(
       "secure websockets advertised using server-wide or resource-specific Link header",
       () => {
-        checkDescription("WebSocketSubscription2021");
+        checkDescription(SECURE_WEBSOCKETS_TYPE);
       }
     );
     ifSecureWebsockets(
@@ -180,7 +184,7 @@ describe("Notifications", () => {
     ifWebhooks(
       "secure websockets advertised using server-wide or resource-specific Link header",
       () => {
-        checkDescription("WebHookSubscription2022");
+        checkDescription(WEBHOOKS_TYPE);
       }
     );
     ifWebhooks("emits secure websockets notification on the resource", () => {

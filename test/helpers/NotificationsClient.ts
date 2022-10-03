@@ -5,6 +5,9 @@ import parseLinkHeader = require("parse-link-header");
 import { URL } from "url";
 
 const PROTOCOL_STRING = "solid-0.1";
+export const SECURE_WEBSOCKETS_TYPE = "WebSocketSubscription2021";
+export const WEBHOOKS_TYPE = "WebHookSubscription2022"; // see https://github.com/solid/specification/issues/457
+
 
 function tryRel(obj: any, rel: string, base: string): string | undefined {
   // console.log(obj);
@@ -20,12 +23,17 @@ function tryRel(obj: any, rel: string, base: string): string | undefined {
 }
 
 export class NotificationsClient {
-  received: string[];
-  sent: string[];
+  receivedInsecure: string[];
+  sentInsecure: string[];
+  receivedSecure: string[];
+  sentSecure: string[];
+  receivedHook: string[];
+  sentHook: string[];
   resourceUrl: string;
   disabled: boolean;
   authFetcher;
   insecureWs;
+  secureWs;
   discoveryLinks: {
     insecureWs?: string;
     storageWide?: string;
@@ -35,8 +43,12 @@ export class NotificationsClient {
     [url: string]: any,
   };
   constructor(resourceUrl: string, authFetcher: AuthFetcher) {
-    this.received = [];
-    this.sent = [];
+    this.receivedInsecure = [];
+    this.sentInsecure = [];
+    this.receivedSecure = [];
+    this.sentSecure = [];
+    this.receivedHook = [];
+    this.sentHook = [];
     this.resourceUrl = resourceUrl;
     this.authFetcher = authFetcher;
     this.disabled = !!process.env.SKIP_WPS;
@@ -97,11 +109,16 @@ export class NotificationsClient {
     const channels = await this.fetchAndParseDescription(descriptionUrl);
     for (let i = 0; i < channels.length; i++) {
       // console.log(channels[i]);
-      if (channels[i].type == "WebSocketNotifications2021") {
-        await this.setupSecureWs(channels[i].subscription);
+      let absolute: string;
+      if (typeof channels[i].subscription === "string") {
+        const urlObj = new URL(channels[i].subscription, descriptionUrl);
+        absolute = urlObj.toString();
       }
-      if (channels[i].type == "WebHookNotifications2022") {
-        await this.setupWebHookClient(channels[i].subscription);
+      if (channels[i].type == SECURE_WEBSOCKETS_TYPE) {
+        await this.setupSecureWs(absolute);
+      }
+      if (channels[i].type == WEBHOOKS_TYPE) {
+        await this.setupWebHookClient(absolute);
       }
     }
   }
@@ -136,11 +153,40 @@ export class NotificationsClient {
 
   async setupSecureWs(subscribeUrl: string): Promise<void> {
     console.log("Setting up Secure Ws!", subscribeUrl);
-    // TODO: implement
+    const result = await this.authFetcher.fetch(subscribeUrl, {
+      headers: {
+        Accept: "application/json",
+      },
+    });
+    const obj = await result.json();
+    console.log(obj);
+    this.secureWs = new WebSocket(subscribeUrl, PROTOCOL_STRING);
+    this.secureWs.on("message", (msg) => {
+      console.log("SWS <", msg);
+      this.receivedSecure.push(msg);
+    });
+    await new Promise<void>((resolve) => {
+      this.secureWs.on("open", async () => {
+        // const authHeaders = await getAuthHeaders(
+        //   this.resourceUrl,
+        //   "GET",
+        //   this.authFetcher
+        // );
+        // await this.send(`auth ${authHeaders.Authorization}`);
+        // await this.send(`dpop ${authHeaders.DPop}`);
+        await this.send(`sub ${this.resourceUrl}`); // FIXME presumably this will no longer be necessary?
+        resolve();
+      });
+    });
   }
+
   async setupWebHookClient(subscribeUrl: string): Promise<void> {
     console.log("Setting up Webhook!", subscribeUrl);
     // TODO: implement
+    JSON.stringify({
+      topic: "https://server/apps/solid/@alice/storage/foo/bar",
+      target: "https://tester",
+    })
   }
 
   async setupInsecureWs(wssUrl: string): Promise<void> {
@@ -148,8 +194,8 @@ export class NotificationsClient {
 
     this.insecureWs = new WebSocket(wssUrl, PROTOCOL_STRING);
     this.insecureWs.on("message", (msg) => {
-      console.log("WS <", msg);
-      this.received.push(msg);
+      console.log("WPS <", msg);
+      this.receivedInsecure.push(msg);
     });
     await new Promise<void>((resolve) => {
       this.insecureWs.on("open", async () => {
@@ -166,13 +212,20 @@ export class NotificationsClient {
     });
   }
   // NB: this will fail if you didn't await getReady first:
-  send(str: string): Promise<any> {
+  async send(str: string): Promise<any> {
     if (this.disabled) {
       return;
     }
-    console.log("WS > ", str);
-    this.sent.push(str);
-    return new Promise((resolve) => this.insecureWs.send(str, resolve));
+    if (this.insecureWs) {
+      await new Promise((resolve) => this.insecureWs.send(str, resolve));
+      console.log("WPS > ", str);
+      this.sentInsecure.push(str);
+    }
+    if (this.secureWs) {
+      await new Promise((resolve) => this.secureWs.send(str, resolve));
+      console.log("SWS > ", str);
+      this.sentSecure.push(str);
+    }
   }
   disconnect(): any {
     if (this.disabled) {
@@ -181,6 +234,10 @@ export class NotificationsClient {
     if (this.insecureWs) {
       this.insecureWs.terminate();
       delete this.insecureWs;
+    }
+    if (this.secureWs) {
+      this.secureWs.terminate();
+      delete this.secureWs;
     }
   }
 }
