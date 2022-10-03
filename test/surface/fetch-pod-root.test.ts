@@ -47,7 +47,7 @@ describe("Alice's storage root", () => {
       return result as unknown;
     };
     const store = getStore(mock);
-    
+
     await store.fetcher.load(store.sym(podRoots[0]));
     const podRootTypes = store
       .statementsMatching(store.sym(podRoots[0]), store.sym(rdf.type))
