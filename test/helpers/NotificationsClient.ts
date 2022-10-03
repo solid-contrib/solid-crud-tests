@@ -3,11 +3,19 @@ import AuthFetcher from "solid-auth-fetcher/dist/AuthFetcher";
 import WebSocket = require("ws");
 import parseLinkHeader = require("parse-link-header");
 import { URL } from "url";
+import { createServer } from "https";
+import { readFileSync } from "fs";
 
 const PROTOCOL_STRING = "solid-0.1";
 export const SECURE_WEBSOCKETS_TYPE = "WebSocketSubscription2021";
 export const WEBHOOKS_TYPE = "WebHookSubscription2022"; // see https://github.com/solid/specification/issues/457
 
+const WEBHOOK_ENDPOINT = "https://tester:8123";
+const WEBHOOK_PORT = 8123;
+const HTTPS_OPTIONS = {
+  key: readFileSync("/tls/server.key"),
+  cert: readFileSync("tls/server.cert"),
+};
 function tryRel(obj: any, rel: string, base: string): string | undefined {
   // console.log(obj);
   if (obj[rel] === undefined) {
@@ -33,6 +41,7 @@ export class NotificationsClient {
   authFetcher;
   insecureWs;
   secureWs;
+  webHookListener;
   discoveryLinks: {
     insecureWs?: string;
     storageWide?: string;
@@ -123,7 +132,7 @@ export class NotificationsClient {
         await this.setupSecureWs(absolute);
       }
       if (channels[i].type == WEBHOOKS_TYPE) {
-        await this.setupWebHookClient(absolute);
+        await this.setupWebHookListener(absolute);
       }
     }
   }
@@ -193,13 +202,41 @@ export class NotificationsClient {
     });
   }
 
-  async setupWebHookClient(subscribeUrl: string): Promise<void> {
+  async setupWebHookListener(subscribeUrl: string): Promise<void> {
     console.log("Setting up Webhook!", subscribeUrl);
-    // TODO: implement
-    JSON.stringify({
-      topic: "https://server/apps/solid/@alice/storage/foo/bar",
-      target: "https://tester",
+    this.webHookListener = createServer(HTTPS_OPTIONS, (req, res) => {
+      let msg = "";
+      req.on("data", (chunk) => {
+        msg += chunk;
+      });
+      req.on("end", () => {
+        console.log("HOOK <", msg);
+        this.receivedHook.push(msg);
+        res.end("OK");
+      });
     });
+    this.webHookListener.listen(WEBHOOK_PORT);
+    const bodyObj = {
+      "@context": ["https://www.w3.org/ns/solid/notification/v1"],
+      type: "WebHookSubscription2022",
+      topic: this.resourceUrl,
+      target: WEBHOOK_ENDPOINT,
+    };
+    console.log("sending", bodyObj);
+    const result = await this.authFetcher.fetch(subscribeUrl, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        // Accept: "application/ld+json",
+        // "Content-Type": "application/ld+json",
+      },
+      method: "POST",
+      body: JSON.stringify(bodyObj),
+    });
+    const txt = await result.text();
+    console.log(txt);
+    const obj = await result.json();
+    console.log(obj);
   }
 
   async setupInsecureWs(wssUrl: string): Promise<void> {
@@ -247,3 +284,4 @@ export class NotificationsClient {
     }
   }
 }
+
