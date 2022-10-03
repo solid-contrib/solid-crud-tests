@@ -14,7 +14,7 @@ import {
 import {
   NotificationsClient,
   SECURE_WEBSOCKETS_TYPE,
-  WEBHOOKS_TYPE
+  WEBHOOKS_TYPE,
 } from "../helpers/NotificationsClient";
 
 // note that these tests do one basic check of which types of notifications
@@ -35,24 +35,24 @@ describe("Notifications", () => {
   beforeAll(async () => {
     let newCookie = cookie;
     if (!cookie && process.env.WEBID_PROVIDER_GUI === "nss") {
-      console.log(
-        "logging in to get IDP cookie",
-        process.env.WEBID_PROVIDER,
-        process.env.USERNAME,
-        process.env.PASSWORD
-      );
+      // console.log(
+      //   "logging in to get IDP cookie",
+      //   process.env.WEBID_PROVIDER,
+      //   process.env.USERNAME,
+      //   process.env.PASSWORD
+      // );
       newCookie = await getNodeSolidServerCookie(
         process.env.WEBID_PROVIDER,
         process.env.USERNAME,
         process.env.PASSWORD
       );
-      console.log({ newCookie });
+      // console.log({ newCookie });
     }
     authFetcher = await getAuthFetcher(oidcIssuer, newCookie, appOrigin);
   });
   describe("When overwriting plain text with plain text using PUT", () => {
     const { testFolderUrl } = generateTestFolder();
-    console.log({ testFolderUrl });
+    // console.log({ testFolderUrl });
     let notificationsClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
     const resourceUrl = `${containerUrl}exists1.txt`;
@@ -92,10 +92,10 @@ describe("Notifications", () => {
           .notificationChannel;
       let found = 0;
       for (let i = 0; i < arr.length; i++) {
-        console.log("channel description", arr[i]);
+        // console.log("channel description", arr[i]);
         const types = arr[i].type;
         for (let j = 0; j < types.length; j++) {
-          console.log(types[j]);
+          // console.log(types[j]);
           if (types[j] === typeStr) {
             found++;
           }
@@ -108,7 +108,7 @@ describe("Notifications", () => {
     beforeAll(async () => {
       // this already relies on the PUT to non-existing folder functionality
       // that will be one of the tested behaviours:
-      console.log("PUT hello world start...");
+      // console.log("PUT hello world start...");
       await authFetcher.fetch(resourceUrl, {
         method: "PUT",
         body: "Hello World",
@@ -116,39 +116,30 @@ describe("Notifications", () => {
           "Content-Type": "text/plain",
         },
       });
-      console.log("Done PUT hello world, waiting...");
       await new Promise((resolve) => setTimeout(resolve, waittime));
-      console.log("...finished waiting, doing get");
       const getResult = await authFetcher.fetch(resourceUrl);
       const resourceETagInQuotes = getResult.headers.get("ETag");
       notificationsClientResource = new NotificationsClient(
         resourceUrl,
         authFetcher
       );
-      console.log("get ready start");
       await notificationsClientResource.getReady();
-      console.log("get ready done");
       const headers = {
         "Content-Type": "text/plain",
       };
       if (resourceETagInQuotes) {
         headers["If-Match"] = resourceETagInQuotes;
       }
-      console.log("PUT something else start...");
       const result = await authFetcher.fetch(resourceUrl, {
         method: "PUT",
         headers,
         body: "Replaced the contents.",
       });
-      console.log("Done PUT somethign else, waiting...");
       await new Promise((resolve) => setTimeout(resolve, waittime));
-      console.log(
-        "...finished waiting, done with beforeAll, going to first test"
-      );
     });
 
-    afterAll(() => {
-      notificationsClientResource.disconnect();
+    afterAll(async () => {
+      await notificationsClientResource.disconnect();
       recursiveDelete(testFolderUrl, authFetcher);
     });
     ifWps(
@@ -191,7 +182,22 @@ describe("Notifications", () => {
       }
     );
     ifWebhooks("emits webhook notification on the resource", () => {
-      expect(1 + 1).toEqual(2);
+      expect(notificationsClientResource.receivedHook.length).toEqual(1);
+      const msgObj = JSON.parse(notificationsClientResource.receivedHook[0]);
+      // console.log(msgObj);
+      expect(Array.isArray(msgObj["@context"])).toEqual(true);
+      expect(Array.isArray(msgObj["type"])).toEqual(true);
+      expect(Array.isArray(msgObj["object"]["type"])).toEqual(true);
+      expect(
+        msgObj["@context"].indexOf(
+          "https://www.w3.org/ns/solid/notification/v1"
+        )
+      ).not.toEqual(-1);
+      expect(msgObj["type"][0]).toEqual("Update");
+      expect(msgObj["object"]["id"]).toEqual(resourceUrl);
+      expect(
+        msgObj["object"]["type"].indexOf("http://www.w3.org/ns/ldp#Resource")
+      ).not.toEqual(-1);
     });
   });
 });

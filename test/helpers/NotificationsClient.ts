@@ -22,7 +22,7 @@ function tryRel(obj: any, rel: string, base: string): string | undefined {
     return;
   }
   const urlStr = obj[rel]["url"];
-  console.log("relative", urlStr);
+  // console.log("relative", urlStr);
   if (typeof urlStr === "string") {
     const urlObj = new URL(urlStr, base);
     return urlObj.toString();
@@ -106,20 +106,20 @@ export class NotificationsClient {
     return this.discoveryLinks;
   }
   async fetchAndParseDescription(url: string): Promise<any> {
-    console.log("absolute", url);
+    // console.log("absolute", url);
     const descriptionFetchResult = await this.authFetcher.fetch(url, {
       headers: {
         Accept: "application/ld+json",
       },
     });
     this.description[url] = await descriptionFetchResult.json();
-    console.log(this.description);
+    // console.log(this.description);
     return this.description[url].notificationChannel;
     /// tbc!
   }
 
   async subscribeToChannels(descriptionUrl: string): Promise<void> {
-    console.log("subscribing to channels", descriptionUrl);
+    // console.log("subscribing to channels", descriptionUrl);
     const channels = await this.fetchAndParseDescription(descriptionUrl);
     for (let i = 0; i < channels.length; i++) {
       // console.log(channels[i]);
@@ -146,27 +146,27 @@ export class NotificationsClient {
       typeof descriptions.insecureWs === "string" &&
       descriptions.insecureWs.length > 0
     ) {
-      console.log("get ready for insecure websockets");
+      // console.log("get ready for insecure websockets");
       await this.setupInsecureWs(descriptions.insecureWs);
     }
     if (
       typeof descriptions.storageWide === "string" &&
       descriptions.storageWide.length > 0
     ) {
-      console.log("get ready for storage wide");
+      // console.log("get ready for storage wide");
       await this.subscribeToChannels(descriptions.storageWide);
     }
     if (
       typeof descriptions.resourceSpecific === "string" &&
       descriptions.resourceSpecific.length > 0
     ) {
-      console.log("get ready for resource specific");
+      // console.log("get ready for resource specific");
       await this.subscribeToChannels(descriptions.resourceSpecific);
     }
   }
 
   async setupSecureWs(subscribeUrl: string): Promise<void> {
-    console.log("Setting up Secure Ws!", subscribeUrl);
+    // console.log("Setting up Secure Ws!", subscribeUrl);
     const result = await this.authFetcher.fetch(subscribeUrl, {
       headers: {
         Accept: "application/json",
@@ -180,17 +180,17 @@ export class NotificationsClient {
       }),
     });
     const obj = await result.json();
-    console.log(obj);
+    // console.log(obj);
     if (typeof obj.source !== "string" || !obj.source.startsWith("http")) {
       throw new Error(
         "could not find source for secure websockets subscription"
       );
     }
     const wssUrl = "ws" + obj.source.substring("http".length);
-    console.log({ wssUrl });
+    // console.log({ wssUrl });
     this.secureWs = new WebSocket(wssUrl, PROTOCOL_STRING);
     this.secureWs.on("message", (msg) => {
-      console.log("SWS <", msg);
+      // console.log("SWS <", msg);
       this.receivedSecure.push(msg);
     });
     await new Promise<void>((resolve) => {
@@ -203,14 +203,15 @@ export class NotificationsClient {
   }
 
   async setupWebHookListener(subscribeUrl: string): Promise<void> {
-    console.log("Setting up Webhook!", subscribeUrl);
+    // console.log("Setting up Webhook!", subscribeUrl);
     this.webHookListener = createServer(HTTPS_OPTIONS, (req, res) => {
       let msg = "";
       req.on("data", (chunk) => {
         msg += chunk;
+        // console.log("HOOK <", msg);
       });
       req.on("end", () => {
-        console.log("HOOK <", msg);
+        // console.log("HOOK END!");
         this.receivedHook.push(msg);
         res.end("OK");
       });
@@ -222,7 +223,7 @@ export class NotificationsClient {
       topic: this.resourceUrl,
       target: WEBHOOK_ENDPOINT,
     };
-    console.log("sending", bodyObj);
+    // console.log("sending", bodyObj);
     const result = await this.authFetcher.fetch(subscribeUrl, {
       headers: {
         Accept: "application/json",
@@ -236,15 +237,15 @@ export class NotificationsClient {
     // const txt = await result.text();
     // console.log(txt);
     const obj = await result.json();
-    console.log(obj);
+    // console.log(obj);
   }
 
   async setupInsecureWs(wssUrl: string): Promise<void> {
-    console.log("Setting up Insecure Ws!", wssUrl);
+    // console.log("Setting up Insecure Ws!", wssUrl);
 
     this.insecureWs = new WebSocket(wssUrl, PROTOCOL_STRING);
     this.insecureWs.on("message", (msg) => {
-      console.log("WPS <", msg);
+      // console.log("WPS <", msg);
       this.receivedInsecure.push(msg);
     });
     await new Promise<void>((resolve) => {
@@ -261,16 +262,16 @@ export class NotificationsClient {
     }
     if (this.insecureWs) {
       await new Promise((resolve) => this.insecureWs.send(str, resolve));
-      console.log("WPS > ", str);
+      // console.log("WPS > ", str);
       this.sentInsecure.push(str);
     }
     if (this.secureWs) {
       await new Promise((resolve) => this.secureWs.send(str, resolve));
-      console.log("SWS > ", str);
+      // console.log("SWS > ", str);
       this.sentSecure.push(str);
     }
   }
-  disconnect(): any {
+  async disconnect(): Promise<any> {
     if (this.disabled) {
       return;
     }
@@ -280,6 +281,10 @@ export class NotificationsClient {
     }
     if (this.secureWs) {
       this.secureWs.terminate();
+      delete this.secureWs;
+    }
+    if (this.webHookListener) {
+      await new Promise((resolve) => this.webHookListener.close(resolve));
       delete this.secureWs;
     }
   }
