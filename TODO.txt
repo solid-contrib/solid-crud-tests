@@ -41,7 +41,7 @@ startSolidNextcloud server
 
 And then run the tester interactively and with code mounted from the host:
 ```
-docker run --rm --network=testnet --env COOKIE="$COOKIE_server" --env COOKIE_ALICE="$COOKIE_server" --env COOKIE_BOB="$COOKIE_thirdparty" --env-file ./env-vars-testers.list -it -v /Users/michiel/gh/solid-contrib/solid-crud-tests/test:/app/test solid-crud-tests /bin/bash
+docker run --rm --network=testnet --env COOKIE="$COOKIE_server" --env COOKIE_ALICE="$COOKIE_server" --env COOKIE_BOB="$COOKIE_thirdparty" --env-file ./env-vars-testers.list -it -v /Users/michiel/gh/solid-contrib/solid-crud-tests/test:/app/test --name tester solid-crud-tests /bin/bash
 ```
 
 And then inside that:

@@ -10,11 +10,11 @@ const PROTOCOL_STRING = "solid-0.1";
 export const SECURE_WEBSOCKETS_TYPE = "WebSocketSubscription2021";
 export const WEBHOOKS_TYPE = "WebHookSubscription2022"; // see https://github.com/solid/specification/issues/457
 
-const WEBHOOK_ENDPOINT = "https://tester:8123";
+const WEBHOOK_ENDPOINT = "https://tester:8123/hook";
 const WEBHOOK_PORT = 8123;
 const HTTPS_OPTIONS = {
   key: readFileSync("/tls/server.key"),
-  cert: readFileSync("tls/server.cert"),
+  cert: readFileSync("/tls/server.cert"),
 };
 function tryRel(obj: any, rel: string, base: string): string | undefined {
   // console.log(obj);
@@ -233,8 +233,8 @@ export class NotificationsClient {
       method: "POST",
       body: JSON.stringify(bodyObj),
     });
-    const txt = await result.text();
-    console.log(txt);
+    // const txt = await result.text();
+    // console.log(txt);
     const obj = await result.json();
     console.log(obj);
   }
