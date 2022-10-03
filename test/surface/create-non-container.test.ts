@@ -149,12 +149,12 @@ describe("Create non-container", () => {
         );
       });
       ifWps("emits websockets-pubsub on the container", () => {
-        expect(notificationsClientContainer.received).toEqual(
+        expect(notificationsClientContainer.receivedInsecure).toEqual(
           expect.arrayContaining([`ack ${containerUrl}`, `pub ${containerUrl}`])
         );
       });
       ifWps("emits websockets-pubsub on the resource", () => {
-        expect(notificationsClientResource.received).toEqual(
+        expect(notificationsClientResource.receivedInsecure).toEqual(
           expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
         );
       });
@@ -238,12 +238,12 @@ describe("Create non-container", () => {
         );
       });
       ifWps("emits websockets-pubsub on the container", () => {
-        expect(notificationsClientContainer.received).toEqual(
+        expect(notificationsClientContainer.receivedInsecure).toEqual(
           expect.arrayContaining([`ack ${containerUrl}`, `pub ${containerUrl}`])
         );
       });
       ifWps("emits websockets-pubsub on the resource", () => {
-        expect(notificationsClientResource.received).toEqual(
+        expect(notificationsClientResource.receivedInsecure).toEqual(
           expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
         );
       });
@@ -315,12 +315,12 @@ describe("Create non-container", () => {
         );
       });
       ifWps("emits websockets-pubsub on the container", () => {
-        expect(notificationsClientContainer.received).toEqual(
+        expect(notificationsClientContainer.receivedInsecure).toEqual(
           expect.arrayContaining([`ack ${containerUrl}`, `pub ${containerUrl}`])
         );
       });
       ifWps("emits websockets-pubsub on the resource", () => {
-        expect(notificationsClientResource.received).toEqual(
+        expect(notificationsClientResource.receivedInsecure).toEqual(
           expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
         );
       });
@@ -406,12 +406,12 @@ describe("Create non-container", () => {
         );
       });
       ifWps("emits websockets-pubsub on the container", () => {
-        expect(notificationsClientContainer.received).toEqual(
+        expect(notificationsClientContainer.receivedInsecure).toEqual(
           expect.arrayContaining([`ack ${containerUrl}`, `pub ${containerUrl}`])
         );
       });
       ifWps("emits websockets-pubsub on the resource", () => {
-        expect(notificationsClientResource.received).toEqual(
+        expect(notificationsClientResource.receivedInsecure).toEqual(
           expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
         );
       });

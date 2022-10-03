@@ -86,7 +86,7 @@ describe("Update", () => {
       expect(result.headers.get("Content-Type")).toContain("text/plain");
     });
     ifWps("emits websockets-pubsub on the resource", () => {
-      expect(notificationsClientResource.received).toEqual(
+      expect(notificationsClientResource.receivedInsecure).toEqual(
         expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
       );
     });
@@ -153,7 +153,7 @@ describe("Update", () => {
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("emits websockets-pubsub on the resource", () => {
-      expect(notificationsClientResource.received).toEqual(
+      expect(notificationsClientResource.receivedInsecure).toEqual(
         expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
       );
     });
@@ -220,7 +220,7 @@ describe("Update", () => {
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("emits websockets-pubsub on the resource", () => {
-      expect(notificationsClientResource.received).toEqual(
+      expect(notificationsClientResource.receivedInsecure).toEqual(
         expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
       );
     });
@@ -285,7 +285,7 @@ describe("Update", () => {
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("emits websockets-pubsub on the resource", () => {
-      expect(notificationsClientResource.received).toEqual(
+      expect(notificationsClientResource.receivedInsecure).toEqual(
         expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
       );
     });
@@ -351,7 +351,7 @@ describe("Update", () => {
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("emits websockets-pubsub on the resource", () => {
-      expect(notificationsClientResource.received).toEqual(
+      expect(notificationsClientResource.receivedInsecure).toEqual(
         expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
       );
     });
@@ -417,7 +417,7 @@ describe("Update", () => {
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("emits websockets-pubsub on the resource", () => {
-      expect(notificationsClientResource.received).toEqual(
+      expect(notificationsClientResource.receivedInsecure).toEqual(
         expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
       );
     });
@@ -483,10 +483,10 @@ describe("Update", () => {
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("does not emit websockets-pubsub on the resource", () => {
-      expect(notificationsClientResource.received).toEqual(
+      expect(notificationsClientResource.receivedInsecure).toEqual(
         expect.arrayContaining([`ack ${resourceUrl}`])
       );
-      expect(notificationsClientResource.received).not.toEqual(
+      expect(notificationsClientResource.receivedInsecure).not.toEqual(
         expect.arrayContaining([`pub ${resourceUrl}`])
       );
     });
@@ -543,7 +543,7 @@ describe("Update", () => {
       expect(result.headers.get("Content-Type")).toContain("text/turtle");
     });
     ifWps("emits websockets-pubsub on the resource", () => {
-      expect(notificationsClientResource.received).toEqual(
+      expect(notificationsClientResource.receivedInsecure).toEqual(
         expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
       );
     });
@@ -606,11 +606,11 @@ describe("Update", () => {
     });
     ifWps("does not emit websockets-pubsub on the resource", () => {
       // Should see ack but not pub
-      expect(notificationsClientResource.received).toEqual(
+      expect(notificationsClientResource.receivedInsecure).toEqual(
         expect.arrayContaining([`ack ${resourceUrl}`])
       );
       // FIXME: https://github.com/michielbdejong/community-server/issues/9#issuecomment-776595324
-      // expect(notificationsClientResource.received).not.toEqual(
+      // expect(notificationsClientResource.receivedInsecure).not.toEqual(
       //   expect.arrayContaining([`pub ${resourceUrl}`])
       // );
     });

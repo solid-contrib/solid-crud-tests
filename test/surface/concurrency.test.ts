@@ -121,14 +121,14 @@ if (process.env.SKIP_CONC) {
       });
       ifWps("emits websockets-pubsub on the container exactly once", () => {
         expect(
-          notificationsClientContainer.received.filter(
+          notificationsClientContainer.receivedInsecure.filter(
             (x) => x === `pub ${containerUrl}`
           ).length
         ).toEqual(1);
       });
       ifWps("emits websockets-pubsub on the resource exactly once", () => {
         expect(
-          notificationsClientResource.received.filter(
+          notificationsClientResource.receivedInsecure.filter(
             (x) => x === `pub ${resourceUrl}`
           ).length
         ).toEqual(1);
@@ -206,7 +206,7 @@ if (process.env.SKIP_CONC) {
       });
       ifWps("emits websockets-pubsub on the resource 10 times", () => {
         expect(
-          notificationsClientResource.received.filter(
+          notificationsClientResource.receivedInsecure.filter(
             (x) => x === `pub ${resourceUrl}`
           ).length
         ).toEqual(10);
