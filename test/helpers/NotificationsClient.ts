@@ -79,14 +79,15 @@ export class NotificationsClient {
     this.discoveryLinks.insecureWs = resourceFetchResult.headers.get("updates-via");
     return this.discoveryLinks;
   }
-  async fetchAndParseDescription(url: string) {
-    // console.log("absolute", serverWideNotificationsDescription);
+  async fetchAndParseDescription(url: string):Promise<any> {
+    console.log("absolute", url);
     const descriptionFetchResult = await this.authFetcher.fetch(url, {
       headers: {
         Accept: "application/ld_json",
       },
     });
     this.description[url] = await descriptionFetchResult.json();
+    console.log(this.description);
     return this.description[url].notificationChannel;
     /// tbc!
   }
@@ -114,18 +115,21 @@ export class NotificationsClient {
       typeof descriptions.insecureWs === "string" &&
       descriptions.insecureWs.length > 0
     ) {
+      console.log("get ready for insecure websockets");
       await this.setupInsecureWs(descriptions.insecureWs);
     }
     if (
       typeof descriptions.storageWide === "string" &&
       descriptions.storageWide.length > 0
     ) {
+      console.log("get ready for storage wide");
       await this.subscribeToChannels(descriptions.storageWide);
     }
     if (
       typeof descriptions.resourceSpecific === "string" &&
       descriptions.resourceSpecific.length > 0
     ) {
+      console.log("get ready for resource specific");
       await this.subscribeToChannels(descriptions.resourceSpecific);
     }
   }

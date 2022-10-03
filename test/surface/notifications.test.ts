@@ -53,6 +53,54 @@ describe("Notifications", () => {
     const containerUrl = `${testFolderUrl}exists/`;
     const resourceUrl = `${containerUrl}exists1.txt`;
 
+    function checkDescription(typeStr: string) {
+      let describedBy = notificationsClientResource.discoveryLinks.storageWide;
+      if (
+        typeof notificationsClientResource.discoveryLinks.resourceSpecific ===
+        "string"
+      ) {
+        // resource specific has preference over storage-wide, see
+        // https://github.com/solid/notifications/issues/58#issuecomment-1219511774
+        // > it could (non-?)normatively state that when both relations are available,
+        // > the client should use the resource specific one for channel information
+        describedBy =
+          notificationsClientResource.discoveryLinks.resourceSpecific;
+      }
+
+      // note that we interpret the spec as per
+      // https://github.com/solid/notifications/issues/58#issuecomment-1265144088
+      // so at least one of the two should be available.
+      expect(typeof describedBy).toBe("string");
+      expect(typeof notificationsClientResource.description[describedBy]).toBe(
+        "object"
+      );
+      expect(
+        notificationsClientResource.description[describedBy]["@context"]
+      ).toEqual(["https://www.w3.org/ns/solid/notification/v1"]);
+      expect(
+        Array.isArray(
+          notificationsClientResource.description[describedBy]
+            .notificationChannel
+        )
+      );
+      const arr: any[] =
+        notificationsClientResource.description[describedBy]
+          .notificationChannel;
+      let found = 0;
+      for (let i = 0; i < arr.length; i++) {
+        console.log('channel description', arr[i]);
+        const types = arr[i].type;
+        for (let j = 0; j < types.length; j++) {
+          console.log(types[j]);
+          if (types[j] === typeStr) {
+            found++;
+          }
+        }
+      }
+      expect(found).toEqual(1);
+      // TODO: follow nose to that doc.
+    }
+
     beforeAll(async () => {
       // this already relies on the PUT to non-existing folder functionality
       // that will be one of the tested behaviours:
@@ -102,10 +150,14 @@ describe("Notifications", () => {
     ifWps(
       "insecure websockets-pubsub advertised using Updates-Via Link header",
       () => {
-        expect(typeof notificationsClientResource.discoveryLinks.insecureWs).toBe(
-          "string"
-        );
-        expect(notificationsClientResource.discoveryLinks.insecureWs.startsWith("http")).toBe(true);
+        expect(
+          typeof notificationsClientResource.discoveryLinks.insecureWs
+        ).toBe("string");
+        expect(
+          notificationsClientResource.discoveryLinks.insecureWs.startsWith(
+            "http"
+          )
+        ).toBe(true);
       }
     );
     ifWps("emits insecure websockets-pubsub on the resource", () => {
@@ -116,26 +168,7 @@ describe("Notifications", () => {
     ifSecureWebsockets(
       "secure websockets advertised using server-wide or resource-specific Link header",
       () => {
-        let describedBy =
-          notificationsClientResource.discoveryLinks.storageWide;
-        if (
-          typeof notificationsClientResource.discoveryLinks.resourceSpecific ===
-          "string"
-        ) {
-          // resource specific has preference over storage-wide, see
-          // https://github.com/solid/notifications/issues/58#issuecomment-1219511774
-          // > it could (non-?)normatively state that when both relations are available,
-          // > the client should use the resource specific one for channel information
-          describedBy =
-            notificationsClientResource.discoveryLinks.resourceSpecific;
-        }
-
-        // note that we interpret the spec as per
-        // https://github.com/solid/notifications/issues/58#issuecomment-1265144088
-        // so at least one of the two should be available.
-        expect(typeof describedBy).toBe("string");
-
-        // TODO: follow nose to that doc.
+        checkDescription("WebSocketSubscription2021");
       }
     );
     ifSecureWebsockets(
@@ -147,26 +180,7 @@ describe("Notifications", () => {
     ifWebhooks(
       "secure websockets advertised using server-wide or resource-specific Link header",
       () => {
-        let describedBy =
-          notificationsClientResource.discoveryLinks.storageWide;
-        if (
-          typeof notificationsClientResource.discoveryLinks.resourceSpecific ===
-          "string"
-        ) {
-          // resource specific has preference over storage-wide, see
-          // https://github.com/solid/notifications/issues/58#issuecomment-1219511774
-          // > it could (non-?)normatively state that when both relations are available,
-          // > the client should use the resource specific one for channel information
-          describedBy =
-            notificationsClientResource.discoveryLinks.resourceSpecific;
-        }
-
-        // note that we interpret the spec as per
-        // https://github.com/solid/notifications/issues/58#issuecomment-1265144088
-        // so at least one of the two should be available.
-        expect(typeof describedBy).toBe("string");
-
-        // TODO: follow nose to that doc.
+        checkDescription("WebHookSubscription2022");
       }
     );
     ifWebhooks("emits secure websockets notification on the resource", () => {
