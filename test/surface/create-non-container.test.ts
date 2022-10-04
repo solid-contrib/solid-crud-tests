@@ -82,7 +82,7 @@ describe("Create non-container", () => {
         );
       });
       ifWps("emits websockets-pubsub on the container", () => {
-        expect(notificationsClient.received).toEqual(
+        expect(notificationsClient.receivedInsecure).toEqual(
           expect.arrayContaining([`ack ${containerUrl}`, `pub ${containerUrl}`])
         );
       });

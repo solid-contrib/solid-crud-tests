@@ -204,19 +204,20 @@ export class NotificationsClient {
   }
 
   async setupWebHookListener(subscribeUrl: string): Promise<void> {
+    console.log('setupWebHookListener', this.webHooksPort);
     if (!this.webHooksPort) {
       // Don't need to listen for webhooks for these tests
       return;
     }
-    // console.log("Setting up Webhook!", subscribeUrl);
+    console.log("Setting up Webhook!", subscribeUrl);
     this.webHookListener = createServer(HTTPS_OPTIONS, (req, res) => {
       let msg = "";
       req.on("data", (chunk) => {
         msg += chunk;
-        // console.log("HOOK <", msg);
+        console.log("HOOK <", msg);
       });
       req.on("end", () => {
-        // console.log("HOOK END!");
+        console.log("HOOK END!");
         this.receivedHook.push(msg);
         res.end("OK");
       });
@@ -228,7 +229,7 @@ export class NotificationsClient {
       topic: this.resourceUrl,
       target: WEBHOOK_ENDPOINT,
     };
-    // console.log("sending", bodyObj);
+    console.log("sending", bodyObj);
     const result = await this.authFetcher.fetch(subscribeUrl, {
       headers: {
         Accept: "application/json",
@@ -242,7 +243,7 @@ export class NotificationsClient {
     // const txt = await result.text();
     // console.log(txt);
     const obj = await result.json();
-    // console.log(obj);
+    console.log(obj);
   }
 
   async setupInsecureWs(wssUrl: string): Promise<void> {
