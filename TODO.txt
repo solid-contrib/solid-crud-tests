@@ -1,14 +1,4 @@
-notifications:
-
-* WPS tests that already exist https://github.com/pdsinterop/solid-nextcloud/pull/85/files#diff-a4c66415bf4c03a7240b331cd9954dcaff97581d735516e2819660fc4c324f2c
-* secure websocket
-* webhook https://github.com/pdsinterop/solid-nextcloud/pull/85/files#diff-f77530c143e43e0e7ea63eb31ae13794ae65cccff03fbdcf5b7c3fba93499a5e
-
-* register a webhook https://github.com/pdsinterop/solid-nextcloud/pull/85/files#diff-3413d5b6b5d579e0fcdfbf98e59bb5afdf592c3417a7741775c7e6e69c24ccb0R55
-
-* see test/registerWebhook.js
-
-next: open a port and listen
+Development notes:
 
 Solid-Nextcloud server with solid app mounted from host:
 ```
@@ -41,14 +31,10 @@ startSolidNextcloud server
 
 And then run the tester interactively and with code mounted from the host:
 ```
-docker run --rm --network=testnet --env COOKIE="$COOKIE_server" --env COOKIE_ALICE="$COOKIE_server" --env COOKIE_BOB="$COOKIE_thirdparty" --env-file ./env-vars-testers.list -it -v /Users/michiel/gh/solid-contrib/solid-crud-tests/test:/app/test --name tester solid-crud-tests /bin/bash
+docker run --rm --network=testnet --env COOKIE="$COOKIE_server" --env COOKIE_ALICE="$COOKIE_server" --env COOKIE_BOB="$COOKIE_thirdparty" --env-file ./env-vars-testers.list -it -v /Users/michiel/gh/solid-contrib/solid-crud-tests/test:/app/test --name tester -v /Users/michiel/hevel:/hevel solid-crud-tests /bin/bash
 ```
 
 And then inside that:
 ```
-npm install parse-link-header
 ./node_modules/.bin/jest test/surface/notifications.test.ts
 ```
-
-notifications-tests now passes all 6 dummy tests.
-next step: fill them in, especially for webhooks, for the RfP.
