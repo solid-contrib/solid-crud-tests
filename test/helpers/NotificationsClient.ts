@@ -50,7 +50,7 @@ export class NotificationsClient {
     [url: string]: any;
   };
   webHooksPort: number;
-  constructor(resourceUrl: string, authFetcher: AuthFetcher, webHooksPort: number) {
+  constructor(resourceUrl: string, authFetcher: AuthFetcher, webHooksPort?: number) {
     this.receivedInsecure = [];
     this.sentInsecure = [];
     this.receivedSecure = [];
@@ -204,7 +204,7 @@ export class NotificationsClient {
   }
 
   async setupWebHookListener(subscribeUrl: string): Promise<void> {
-    if (!webHooksPort) {
+    if (!this.webHooksPort) {
       // Don't need to listen for webhooks for these tests
       return;
     }
