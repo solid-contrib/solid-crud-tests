@@ -121,7 +121,8 @@ describe("Notifications", () => {
       const resourceETagInQuotes = getResult.headers.get("ETag");
       notificationsClientResource = new NotificationsClient(
         resourceUrl,
-        authFetcher
+        authFetcher,
+        8123 // webHooksPort
       );
       await notificationsClientResource.getReady();
       const headers = {
@@ -156,7 +157,7 @@ describe("Notifications", () => {
       }
     );
     ifWps("emits insecure websockets-pubsub on the resource", () => {
-      expect(notificationsClientResource.receivedInsecureInsecure).toEqual(
+      expect(notificationsClientResource.receivedInsecure).toEqual(
         expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
       );
     });
@@ -170,7 +171,7 @@ describe("Notifications", () => {
       "emits secure websockets notification on the resource",
       () => {
         // FIXME: expect the new format!
-        // expect(notificationsClientResource.receivedInsecureSecure).toEqual(
+        // expect(notificationsClientResource.receivedSecure).toEqual(
         //   expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
         // );
       }
@@ -182,8 +183,8 @@ describe("Notifications", () => {
       }
     );
     ifWebhooks("emits webhook notification on the resource", () => {
-      expect(notificationsClientResource.receivedInsecureHook.length).toEqual(1);
-      const msgObj = JSON.parse(notificationsClientResource.receivedInsecureHook[0]);
+      expect(notificationsClientResource.receivedHook.length).toEqual(1);
+      const msgObj = JSON.parse(notificationsClientResource.receivedHook[0]);
       // console.log(msgObj);
       expect(Array.isArray(msgObj["@context"])).toEqual(true);
       expect(Array.isArray(msgObj["type"])).toEqual(true);

@@ -11,7 +11,6 @@ export const SECURE_WEBSOCKETS_TYPE = "WebSocketSubscription2021";
 export const WEBHOOKS_TYPE = "WebHookSubscription2022"; // see https://github.com/solid/specification/issues/457
 
 const WEBHOOK_ENDPOINT = "https://tester:8123/hook";
-const WEBHOOK_PORT = 8123;
 const HTTPS_OPTIONS = {
   key: readFileSync("/tls/server.key"),
   cert: readFileSync("/tls/server.cert"),
@@ -50,7 +49,8 @@ export class NotificationsClient {
   description: {
     [url: string]: any;
   };
-  constructor(resourceUrl: string, authFetcher: AuthFetcher) {
+  webHooksPort: number;
+  constructor(resourceUrl: string, authFetcher: AuthFetcher, webHooksPort: number) {
     this.receivedInsecure = [];
     this.sentInsecure = [];
     this.receivedSecure = [];
@@ -66,6 +66,7 @@ export class NotificationsClient {
       resourceSpecific: undefined,
     };
     this.description = {};
+    this.webHooksPort = webHooksPort;
   }
   async getLinksToNotifications(): Promise<{
     insecureWs?: string;
@@ -203,6 +204,10 @@ export class NotificationsClient {
   }
 
   async setupWebHookListener(subscribeUrl: string): Promise<void> {
+    if (!webHooksPort) {
+      // Don't need to listen for webhooks for these tests
+      return;
+    }
     // console.log("Setting up Webhook!", subscribeUrl);
     this.webHookListener = createServer(HTTPS_OPTIONS, (req, res) => {
       let msg = "";
@@ -216,7 +221,7 @@ export class NotificationsClient {
         res.end("OK");
       });
     });
-    this.webHookListener.listen(WEBHOOK_PORT);
+    this.webHookListener.listen(this.webHooksPort);
     const bodyObj = {
       "@context": ["https://www.w3.org/ns/solid/notification/v1"],
       type: "WebHookSubscription2022",
