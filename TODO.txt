@@ -31,6 +31,8 @@ startSolidNextcloud server
 
 And then run the tester interactively and with code mounted from the host:
 ```
+# docker tag solidtestsuite/solid-crud-tests:v7.0.5 solid-crud-tests
+
 docker run --rm --network=testnet --env COOKIE="$COOKIE_server" --env COOKIE_ALICE="$COOKIE_server" --env COOKIE_BOB="$COOKIE_thirdparty" --env-file ./env-vars-testers.list -it -v /Users/michiel/gh/solid-contrib/solid-crud-tests/test:/app/test --name tester -v /Users/michiel/hevel:/hevel solid-crud-tests /bin/bash
 ```
 
@@ -38,3 +40,8 @@ And then inside that:
 ```
 ./node_modules/.bin/jest test/surface/notifications.test.ts
 ```
+
+
+For Wh2Ws testing:
+
+docker exec -it pubsub php server/serverWh2Ws.php
