@@ -28,6 +28,7 @@ npm ci
 # To use a different base container set STORAGE_ROOT.
 
 export SERVER_ROOT=https://solid-crud-tests-example-1.solidcommunity.net
+export ALICE_WEBID=https://solid-crud-tests-example-1.solidcommunity.net/profile/card#me
 export USERNAME=solid-crud-tests-example-1
 export PASSWORD=123
 # This curl command is specific to node-solid-server:
