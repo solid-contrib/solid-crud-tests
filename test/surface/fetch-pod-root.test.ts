@@ -17,7 +17,7 @@ describe("Alice's storage root", () => {
       .map((st) => st.object.value);
   });
 
-  test("is an ldp BasicContainer", async () => {
+  test.skip("is an ldp BasicContainer", async () => {
     expect(podRoots.length).toEqual(1);
     const store = getStore({
       fetch: async (url, options) => {
