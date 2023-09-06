@@ -12,8 +12,8 @@ export const WEBHOOKS_TYPE = "WebHookSubscription2022"; // see https://github.co
 
 const WEBHOOK_ENDPOINT = "https://tester:8123/hook";
 const HTTPS_OPTIONS = {
-  key: readFileSync("/tls/server.key"),
-  cert: readFileSync("/tls/server.cert"),
+  key: (process.env.SKIP_WPS ? null : readFileSync("/tls/server.key")),
+  cert: (process.env.SKIP_WPS ? null : readFileSync("/tls/server.cert")),
 };
 function tryRel(obj: any, rel: string, base: string): string | undefined {
   // console.log(obj);
