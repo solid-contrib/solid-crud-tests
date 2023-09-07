@@ -39,6 +39,9 @@ describe("Hello World", () => {
       containerUrl
     ).toString();
     await new Promise((resolve) => setTimeout(resolve, waittime));
+    const responseBody = await result.text();
+    console.log(`response body: '${responseBody}'`);
+    console.log("response headers", (result.headers as any).raw());
     expect(result.status).toBe(201);
     recursiveDelete(testFolderUrl, authFetcher as AuthFetcher);
   });
