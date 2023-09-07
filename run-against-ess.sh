@@ -12,6 +12,6 @@ export ALICE_WEBID=https://solidtestsuite.solidcommunity.net/profile/card#me
 
 export SKIP_WPS=1
 mkdir -p ../test-suite/ESS
-#export DEBUG=*
+export DEBUG=*
 env
 ./node_modules/.bin/jest test/surface/ --verbose --json --outputFile="../test-suite/ESS/crud-results.json"
