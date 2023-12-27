@@ -586,7 +586,7 @@ describe("Update", () => {
 
     it("does not update the resource", async () => {
       const result = await authFetcher.fetch(resourceUrl);
-      expect(responseCodeGroup(result.status)).toEqual("2xx");
+      expect(responseCodeGroup(result.status)).toEqual("403");
       const store1 = getStore(authFetcher);
       const store2 = getStore(authFetcher);
 
