@@ -422,12 +422,12 @@ describe("Update", () => {
     });
   });
 
-  // DISPUTED: https://github.com/solid/specification/issues/139#issuecomment-797338177
-  describe.skip("Using PATCH to replace triple (not present)", () => {
+  describe("Using PATCH to replace triple (not present)", () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
     const resourceUrl = `${containerUrl}exists5.ttl`;
+    let patchResponse
 
     beforeAll(async () => {
       // this already relies on the PUT to non-existing folder functionality
@@ -442,7 +442,7 @@ describe("Update", () => {
 
       websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
       await websocketsPubsubClientResource.getReady();
-      await authFetcher.fetch(resourceUrl, {
+      patchResponse = await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
           "Content-Type": "text/n3",
@@ -461,8 +461,8 @@ describe("Update", () => {
     });
 
     it("does not update the resource", async () => {
+      expect(responseCodeGroup(patchResponse.status)).toEqual("4xx"); // 409
       const result = await authFetcher.fetch(resourceUrl);
-      expect(responseCodeGroup(result.status)).toEqual("2xx");
 
       const store1 = getStore(authFetcher);
       const store2 = getStore(authFetcher);
@@ -553,6 +553,7 @@ describe("Update", () => {
     let websocketsPubsubClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
     const resourceUrl = `${containerUrl}exists7.ttl`;
+    let patchResponse
 
     beforeAll(async () => {
       // this already relies on the PUT to non-existing folder functionality
@@ -567,7 +568,7 @@ describe("Update", () => {
 
       websocketsPubsubClientResource = new WPSClient(resourceUrl, authFetcher);
       await websocketsPubsubClientResource.getReady();
-      await authFetcher.fetch(resourceUrl, {
+      patchResponse = await authFetcher.fetch(resourceUrl, {
         method: "PATCH",
         headers: {
           "Content-Type": "text/n3",
@@ -585,8 +586,8 @@ describe("Update", () => {
     });
 
     it("does not update the resource", async () => {
+      expect(responseCodeGroup(patchResponse.status)).toEqual("4xx"); // 409
       const result = await authFetcher.fetch(resourceUrl);
-      expect(responseCodeGroup(result.status)).toEqual("403");
       const store1 = getStore(authFetcher);
       const store2 = getStore(authFetcher);
 
