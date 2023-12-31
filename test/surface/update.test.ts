@@ -290,7 +290,7 @@ describe("Update", () => {
     });
   });
 
-  describe.skip("Using PATCH to replace triple (same content)", () => {
+  describe("Using PATCH to replace triple (same content)", () => { // alain succeeds locally fails in CI
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
