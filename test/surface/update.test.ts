@@ -463,7 +463,7 @@ describe("Update", () => {
     it("does not update the resource", async () => {
       expect(responseCodeGroup(patchResponse.status)).toEqual("4xx"); // 409
       const result = await authFetcher.fetch(resourceUrl);
-      const resultText = await result.text()
+      // const resultText = await result.text()
 
       const store1 = getStore(authFetcher);
       const store2 = getStore(authFetcher);
@@ -474,7 +474,7 @@ describe("Update", () => {
         resourceUrl,
         "text/turtle"
       );
-      rdflib.parse(resultText, store2, resourceUrl, "text/turtle");
+      rdflib.parse(await resultText, store2, resourceUrl, "text/turtle");
 
       // console.log(resourceUrl);
       expect(store2.statements).toEqual(
@@ -589,7 +589,7 @@ describe("Update", () => {
     it("does not update the resource", async () => {
       expect(responseCodeGroup(patchResponse.status)).toEqual("4xx"); // 409
       const result = await authFetcher.fetch(resourceUrl);
-      const resultText = await result.text()
+      // const resultText = await result.text()
       const store1 = getStore(authFetcher);
       const store2 = getStore(authFetcher);
 
@@ -599,7 +599,7 @@ describe("Update", () => {
         resourceUrl,
         "text/turtle"
       );
-      rdflib.parse(resultText, store2, resourceUrl, "text/turtle");
+      rdflib.parse(await resultText, store2, resourceUrl, "text/turtle");
 
       expect(store2.statements).toEqual(
         expect.arrayContaining(store1.statements)
