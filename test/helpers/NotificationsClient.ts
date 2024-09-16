@@ -59,7 +59,7 @@ export class NotificationsClient {
     this.sentHook = [];
     this.resourceUrl = resourceUrl;
     this.authFetcher = authFetcher;
-    this.disabled = !!process.env.SKIP_WPS;
+    this.disabled = !!process.env.SKIP_WPS && !!process.env.SKIP_SECURE_WEBSOCKETS && !!process.env.SKIP_WEBHOOKS;
     this.discoveryLinks = {
       insecureWs: undefined,
       storageWide: undefined,
@@ -77,6 +77,7 @@ export class NotificationsClient {
       method: "HEAD",
     });
     const linkHeaders = resourceFetchResult.headers.raw()["link"];
+    console.log({linkHeaders});
     if (Array.isArray(linkHeaders) && linkHeaders.length > 0) {
       let obj = {};
       for (let i = 0; i < linkHeaders.length; i++) {
@@ -139,27 +140,30 @@ export class NotificationsClient {
   }
 
   async getReady(): Promise<void> {
+    console.log('in getReady!');
     if (this.disabled) {
+      console.log('disabled, not getting ready!');
       return;
     }
     const descriptions = await this.getLinksToNotifications();
+    console.log({ descriptions });
     if (
       typeof descriptions.insecureWs === "string" &&
-      descriptions.insecureWs.length > 0
+      descriptions.insecureWs.length > 0 && !process.env.SKIP_WPS
     ) {
       // console.log("get ready for insecure websockets");
       await this.setupInsecureWs(descriptions.insecureWs);
     }
     if (
       typeof descriptions.storageWide === "string" &&
-      descriptions.storageWide.length > 0
+      descriptions.storageWide.length > 0 && !process.env.SKIP_SECURE_WEBSOCKETS
     ) {
       // console.log("get ready for storage wide");
       await this.subscribeToChannels(descriptions.storageWide);
     }
     if (
       typeof descriptions.resourceSpecific === "string" &&
-      descriptions.resourceSpecific.length > 0
+      descriptions.resourceSpecific.length > 0 && !process.env.SKIP_WEBHOOKS
     ) {
       // console.log("get ready for resource specific");
       await this.subscribeToChannels(descriptions.resourceSpecific);

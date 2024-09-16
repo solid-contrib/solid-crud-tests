@@ -48,6 +48,7 @@ describe("Notifications", () => {
       );
       // console.log({ newCookie });
     }
+    console.log("getAuthFetcher", oidcIssuer, newCookie, appOrigin);
     authFetcher = await getAuthFetcher(oidcIssuer, newCookie, appOrigin);
   });
   describe("When overwriting plain text with plain text using PUT", () => {
@@ -124,7 +125,9 @@ describe("Notifications", () => {
         authFetcher,
         8123 // webHooksPort
       );
+      console.log('getting ready');
       await notificationsClientResource.getReady();
+      console.log('got ready');
       const headers = {
         "Content-Type": "text/plain",
       };
@@ -170,11 +173,23 @@ describe("Notifications", () => {
     ifSecureWebsockets(
       "emits secure websockets notification on the resource",
       () => {
-        // FIXME: expect the new format!
-        // expect(notificationsClientResource.receivedSecure).toEqual(
-        //   expect.arrayContaining([`ack ${resourceUrl}`, `pub ${resourceUrl}`])
-        // );
-      }
+        expect(Array.isArray(notificationsClientResource.receivedSecure)).toEqual(true);
+        expect(notificationsClientResource.receivedSecure.length).toEqual(1);
+        const msgObj = JSON.parse(notificationsClientResource.receivedSecure[0]);
+        expect(Array.isArray(msgObj["@context"])).toEqual(true);
+        expect(Array.isArray(msgObj["type"])).toEqual(true);
+        expect(Array.isArray(msgObj["object"]["type"])).toEqual(true);
+        expect(
+          msgObj["@context"].indexOf(
+            "https://www.w3.org/ns/solid/notification/v1"
+          )
+        ).not.toEqual(-1);
+        expect(msgObj["type"][0]).toEqual("Update");
+        expect(msgObj["object"]["id"]).toEqual(resourceUrl);
+        expect(
+          msgObj["object"]["type"].indexOf("http://www.w3.org/ns/ldp#Resource")
+        ).not.toEqual(-1);
+        }
     );
     ifWebhooks(
       "webhooks advertised using server-wide or resource-specific Link header",
