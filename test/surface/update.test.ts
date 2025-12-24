@@ -14,7 +14,7 @@ import {
 } from "../helpers/util";
 import { getStore } from "../helpers/util";
 import * as rdflib from "rdflib";
-const waittime = 1000;
+const waittime = 2000;
 // when the tests start, exists/exists[i].ttl exists in the test folder,
 // and nothing else.
 
@@ -290,7 +290,7 @@ describe("Update", () => {
     });
   });
 
-  describe.skip("Using PATCH to replace triple (same content)", () => { // alain succeeds locally fails in CI
+  describe("Using PATCH to replace triple (same content)", () => { // alain succeeds locally fails in CI
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
     const containerUrl = `${testFolderUrl}exists/`;
