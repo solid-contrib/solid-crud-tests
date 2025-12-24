@@ -1,4 +1,5 @@
 import {
+  storageRoot,
   generateTestFolder,
   oidcIssuer,
   cookie,
@@ -37,7 +38,15 @@ describe("Update", () => {
       console.log({ newCookie });
     }
     authFetcher = await getAuthFetcher(oidcIssuer, newCookie, appOrigin);
+
+    recursiveDelete(`${storageRoot}/solid-crud-tests/`, authFetcher);
   });
+
+  /* afterAll(() => {
+    // websocketsPubsubClientResource.disconnect();
+    // recursiveDelete(`${storageRoot}/solid-crud-tests`, authFetcher);
+  }); */
+  
   describe("Using PUT, overwriting plain text with plain text", () => {
     const { testFolderUrl } = generateTestFolder();
     let websocketsPubsubClientResource;
@@ -80,8 +89,9 @@ describe("Update", () => {
 
     it("updates the resource", async () => {
       const result = await authFetcher.fetch(resourceUrl);
+      const resultText = await result.text()
       expect(responseCodeGroup(result.status)).toEqual("2xx");
-      expect(await result.text()).toEqual("Replaced the contents.");
+      expect(resultText).toEqual("Replaced the contents.");
       expect(result.headers.get("Content-Type")).toContain("text/plain");
     });
     ifWps("emits websockets-pubsub on the resource", () => {
@@ -133,6 +143,7 @@ describe("Update", () => {
 
     it("updates the resource", async () => {
       const result = await authFetcher.fetch(resourceUrl);
+      const resultText = await result.text()
       expect(responseCodeGroup(result.status)).toEqual("2xx");
 
       const store1 = getStore(authFetcher);
@@ -144,7 +155,7 @@ describe("Update", () => {
         resourceUrl,
         "text/turtle"
       );
-      rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
+      rdflib.parse(resultText, store2, resourceUrl, "text/turtle");
 
       expect(store2.statements).toEqual(
         expect.arrayContaining(store1.statements)
@@ -200,6 +211,7 @@ describe("Update", () => {
 
     it("updates the resource", async () => {
       const result = await authFetcher.fetch(resourceUrl);
+      const resultText = await result.text()
       expect(responseCodeGroup(result.status)).toEqual("2xx");
 
       const store1 = getStore(authFetcher);
@@ -211,7 +223,7 @@ describe("Update", () => {
         resourceUrl,
         "text/turtle"
       );
-      rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
+      rdflib.parse(resultText, store2, resourceUrl, "text/turtle");
 
       expect(store2.statements).toEqual(
         expect.arrayContaining(store1.statements)
@@ -260,11 +272,12 @@ describe("Update", () => {
 
     afterAll(() => {
       websocketsPubsubClientResource.disconnect();
-      recursiveDelete(testFolderUrl, authFetcher);
+      // recursiveDelete(testFolderUrl, authFetcher);
     });
 
     it("updates the resource", async () => {
       const result = await authFetcher.fetch(resourceUrl);
+      const resultText = await result.text()
       expect(responseCodeGroup(result.status)).toEqual("2xx");
 
       const store1 = getStore(authFetcher);
@@ -276,7 +289,7 @@ describe("Update", () => {
         resourceUrl,
         "text/turtle"
       );
-      rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
+      rdflib.parse(resultText, store2, resourceUrl, "text/turtle");
 
       expect(store2.statements).toEqual(
         expect.arrayContaining(store1.statements)
@@ -326,11 +339,12 @@ describe("Update", () => {
 
     afterAll(() => {
       websocketsPubsubClientResource.disconnect();
-      recursiveDelete(testFolderUrl, authFetcher);
+      // recursiveDelete(testFolderUrl, authFetcher);
     });
 
     it("updates the resource", async () => {
       const result = await authFetcher.fetch(resourceUrl);
+      const resultText = await result.text()
       expect(responseCodeGroup(result.status)).toEqual("2xx");
 
       const store1 = getStore(authFetcher);
@@ -342,7 +356,7 @@ describe("Update", () => {
         resourceUrl,
         "text/turtle"
       );
-      rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
+      rdflib.parse(resultText, store2, resourceUrl, "text/turtle");
 
       expect(store2.statements).toEqual(
         expect.arrayContaining(store1.statements)
@@ -392,11 +406,12 @@ describe("Update", () => {
 
     afterAll(() => {
       websocketsPubsubClientResource.disconnect();
-      recursiveDelete(testFolderUrl, authFetcher);
+      // recursiveDelete(testFolderUrl, authFetcher);
     });
 
     it("updates the resource", async () => {
       const result = await authFetcher.fetch(resourceUrl);
+      const resultText = await result.text()
       expect(responseCodeGroup(result.status)).toEqual("2xx");
 
       const store1 = getStore(authFetcher);
@@ -408,7 +423,7 @@ describe("Update", () => {
         resourceUrl,
         "text/turtle"
       );
-      rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
+      rdflib.parse(resultText, store2, resourceUrl, "text/turtle");
 
       expect(store2.statements).toEqual(
         expect.arrayContaining(store1.statements)
@@ -457,7 +472,7 @@ describe("Update", () => {
 
     afterAll(() => {
       websocketsPubsubClientResource.disconnect();
-      recursiveDelete(testFolderUrl, authFetcher);
+      // recursiveDelete(testFolderUrl, authFetcher);
     });
 
     it("does not update the resource", async () => {
@@ -530,12 +545,13 @@ describe("Update", () => {
 
     it("updates the resource", async () => {
       const result = await authFetcher.fetch(resourceUrl);
+      const resultText = await result.text()
       expect(responseCodeGroup(result.status)).toEqual("2xx");
       const store1 = getStore(authFetcher);
       const store2 = getStore(authFetcher);
 
       rdflib.parse("@prefix : <#>.", store1, resourceUrl, "text/turtle");
-      rdflib.parse(await result.text(), store2, resourceUrl, "text/turtle");
+      rdflib.parse(resultText, store2, resourceUrl, "text/turtle");
 
       expect(store2.statements).toEqual(
         expect.arrayContaining(store1.statements)
@@ -583,7 +599,7 @@ describe("Update", () => {
 
     afterAll(() => {
       websocketsPubsubClientResource.disconnect();
-      recursiveDelete(testFolderUrl, authFetcher);
+      // recursiveDelete(testFolderUrl, authFetcher);
     });
 
     it("does not update the resource", async () => {

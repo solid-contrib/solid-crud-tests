@@ -8,7 +8,7 @@ export const storageRoot = process.env.STORAGE_ROOT || process.env.SERVER_ROOT;
 export const aliceWebId = process.env.ALICE_WEBID;
 
 export function generateTestFolder() {
-  const testFolder = `solid-crud-tests-${new Date().getTime()}`;
+  const testFolder = `solid-crud-tests/${new Date().getTime()}`;
   return {
     testFolder,
     testFolderUrl: `${storageRoot}/${testFolder}/`,
