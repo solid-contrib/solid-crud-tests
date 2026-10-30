@@ -30,7 +30,7 @@ describe("Create container", () => {
       const { testFolderUrl } = generateTestFolder();
       let notificationsClientContainer;
       let notificationsClientResource;
-      const containerUrl = `${testFolderUrl}exists/`;
+      const containerUrl = `${testFolderUrl}test1/`;
       const resourceUrl = `${containerUrl}new/`;
 
       beforeAll(async () => {
@@ -67,7 +67,7 @@ describe("Create container", () => {
       afterAll(() => {
         notificationsClientContainer.disconnect();
         notificationsClientResource.disconnect();
-        recursiveDelete(testFolderUrl, authFetcher);
+        recursiveDelete(containerUrl, authFetcher);
       });
 
       it("creates the container", async () => {

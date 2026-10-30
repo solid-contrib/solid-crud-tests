@@ -41,7 +41,7 @@ if (process.env.SKIP_CONC) {
       let notificationsClientResource;
       let results;
       let bodyExpected = "who won?";
-      const containerUrl = `${testFolderUrl}exists/`;
+      const containerUrl = `${testFolderUrl}test1/`;
       const resourceUrl = `${containerUrl}new.txt`;
 
       beforeAll(async () => {
@@ -90,7 +90,7 @@ if (process.env.SKIP_CONC) {
       afterAll(() => {
         notificationsClientContainer.disconnect();
         notificationsClientResource.disconnect();
-        recursiveDelete(testFolderUrl, authFetcher);
+        recursiveDelete(containerUrl, authFetcher);
       });
 
       it("succeeds exactly once", () => {
@@ -139,7 +139,7 @@ if (process.env.SKIP_CONC) {
       let notificationsClientResource;
       let results;
       let expectedRdf = "";
-      const containerUrl = `${testFolderUrl}exists/`;
+      const containerUrl = `${testFolderUrl}test2/`;
       const resourceUrl = `${containerUrl}resource.ttl`;
 
       beforeAll(async () => {
@@ -181,7 +181,7 @@ if (process.env.SKIP_CONC) {
 
       afterAll(() => {
         notificationsClientResource.disconnect();
-        recursiveDelete(testFolderUrl, authFetcher);
+        recursiveDelete(containerUrl, authFetcher);
       });
 
       it("succeeds 10 times", async () => {
