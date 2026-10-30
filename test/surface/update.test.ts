@@ -42,7 +42,7 @@ describe("Update", () => {
   describe("Using PUT, overwriting plain text with plain text", () => {
     const { testFolderUrl } = generateTestFolder();
     let notificationsClientResource;
-    const containerUrl = `${testFolderUrl}exists/`;
+    const containerUrl = `${testFolderUrl}test1/`;
     const resourceUrl = `${containerUrl}exists1.txt`;
 
     beforeAll(async () => {
@@ -76,7 +76,7 @@ describe("Update", () => {
 
     afterAll(() => {
       notificationsClientResource.disconnect();
-      recursiveDelete(testFolderUrl, authFetcher);
+      recursiveDelete(containerUrl, authFetcher);
     });
 
     it("updates the resource", async () => {
@@ -95,8 +95,8 @@ describe("Update", () => {
   describe("Using PUT, overwriting Turtle with Turtle", () => {
     const { testFolderUrl } = generateTestFolder();
     let notificationsClientResource;
-    const containerUrl = `${testFolderUrl}exists/`;
-    const resourceUrl = `${containerUrl}exists1.ttl`;
+    const containerUrl = `${testFolderUrl}test2/`;
+    const resourceUrl = `${containerUrl}exists2.ttl`;
 
     beforeAll(async () => {
       // this already relies on the PUT to non-existing folder functionality
@@ -129,7 +129,7 @@ describe("Update", () => {
 
     afterAll(() => {
       notificationsClientResource.disconnect();
-      recursiveDelete(testFolderUrl, authFetcher);
+      recursiveDelete(containerUrl, authFetcher);
     });
 
     it("updates the resource", async () => {
@@ -162,8 +162,8 @@ describe("Update", () => {
   describe("Using PUT (same Turtle content)", () => {
     const { testFolderUrl } = generateTestFolder();
     let notificationsClientResource;
-    const containerUrl = `${testFolderUrl}exists/`;
-    const resourceUrl = `${containerUrl}exists1.ttl`;
+    const containerUrl = `${testFolderUrl}test3/`;
+    const resourceUrl = `${containerUrl}exists3.ttl`;
 
     beforeAll(async () => {
       // this already relies on the PUT to non-existing folder functionality
@@ -196,7 +196,7 @@ describe("Update", () => {
 
     afterAll(() => {
       notificationsClientResource.disconnect();
-      recursiveDelete(testFolderUrl, authFetcher);
+      recursiveDelete(containerUrl, authFetcher);
     });
 
     it("updates the resource", async () => {
@@ -229,8 +229,8 @@ describe("Update", () => {
   describe("Using PATCH to add triple", () => {
     const { testFolderUrl } = generateTestFolder();
     let notificationsClientResource;
-    const containerUrl = `${testFolderUrl}exists/`;
-    const resourceUrl = `${containerUrl}exists3.ttl`;
+    const containerUrl = `${testFolderUrl}test4/`;
+    const resourceUrl = `${containerUrl}exists4.ttl`;
 
     beforeAll(async () => {
       // this already relies on the PUT to non-existing folder functionality
@@ -261,7 +261,7 @@ describe("Update", () => {
 
     afterAll(() => {
       notificationsClientResource.disconnect();
-      recursiveDelete(testFolderUrl, authFetcher);
+      recursiveDelete(containerUrl, authFetcher);
     });
 
     it("updates the resource", async () => {
@@ -294,8 +294,8 @@ describe("Update", () => {
   describe("Using PATCH to replace triple (same content)", () => {
     const { testFolderUrl } = generateTestFolder();
     let notificationsClientResource;
-    const containerUrl = `${testFolderUrl}exists/`;
-    const resourceUrl = `${containerUrl}exists4.ttl`;
+    const containerUrl = `${testFolderUrl}test5/`;
+    const resourceUrl = `${containerUrl}exists5.ttl`;
 
     beforeAll(async () => {
       // this already relies on the PUT to non-existing folder functionality
@@ -327,7 +327,7 @@ describe("Update", () => {
 
     afterAll(() => {
       notificationsClientResource.disconnect();
-      recursiveDelete(testFolderUrl, authFetcher);
+      recursiveDelete(containerUrl, authFetcher);
     });
 
     it("updates the resource", async () => {
@@ -360,8 +360,8 @@ describe("Update", () => {
   describe("Using PATCH to replace triple (present)", () => {
     const { testFolderUrl } = generateTestFolder();
     let notificationsClientResource;
-    const containerUrl = `${testFolderUrl}exists/`;
-    const resourceUrl = `${containerUrl}exists4.ttl`;
+    const containerUrl = `${testFolderUrl}test6/`;
+    const resourceUrl = `${containerUrl}exists6.ttl`;
 
     beforeAll(async () => {
       // this already relies on the PUT to non-existing folder functionality
@@ -393,7 +393,7 @@ describe("Update", () => {
 
     afterAll(() => {
       notificationsClientResource.disconnect();
-      recursiveDelete(testFolderUrl, authFetcher);
+      recursiveDelete(containerUrl, authFetcher);
     });
 
     it("updates the resource", async () => {
@@ -427,8 +427,8 @@ describe("Update", () => {
   describe.skip("Using PATCH to replace triple (not present)", () => {
     const { testFolderUrl } = generateTestFolder();
     let notificationsClientResource;
-    const containerUrl = `${testFolderUrl}exists/`;
-    const resourceUrl = `${containerUrl}exists5.ttl`;
+    const containerUrl = `${testFolderUrl}test7/`;
+    const resourceUrl = `${containerUrl}exists7.ttl`;
 
     beforeAll(async () => {
       // this already relies on the PUT to non-existing folder functionality
@@ -458,7 +458,7 @@ describe("Update", () => {
 
     afterAll(() => {
       notificationsClientResource.disconnect();
-      recursiveDelete(testFolderUrl, authFetcher);
+      recursiveDelete(containerUrl, authFetcher);
     });
 
     it("does not update the resource", async () => {
@@ -495,8 +495,8 @@ describe("Update", () => {
   describe("Using PATCH to remove triple (present)", () => {
     const { testFolderUrl } = generateTestFolder();
     let notificationsClientResource;
-    const containerUrl = `${testFolderUrl}exists/`;
-    const resourceUrl = `${containerUrl}exists6.ttl`;
+    const containerUrl = `${testFolderUrl}test8/`;
+    const resourceUrl = `${containerUrl}exists8.ttl`;
 
     beforeAll(async () => {
       // this already relies on the PUT to non-existing folder functionality
@@ -525,7 +525,7 @@ describe("Update", () => {
 
     afterAll(() => {
       notificationsClientResource.disconnect();
-      recursiveDelete(testFolderUrl, authFetcher);
+      recursiveDelete(containerUrl, authFetcher);
     });
 
     it("updates the resource", async () => {
@@ -552,8 +552,8 @@ describe("Update", () => {
   describe("Using PATCH to remove triple (not present)", () => {
     const { testFolderUrl } = generateTestFolder();
     let notificationsClientResource;
-    const containerUrl = `${testFolderUrl}exists/`;
-    const resourceUrl = `${containerUrl}exists7.ttl`;
+    const containerUrl = `${testFolderUrl}test9/`;
+    const resourceUrl = `${containerUrl}exists9.ttl`;
 
     beforeAll(async () => {
       // this already relies on the PUT to non-existing folder functionality
@@ -582,7 +582,7 @@ describe("Update", () => {
 
     afterAll(() => {
       notificationsClientResource.disconnect();
-      recursiveDelete(testFolderUrl, authFetcher);
+      recursiveDelete(containerUrl, authFetcher);
     });
 
     it("does not update the resource", async () => {

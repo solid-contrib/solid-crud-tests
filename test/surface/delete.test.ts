@@ -27,7 +27,7 @@ describe("Delete", () => {
     const { testFolderUrl } = generateTestFolder();
     let notificationsClientContainer;
     let notificationsClientResource;
-    const containerUrl = `${testFolderUrl}exists/`;
+    const containerUrl = `${testFolderUrl}test1/`;
     const resourceUrl = `${containerUrl}exists.ttl`;
 
     beforeAll(async () => {
@@ -56,7 +56,7 @@ describe("Delete", () => {
     afterAll(() => {
       notificationsClientContainer.disconnect();
       notificationsClientResource.disconnect();
-      recursiveDelete(testFolderUrl, authFetcher);
+      recursiveDelete(containerUrl, authFetcher);
     });
 
     it("deletes the resource", async () => {
@@ -87,7 +87,7 @@ describe("Delete", () => {
     const { testFolderUrl } = generateTestFolder();
     let notificationsClientContainer;
     let notificationsClientResource;
-    const containerUrl = `${testFolderUrl}exists/`;
+    const containerUrl = `${testFolderUrl}test2/`;
     const resourceUrl = `${containerUrl}exists.txt`;
 
     beforeAll(async () => {
@@ -116,7 +116,7 @@ describe("Delete", () => {
     afterAll(() => {
       notificationsClientContainer.disconnect();
       notificationsClientResource.disconnect();
-      recursiveDelete(testFolderUrl, authFetcher);
+      recursiveDelete(containerUrl, authFetcher);
     });
 
     it("leaves the container with the resource in it", async () => {
@@ -156,7 +156,7 @@ describe("Delete", () => {
   describe("empty container", () => {
     const { testFolderUrl } = generateTestFolder();
     let notificationsClientContainer;
-    const containerUrl = `${testFolderUrl}exists/`;
+    const containerUrl = `${testFolderUrl}test3/`;
     const resourceUrl = `${containerUrl}exists.ttl`;
 
     beforeAll(async () => {
@@ -185,7 +185,7 @@ describe("Delete", () => {
 
     afterAll(() => {
       notificationsClientContainer.disconnect();
-      recursiveDelete(testFolderUrl, authFetcher);
+      recursiveDelete(containerUrl, authFetcher);
     });
 
     it("deletes the container", async () => {

@@ -54,7 +54,7 @@ describe("Notifications", () => {
     const { testFolderUrl } = generateTestFolder();
     // console.log({ testFolderUrl });
     let notificationsClientResource;
-    const containerUrl = `${testFolderUrl}exists/`;
+    const containerUrl = `${testFolderUrl}test1/`;
     const resourceUrl = `${containerUrl}exists1.txt`;
 
     function checkDescription(typeStr: string) {
@@ -141,7 +141,7 @@ describe("Notifications", () => {
 
     afterAll(async () => {
       await notificationsClientResource.disconnect();
-      recursiveDelete(testFolderUrl, authFetcher);
+      recursiveDelete(containerUrl, authFetcher);
     });
     ifWps(
       "insecure websockets-pubsub advertised using Updates-Via Link header",

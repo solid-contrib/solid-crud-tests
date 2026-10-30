@@ -32,7 +32,7 @@ describe("Create non-container", () => {
       const { testFolderUrl } = generateTestFolder();
       let resourceUrl;
       let notificationsClient;
-      const containerUrl = `${testFolderUrl}exists/`;
+      const containerUrl = `${testFolderUrl}test1/`;
 
       beforeAll(async () => {
         // this already relies on the PUT to non-existing folder functionality
@@ -63,7 +63,7 @@ describe("Create non-container", () => {
 
       afterAll(() => {
         notificationsClient.disconnect();
-        recursiveDelete(testFolderUrl, authFetcher);
+        recursiveDelete(containerUrl, authFetcher);
       });
 
       it("creates the resource", async () => {
@@ -92,7 +92,7 @@ describe("Create non-container", () => {
       const { testFolderUrl } = generateTestFolder();
       let notificationsClientContainer;
       let notificationsClientResource;
-      const containerUrl = `${testFolderUrl}exists/`;
+      const containerUrl = `${testFolderUrl}test2/`;
       const resourceUrl = `${containerUrl}new.txt`;
 
       beforeAll(async () => {
@@ -130,7 +130,7 @@ describe("Create non-container", () => {
       afterAll(() => {
         notificationsClientContainer.disconnect();
         notificationsClientResource.disconnect();
-        recursiveDelete(testFolderUrl, authFetcher);
+        recursiveDelete(containerUrl, authFetcher);
       });
 
       it("creates the resource", async () => {
@@ -164,7 +164,7 @@ describe("Create non-container", () => {
       const { testFolderUrl } = generateTestFolder();
       let notificationsClientContainer;
       let notificationsClientResource;
-      const containerUrl = `${testFolderUrl}exists/`;
+      const containerUrl = `${testFolderUrl}test3/`;
       const resourceUrl = `${containerUrl}new.ttl`;
 
       beforeAll(async () => {
@@ -205,7 +205,7 @@ describe("Create non-container", () => {
       afterAll(() => {
         notificationsClientContainer.disconnect();
         notificationsClientResource.disconnect();
-        recursiveDelete(testFolderUrl, authFetcher);
+        recursiveDelete(containerUrl, authFetcher);
       });
 
       it("creates the resource", async () => {
@@ -253,7 +253,7 @@ describe("Create non-container", () => {
   describe("in a non-existing container", () => {
     describe("using PUT", () => {
       const { testFolderUrl } = generateTestFolder();
-      const containerUrl = `${testFolderUrl}new/`;
+      const containerUrl = `${testFolderUrl}test4/`;
       let notificationsClientParent;
       let notificationsClientContainer;
       let notificationsClientResource;
@@ -290,7 +290,7 @@ describe("Create non-container", () => {
         notificationsClientParent.disconnect();
         notificationsClientContainer.disconnect();
         notificationsClientResource.disconnect();
-        recursiveDelete(testFolderUrl, authFetcher);
+        recursiveDelete(containerUrl, authFetcher);
       });
 
       it("creates the resource", async () => {
@@ -331,7 +331,7 @@ describe("Create non-container", () => {
       let notificationsClientParent;
       let notificationsClientContainer;
       let notificationsClientResource;
-      const containerUrl = `${testFolderUrl}new/`;
+      const containerUrl = `${testFolderUrl}test5/`;
       const resourceUrl = `${containerUrl}new.ttl`;
 
       beforeAll(async () => {
@@ -367,7 +367,7 @@ describe("Create non-container", () => {
         notificationsClientParent.disconnect();
         notificationsClientContainer.disconnect();
         notificationsClientResource.disconnect();
-        recursiveDelete(testFolderUrl, authFetcher);
+        recursiveDelete(containerUrl, authFetcher);
       });
 
       it("creates the resource", async () => {
